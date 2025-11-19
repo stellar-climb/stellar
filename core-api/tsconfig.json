@@ -24,7 +24,9 @@
 
     "paths": {
       "@configs": ["configs"],
-      "@databases": ["databases"]
+      "@databases": ["databases"],
+      "@services/*": ["services/*"],
+      "@libs/*": ["libs/*"]
     }
   }
 }
