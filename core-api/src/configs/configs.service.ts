@@ -32,6 +32,13 @@ export class ConfigsService {
     return config;
   }
 
+  get redis() {
+    return {
+      host: this.configService.get('REDIS_HOST'),
+      port: 6379,
+    };
+  }
+
   private validateConfig(config: Record<string, any>, name: string) {
     Object.entries(config).forEach(([key, value]) => {
       if (value === undefined) {

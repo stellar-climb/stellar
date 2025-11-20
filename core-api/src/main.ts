@@ -3,7 +3,12 @@ import { AppModule } from './app.module';
 
 (async () => {
   const app = await NestFactory.create(AppModule);
+  const port = process.env.PORT ?? 3000;
 
+  // Enable shutdown hooks
   app.enableShutdownHooks();
-  await app.listen(process.env.PORT ?? 3000);
+
+  await app.listen(port, () => {
+    console.log(`Server is running on port ${port}.🚀 `);
+  });
 })();

@@ -1,6 +1,9 @@
 import { Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
+import { DddEvent } from './ddd-event';
 
 export class DddAggregate {
+  private readonly events: DddEvent[] = [];
+
   @CreateDateColumn()
   private readonly createdAt!: Date;
 
@@ -21,5 +24,13 @@ export class DddAggregate {
       this.createdBy = txId;
     }
     this.updatedBy = txId;
+  }
+
+  publishEvent(event: DddEvent) {
+    this.events.push(event);
+  }
+
+  getPublishedEvents() {
+    return [...this.events];
   }
 }
