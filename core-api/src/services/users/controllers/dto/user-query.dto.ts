@@ -1,14 +1,3 @@
-import { Type } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { PaginationDto } from '@common/dto';
 
-export class UserQueryDto {
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  page?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  limit?: number;
-}
+export class UserQueryDto extends PaginationDto {}

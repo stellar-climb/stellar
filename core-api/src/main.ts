@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fs from 'fs';
 import generals from './services/generals';
 import admins from './services/admins';
+import { PaginationDto } from '@common/dto';
 
 (async () => {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,7 @@ import admins from './services/admins';
 
   const swaggerDocument = SwaggerModule.createDocument(app, config, {
     include: [...generals],
+    extraModels: [PaginationDto],
   });
   fs.writeFileSync('./swagger.json', JSON.stringify(swaggerDocument));
 
@@ -35,6 +37,7 @@ import admins from './services/admins';
 
   const adminSwaggerDocument = SwaggerModule.createDocument(app, adminConfig, {
     include: [...admins],
+    extraModels: [PaginationDto],
   });
   fs.writeFileSync('./swagger-admin.json', JSON.stringify(adminSwaggerDocument));
 
