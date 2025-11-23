@@ -25,6 +25,9 @@ jobs:
           # swagger.json 파일을 읽어서 JSON 문자열로 변환
           SWAGGER_CONTENT=$(cat swagger.json | jq -c .)
 
+          # swagger-admin.json 파일을 읽어서 JSON 문자열로 변환
+          SWAGGER_ADMIN_CONTENT=$(cat swagger-admin.json | jq -c .)
+
           # JSON body 생성
           JSON_BODY=$(jq -n \
             --arg input "$SWAGGER_CONTENT" \
@@ -35,7 +38,22 @@ jobs:
                 endpointOverwriteBehavior: "OVERWRITE_EXISTING",
                 schemaOverwriteBehavior: "OVERWRITE_EXISTING",
                 updateFolderOfChangedEndpoint: false,
-                prependBasePath: false
+                prependBasePath: false,
+                targetEndpointFolderId: 5689113
+              }
+            }')
+
+          JSON_BODY_ADMIN=$(jq -n \
+            --arg input "$SWAGGER_ADMIN_CONTENT" \
+            --arg branch "$TARGET_APIDOG_BRANCH" \
+            '{
+              input: $input,
+              options: {
+                endpointOverwriteBehavior: "OVERWRITE_EXISTING",
+                schemaOverwriteBehavior: "OVERWRITE_EXISTING",
+                updateFolderOfChangedEndpoint: false,
+                prependBasePath: false,
+                targetEndpointFolderId: 5689111
               }
             }')
 
@@ -45,3 +63,9 @@ jobs:
           --header "Authorization: Bearer APS-GSvqfuLyf5RfQBrM037WWlm7PEeU5Thi" \
           --header "Content-Type: application/json" \
           --data-raw "$JSON_BODY"
+
+          curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
+          --header "X-Apidog-Api-Version: 2024-03-28" \
+          --header "Authorization: Bearer APS-GSvqfuLyf5RfQBrM037WWlm7PEeU5Thi" \
+          --header "Content-Type: application/json" \
+          --data-raw "$JSON_BODY_ADMIN"

@@ -21,6 +21,17 @@ import fs from 'fs';
   const swaggerDocument = SwaggerModule.createDocument(app, config);
   fs.writeFileSync('./swagger.json', JSON.stringify(swaggerDocument));
 
+  // Swagger Admin
+  const adminConfig = new DocumentBuilder()
+    .setTitle('Core API Admin')
+    .setDescription('Core API Admin description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const adminSwaggerDocument = SwaggerModule.createDocument(app, adminConfig);
+  fs.writeFileSync('./swagger-admin.json', JSON.stringify(adminSwaggerDocument));
+
   await app.listen(port, () => {
     console.log(`Server is running on port ${port}.🚀 `);
   });
