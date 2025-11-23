@@ -12,4 +12,7 @@ export class AdminUserController {
   async getUsers(@Query() query: UserQueryDto) {
     return 'Hello World';
   }
+
+  @Get(':id')
+  async retrieve() {}
 }
