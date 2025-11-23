@@ -25,9 +25,9 @@ jobs:
         run: |
 
           if [ "$TARGET_APIDOG_BRANCH" == "main" ]; then
-            TARGET_APIDOG_BRANCH="main"
+            TARGET_APIDOG_BRANCH=1126584
           else
-            TARGET_APIDOG_BRANCH="dev"
+            TARGET_APIDOG_BRANCH=1126805
           fi
 
           # swagger.json 파일을 읽어서 JSON 문자열로 변환
