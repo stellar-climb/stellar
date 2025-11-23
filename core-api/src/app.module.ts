@@ -7,9 +7,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ContextMiddleware, UUIDMiddleware } from '@middlewares';
 import { RequestLoggerInterceptor } from '@libs/interceptors';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import admins from './services/admins';
 
 @Module({
-  imports: [DatabasesModule, ConfigsModule, CommonModule, EventEmitterModule.forRoot()],
+  imports: [DatabasesModule, ConfigsModule, CommonModule, EventEmitterModule.forRoot(), ...admins],
   controllers: [HealthController],
   providers: [
     {
