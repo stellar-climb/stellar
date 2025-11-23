@@ -13,6 +13,9 @@ export class AdminUserController {
     return 'Hello World';
   }
 
+  /**
+   * 사용자 상세 조회
+   */
   @Get(':id')
   async retrieve() {}
 }
