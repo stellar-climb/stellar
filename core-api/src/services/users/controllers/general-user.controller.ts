@@ -1,8 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-/**
- * [사용자] 사용자 API
- */
+@ApiTags('[사용자] 사용자 API')
 @Controller('users')
 export class GeneralUserController {
   /**
