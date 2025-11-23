@@ -22,6 +22,13 @@ jobs:
         env:
           TARGET_APIDOG_BRANCH: ${{ github.ref_name }}
         run: |
+
+          if [ "$TARGET_APIDOG_BRANCH" == "main" ]; then
+            TARGET_APIDOG_BRANCH="main"
+          else
+            TARGET_APIDOG_BRANCH="dev"
+          fi
+
           # swagger.json 파일을 읽어서 JSON 문자열로 변환
           SWAGGER_CONTENT=$(cat swagger.json | jq -c .)
 
@@ -39,7 +46,8 @@ jobs:
                 schemaOverwriteBehavior: "OVERWRITE_EXISTING",
                 updateFolderOfChangedEndpoint: false,
                 prependBasePath: false,
-                targetEndpointFolderId: 5689113
+                targetEndpointFolderId: 5689113,
+                targetBranchId: $branch
               }
             }')
 
@@ -53,7 +61,8 @@ jobs:
                 schemaOverwriteBehavior: "OVERWRITE_EXISTING",
                 updateFolderOfChangedEndpoint: false,
                 prependBasePath: false,
-                targetEndpointFolderId: 5689111
+                targetEndpointFolderId: 5689111,
+                targetBranchId: $branch
               }
             }')
 
