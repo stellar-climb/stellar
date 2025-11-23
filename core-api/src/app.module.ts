@@ -8,9 +8,10 @@ import { ContextMiddleware, UUIDMiddleware } from '@middlewares';
 import { RequestLoggerInterceptor } from '@libs/interceptors';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import admins from './services/admins';
+import generals from './services/generals';
 
 @Module({
-  imports: [DatabasesModule, ConfigsModule, CommonModule, EventEmitterModule.forRoot(), ...admins],
+  imports: [DatabasesModule, ConfigsModule, CommonModule, EventEmitterModule.forRoot(), ...admins, ...generals],
   controllers: [HealthController],
   providers: [
     {

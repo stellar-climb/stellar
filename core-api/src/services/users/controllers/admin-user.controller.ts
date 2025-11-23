@@ -6,8 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('/admins/users')
 export class AdminUserController {
   /**
-   * 사용자 목록 조회입니다.
-   * @summary 사용자 목록 조회
+   * 사용자 목록 조회
    */
   @Get()
   async getUsers(@Query() query: UserQueryDto) {
