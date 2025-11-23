@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fs from 'fs';
+import generals from './services/generals';
+import admins from './services/admins';
 
 (async () => {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +20,9 @@ import fs from 'fs';
     .addBearerAuth()
     .build();
 
-  const swaggerDocument = SwaggerModule.createDocument(app, config);
+  const swaggerDocument = SwaggerModule.createDocument(app, config, {
+    include: [...generals],
+  });
   fs.writeFileSync('./swagger.json', JSON.stringify(swaggerDocument));
 
   // Swagger Admin
@@ -29,7 +33,9 @@ import fs from 'fs';
     .addBearerAuth()
     .build();
 
-  const adminSwaggerDocument = SwaggerModule.createDocument(app, adminConfig);
+  const adminSwaggerDocument = SwaggerModule.createDocument(app, adminConfig, {
+    include: [...admins],
+  });
   fs.writeFileSync('./swagger-admin.json', JSON.stringify(adminSwaggerDocument));
 
   await app.listen(port, () => {
