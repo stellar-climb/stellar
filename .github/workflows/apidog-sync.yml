@@ -44,7 +44,6 @@ jobs:
         working-directory: ./core-api
         env:
           TARGET_APIDOG_BRANCH: ${{ github.ref_name }}
-          APIDOG_TOKEN: ${{ secrets.APIDOG_TOKEN }} # Secrets 사용 필수!
         run: |
           # 브랜치에 따른 Apidog 타겟 브랜치 ID 매핑
           if [ "$TARGET_APIDOG_BRANCH" == "main" ]; then
@@ -79,7 +78,7 @@ jobs:
 
             curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
             --header "X-Apidog-Api-Version: 2024-03-28" \
-            --header "Authorization: Bearer $APIDOG_TOKEN" \
+            --header "Authorization: Bearer APS-GSvqfuLyf5RfQBrM037WWlm7PEeU5Thi" \
             --header "Content-Type: application/json" \
             --data-raw "$JSON_BODY"
           else
@@ -110,7 +109,7 @@ jobs:
 
             curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
             --header "X-Apidog-Api-Version: 2024-03-28" \
-            --header "Authorization: Bearer $APIDOG_TOKEN" \
+            --header "Authorization: Bearer APS-GSvqfuLyf5RfQBrM037WWlm7PEeU5Thi" \
             --header "Content-Type: application/json" \
             --data-raw "$JSON_BODY_ADMIN"
           else
