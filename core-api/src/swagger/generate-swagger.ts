@@ -1,4 +1,4 @@
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../app.module';
 import { NestFactory } from '@nestjs/core';
 import { PaginationDto } from '@common/dto';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
