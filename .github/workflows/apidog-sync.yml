@@ -18,64 +18,101 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 1. Node.js 환경 설정 (스크립트 실행용)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "./core-api/package-lock.json"
+
+      # 2. 의존성 설치 (NestJS, sqlite3 등 필요)
+      - name: Install Dependencies
+        working-directory: ./core-api
+        run: npm ci
+
+      # 3. Swagger 파일 생성 (Mock DB 사용)
+      # package.json에 "generate:swagger": "cross-env SWAGGER_GEN=true ts-node generate-swagger.ts" 가 있어야 함
+      - name: Generate Swagger Files
+        working-directory: ./core-api
+        run: npm run generate:swagger
+        env:
+          SWAGGER_GEN: "true" # 가짜 DB 사용 트리거
+
+      # 4. Apidog로 전송 (기존 로직 + Secrets 적용)
       - name: Sync API Doc to Apidog
         working-directory: ./core-api
         env:
           TARGET_APIDOG_BRANCH: ${{ github.ref_name }}
+          APIDOG_TOKEN: ${{ secrets.APIDOG_TOKEN }} # Secrets 사용 필수!
         run: |
-
+          # 브랜치에 따른 Apidog 타겟 브랜치 ID 매핑
           if [ "$TARGET_APIDOG_BRANCH" == "main" ]; then
             TARGET_APIDOG_BRANCH=1126584
           else
             TARGET_APIDOG_BRANCH=1126805
           fi
 
-          # swagger.json 파일을 읽어서 JSON 문자열로 변환
-          SWAGGER_CONTENT=$(cat swagger.json | jq -c .)
+          echo "🚀 Syncing to Apidog Branch ID: $TARGET_APIDOG_BRANCH"
 
-          # swagger-admin.json 파일을 읽어서 JSON 문자열로 변환
-          SWAGGER_ADMIN_CONTENT=$(cat swagger-admin.json | jq -c .)
+          # ---------------------------------------------------------
+          # 1. Main API Sync
+          # ---------------------------------------------------------
+          if [ -f "swagger.json" ]; then
+            echo "Processing swagger.json..."
+            SWAGGER_CONTENT=$(cat swagger.json | jq -c .)
+            
+            JSON_BODY=$(jq -n \
+              --arg input "$SWAGGER_CONTENT" \
+              --arg branch "$TARGET_APIDOG_BRANCH" \
+              '{
+                input: $input,
+                options: {
+                  endpointOverwriteBehavior: "OVERWRITE_EXISTING",
+                  schemaOverwriteBehavior: "OVERWRITE_EXISTING",
+                  updateFolderOfChangedEndpoint: false,
+                  prependBasePath: false,
+                  targetEndpointFolderId: 5689113,
+                  targetBranchId: $branch
+                }
+              }')
 
-          # JSON body 생성
-          JSON_BODY=$(jq -n \
-            --arg input "$SWAGGER_CONTENT" \
-            --arg branch "$TARGET_APIDOG_BRANCH" \
-            '{
-              input: $input,
-              options: {
-                endpointOverwriteBehavior: "OVERWRITE_EXISTING",
-                schemaOverwriteBehavior: "OVERWRITE_EXISTING",
-                updateFolderOfChangedEndpoint: false,
-                prependBasePath: false,
-                targetEndpointFolderId: 5689113,
-                targetBranchId: $branch
-              }
-            }')
+            curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
+            --header "X-Apidog-Api-Version: 2024-03-28" \
+            --header "Authorization: Bearer $APIDOG_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-raw "$JSON_BODY"
+          else
+            echo "⚠️ swagger.json not found! Skipping..."
+          fi
 
-          JSON_BODY_ADMIN=$(jq -n \
-            --arg input "$SWAGGER_ADMIN_CONTENT" \
-            --arg branch "$TARGET_APIDOG_BRANCH" \
-            '{
-              input: $input,
-              options: {
-                endpointOverwriteBehavior: "OVERWRITE_EXISTING",
-                schemaOverwriteBehavior: "OVERWRITE_EXISTING",
-                updateFolderOfChangedEndpoint: false,
-                prependBasePath: false,
-                targetEndpointFolderId: 5689111,
-                targetBranchId: $branch
-              }
-            }')
+          # ---------------------------------------------------------
+          # 2. Admin API Sync (파일이 존재할 경우에만 실행)
+          # ---------------------------------------------------------
+          if [ -f "swagger-admin.json" ]; then
+            echo "Processing swagger-admin.json..."
+            SWAGGER_ADMIN_CONTENT=$(cat swagger-admin.json | jq -c .)
 
-          # https://openapi.apidog.io/import-openapiswagger-data-7312738e0 해당 문서 참고
-          curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
-          --header "X-Apidog-Api-Version: 2024-03-28" \
-          --header "Authorization: Bearer APS-GSvqfuLyf5RfQBrM037WWlm7PEeU5Thi" \
-          --header "Content-Type: application/json" \
-          --data-raw "$JSON_BODY"
+            JSON_BODY_ADMIN=$(jq -n \
+              --arg input "$SWAGGER_ADMIN_CONTENT" \
+              --arg branch "$TARGET_APIDOG_BRANCH" \
+              '{
+                input: $input,
+                options: {
+                  endpointOverwriteBehavior: "OVERWRITE_EXISTING",
+                  schemaOverwriteBehavior: "OVERWRITE_EXISTING",
+                  updateFolderOfChangedEndpoint: false,
+                  prependBasePath: false,
+                  targetEndpointFolderId: 5689111,
+                  targetBranchId: $branch
+                }
+              }')
 
-          curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
-          --header "X-Apidog-Api-Version: 2024-03-28" \
-          --header "Authorization: Bearer APS-GSvqfuLyf5RfQBrM037WWlm7PEeU5Thi" \
-          --header "Content-Type: application/json" \
-          --data-raw "$JSON_BODY_ADMIN"
+            curl -v --location --request POST "https://api.apidog.com/v1/projects/1134504/import-openapi" \
+            --header "X-Apidog-Api-Version: 2024-03-28" \
+            --header "Authorization: Bearer $APIDOG_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-raw "$JSON_BODY_ADMIN"
+          else
+            echo "⚠️ swagger-admin.json not found! Skipping..."
+          fi
