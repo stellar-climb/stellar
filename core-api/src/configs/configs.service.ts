@@ -40,6 +40,10 @@ export class ConfigsService {
   }
 
   private validateConfig(config: Record<string, any>, name: string) {
+    if (process.env.SWAGGER_GEN) {
+      return;
+    }
+
     Object.entries(config).forEach(([key, value]) => {
       if (value === undefined) {
         throw new Error(`${key}'s ${name} config is required. check .env file.`);

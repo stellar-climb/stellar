@@ -14,32 +14,32 @@ import { PaginationDto } from '@common/dto';
   app.enableShutdownHooks();
 
   // Swagger json 파일 생성
-  const config = new DocumentBuilder()
-    .setTitle('Core API')
-    .setDescription('Core API description')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+  // const config = new DocumentBuilder()
+  //   .setTitle('Core API')
+  //   .setDescription('Core API description')
+  //   .setVersion('1.0')
+  //   .addBearerAuth()
+  //   .build();
 
-  const swaggerDocument = SwaggerModule.createDocument(app, config, {
-    include: [...generals],
-    extraModels: [PaginationDto],
-  });
-  fs.writeFileSync('./swagger.json', JSON.stringify(swaggerDocument));
+  // const swaggerDocument = SwaggerModule.createDocument(app, config, {
+  //   include: [...generals],
+  //   extraModels: [PaginationDto],
+  // });
+  // fs.writeFileSync('./swagger.json', JSON.stringify(swaggerDocument));
 
-  // Swagger Admin
-  const adminConfig = new DocumentBuilder()
-    .setTitle('Core API Admin')
-    .setDescription('Core API Admin description')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+  // // Swagger Admin
+  // const adminConfig = new DocumentBuilder()
+  //   .setTitle('Core API Admin')
+  //   .setDescription('Core API Admin description')
+  //   .setVersion('1.0')
+  //   .addBearerAuth()
+  //   .build();
 
-  const adminSwaggerDocument = SwaggerModule.createDocument(app, adminConfig, {
-    include: [...admins],
-    extraModels: [PaginationDto],
-  });
-  fs.writeFileSync('./swagger-admin.json', JSON.stringify(adminSwaggerDocument));
+  // const adminSwaggerDocument = SwaggerModule.createDocument(app, adminConfig, {
+  //   include: [...admins],
+  //   extraModels: [PaginationDto],
+  // });
+  // fs.writeFileSync('./swagger-admin.json', JSON.stringify(adminSwaggerDocument));
 
   await app.listen(port, () => {
     console.log(`Server is running on port ${port}.🚀 `);
