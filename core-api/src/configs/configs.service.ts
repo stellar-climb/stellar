@@ -33,10 +33,22 @@ export class ConfigsService {
   }
 
   get redis() {
-    return {
+    const config = {
       host: this.configService.get('REDIS_HOST'),
       port: 6379,
     };
+
+    this.validateConfig(config, 'redis');
+    return config;
+  }
+
+  get jwt() {
+    const config = {
+      accessTokenSecret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+    };
+
+    this.validateConfig(config, 'jwt');
+    return config;
   }
 
   private validateConfig(config: Record<string, any>, name: string) {
