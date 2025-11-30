@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { ContextModule } from './context';
 import { EventBoxModule } from './event-box';
-import { GuardsModule } from './guards/guards.module';
-import { JwtHelperModule } from './jwt/jwt.module';
+import { GuardsModule } from './guards';
+import { JwtHelperModule } from './jwt';
 
 @Global()
 @Module({

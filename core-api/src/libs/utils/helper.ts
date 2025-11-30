@@ -1,4 +1,5 @@
-import { FindOptionsWhere } from 'typeorm';
+import { type FindOptionsWhere } from 'typeorm';
+import { customAlphabet } from 'nanoid';
 
 type NonFunction<T> = {
   [K in keyof T as T[K] extends (...args: any[]) => any ? never : K]: T[K];
@@ -30,4 +31,8 @@ export function stripUndefined<T>(obj: StrippableWhere<T>): StrictFindOptionsWhe
 
   // 최종 결과는 TypeORM 검색 조건 객체 타입으로 단언하여 반환합니다.
   return stripped as StrictFindOptionsWhere<T>;
+}
+
+export function generateId() {
+  return customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10)();
 }
