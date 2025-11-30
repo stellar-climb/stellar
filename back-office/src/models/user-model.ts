@@ -1,7 +1,7 @@
-export class UserModel {
-  id!: string;
+export interface UserModel {
+  id: string;
 
-  name!: string;
+  name: string;
 
-  email!: string;
+  email: string;
 }

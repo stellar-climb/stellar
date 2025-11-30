@@ -1,13 +1,13 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { UserModel } from '@models';
+import { type AdminModel } from '@models';
 import { httpClient } from '../http-client';
 import { CircularProgress } from '@mui/material';
 
 const authClient = httpClient;
 
 const UserContext = createContext<{
-  getUser: () => UserModel | undefined;
-  setUser: (user?: UserModel) => void;
+  getUser: () => AdminModel | undefined;
+  setUser: (user?: AdminModel) => void;
 }>({
   getUser() {
     return undefined;
@@ -31,22 +31,22 @@ async function unloadToken() {
 }
 
 async function getSelf() {
-  return authClient.get<UserModel>('/users/self');
+  return authClient.get<AdminModel>('/self');
 }
 
-export function AuthProvider({ user: initUser, children }: { user?: UserModel; children: ReactNode }) {
+export function AuthProvider({ user: initUser, children }: { user?: AdminModel; children: ReactNode }) {
   // props destructure
   // lib hooks
   // state hooks
   const [initialized, setInitialized] = useState(!!initUser);
-  const [user, setUser] = useState<UserModel | undefined>(initUser);
+  const [user, setUser] = useState<AdminModel | undefined>(initUser);
 
   const userContext = useMemo(
     () => ({
       getUser() {
         return user;
       },
-      setUser(user?: UserModel) {
+      setUser(user?: AdminModel) {
         setUser(user);
       },
     }),
