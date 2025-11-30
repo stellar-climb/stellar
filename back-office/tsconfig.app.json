@@ -15,6 +15,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
 
     /* Linting */
     "strict": true,
@@ -22,7 +23,16 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": "src",
+    "paths": {
+      "@libs": ["libs"],
+      "@models": ["models"],
+      "@routes": ["routes"],
+      "@repositories": ["repositories"],
+      "@components": ["components"],
+      "@screens": ["screens"]
+    }
   },
   "include": ["src"]
 }
