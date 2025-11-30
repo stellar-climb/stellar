@@ -1,7 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AdminAuthService } from '../applications/admin-auth.service';
 import { GoogleAuthDto } from './dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('[관리자] 인증 API')
 @Controller('admins/auth')
 export class AdminAuthController {
   constructor(private readonly adminAuthService: AdminAuthService) {}
