@@ -12,7 +12,7 @@ export class GeneralUserController {
   /**
    * 사용자 목록 조회
    */
-  @Get()
+  @Get('self')
   self() {
     // 1. Destructure body, params, query
     // 2. Get context
