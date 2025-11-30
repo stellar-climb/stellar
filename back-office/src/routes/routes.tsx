@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useUser } from '@libs';
+import { HomeScreen, LoginScreen } from '@screens';
+import { Layout } from './base-layout';
 
 function AuthorizedRoute() {
   // 1. destructure props
@@ -12,7 +14,7 @@ function AuthorizedRoute() {
   // 6. calculate values
   // 7. effect hooks
   // 8. handlers
-  return user ? <Navigate to="/" /> : <Outlet />;
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
 function UnauthorizedRoute() {
@@ -26,7 +28,7 @@ function UnauthorizedRoute() {
   // 6. calculate values
   // 7. effect hooks
   // 8. handlers
-  return user ? <Navigate to="/" /> : <Outlet />;
+  return !user ? <Outlet /> : <Navigate to="/" replace />;
 }
 
 export function AppRouter() {
@@ -34,11 +36,13 @@ export function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route element={<AuthorizedRoute />}>
-          <Route path="/" element={<div>Home</div>} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomeScreen />} />
+          </Route>
         </Route>
 
         <Route element={<UnauthorizedRoute />}>
-          <Route path="/login" element={<div>fdasfsafdsafdsafdsafdas</div>} />
+          <Route path="/login" element={<LoginScreen />} />
         </Route>
       </Routes>
     </BrowserRouter>
