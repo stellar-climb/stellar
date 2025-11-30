@@ -15,7 +15,6 @@ export class AdminController {
 
   /**
    * 본인 정보 조회 API
-   * @description 관리자 자기 자신의 정보를 조회합니다.
    */
   @Get('self')
   getSelf() {
