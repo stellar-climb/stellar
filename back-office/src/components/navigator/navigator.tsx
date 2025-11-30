@@ -21,7 +21,6 @@ export function Navigator(props: { drawerWidth: number }) {
   // 6. calculate values
   // 7. effect hooks
   // 8. handlers
-
   return (
     <Drawer
       variant="permanent"

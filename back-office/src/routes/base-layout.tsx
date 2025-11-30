@@ -26,7 +26,7 @@ export function Layout() {
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            Back Office
+            Stellar Back Office
           </Typography>
         </Toolbar>
       </AppBar>
