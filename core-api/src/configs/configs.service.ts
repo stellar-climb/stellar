@@ -51,6 +51,17 @@ export class ConfigsService {
     return config;
   }
 
+  get google() {
+    const config = {
+      clientId: this.configService.get('GOOGLE_CLIENT_ID'),
+      clientSecret: this.configService.get('GOOGLE_CLIENT_SECRET_KEY'),
+      redirectUri: this.configService.get('GOOGLE_REDIRECT_URI'),
+    };
+
+    this.validateConfig(config, 'google');
+    return config;
+  }
+
   private validateConfig(config: Record<string, any>, name: string) {
     if (process.env.SWAGGER_GEN) {
       return;
