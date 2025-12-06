@@ -1,5 +1,6 @@
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSignOut, useUser } from '@libs';
 
 const menuItems = [
   { path: '/', label: '홈' },
@@ -14,6 +15,8 @@ export function Navigator(props: { drawerWidth: number }) {
   // 2. lib hooks
   const navigate = useNavigate();
   const location = useLocation();
+  const signOut = useSignOut();
+  const [user] = useUser();
 
   // 3. state hooks
   // 4. query hooks
@@ -33,16 +36,28 @@ export function Navigator(props: { drawerWidth: number }) {
         },
       }}
     >
-      <Box sx={{ overflow: 'auto', mt: 8 }}>
-        <List>
-          {menuItems.map((item) => (
-            <ListItem key={item.path} disablePadding>
-              <ListItemButton selected={location.pathname === item.path} onClick={() => navigate(item.path)}>
-                <ListItemText primary={item.label} />
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', mt: 8 }}>
+        <Box sx={{ overflow: 'auto', flex: 1 }}>
+          <List>
+            {menuItems.map((item) => (
+              <ListItem key={item.path} disablePadding>
+                <ListItemButton selected={location.pathname === item.path} onClick={() => navigate(item.path)}>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+        <Box>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton onClick={signOut}>
+                <ListItemText primary={user.name} secondary={user.email} />
               </ListItemButton>
             </ListItem>
-          ))}
-        </List>
+          </List>
+        </Box>
       </Box>
     </Drawer>
   );

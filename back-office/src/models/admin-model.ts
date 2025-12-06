@@ -4,4 +4,6 @@ export interface AdminModel {
   email: string;
 
   name: string;
+
+  profileImageUrl: string;
 }
