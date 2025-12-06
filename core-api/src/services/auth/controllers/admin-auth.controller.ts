@@ -16,6 +16,6 @@ export class AdminAuthController {
     const data = await this.adminAuthService.googleSignIn({ ...body });
 
     // 4. Send response
-    return { data };
+    return { data: { accessToken: 'test' } };
   }
 }
