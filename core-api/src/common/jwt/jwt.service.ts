@@ -14,4 +14,8 @@ export class JwtHelperService {
       secret: this.configsService.jwt.accessTokenSecret,
     });
   }
+
+  async signAccessToken({ id }: { id: string }) {
+    return this.jwtService.signAsync({ id }, { secret: this.configsService.jwt.accessTokenSecret });
+  }
 }

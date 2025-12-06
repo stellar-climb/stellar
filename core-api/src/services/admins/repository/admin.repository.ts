@@ -7,23 +7,23 @@ import { convertOptions, type PaginationOptions, stripUndefined } from '@libs/ut
 export class AdminRepository extends DddRepository<Admin> {
   entityClass = Admin;
 
-  async find(conditions: { id?: string; email?: string; googleCI?: string }, options?: PaginationOptions) {
+  async find(conditions: { id?: string; email?: string; googleSub?: string }, options?: PaginationOptions) {
     return this.entityManager.find(this.entityClass, {
       where: stripUndefined({
         id: conditions.id,
         email: conditions.email,
-        googleCI: conditions.googleCI,
+        googleSub: conditions.googleSub,
       }),
       ...convertOptions(options),
     });
   }
 
-  async count(conditions: { id?: string; email?: string; googleCI?: string }) {
+  async count(conditions: { id?: string; email?: string; googleSub?: string }) {
     return this.entityManager.count(this.entityClass, {
       where: stripUndefined({
         id: conditions.id,
         email: conditions.email,
-        googleCI: conditions.googleCI,
+        googleSub: conditions.googleSub,
       }),
     });
   }

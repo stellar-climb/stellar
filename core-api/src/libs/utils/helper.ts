@@ -7,7 +7,7 @@ type NonFunction<T> = {
 
 type StrippableWhere<T> = {
   [K in keyof FindOptionsWhere<NonFunction<T>>]?: FindOptionsWhere<NonFunction<T>>[K] | undefined;
-} & Record<string, any>;
+};
 
 type StrictFindOptionsWhere<T> = FindOptionsWhere<T>;
 
