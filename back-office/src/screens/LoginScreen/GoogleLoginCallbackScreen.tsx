@@ -34,7 +34,7 @@ export function GoogleLoginCallbackScreen() {
 
     if (code) {
       // 백엔드 API 호출
-      fetch(`${import.meta.env.VITE_CORE_API_URL}/admins/auth/sign-in`, {
+      fetch(`${import.meta.env.VITE_CORE_API_URL}/auth/sign-in`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export function GoogleLoginCallbackScreen() {
             window.opener?.postMessage(
               {
                 type: 'GOOGLE_AUTH_SUCCESS',
-                idToken: data.data.idToken || data.data.accessToken,
+                accessToken: data.data.accessToken,
               },
               window.location.origin
             );

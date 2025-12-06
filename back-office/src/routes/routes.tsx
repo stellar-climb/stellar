@@ -35,16 +35,16 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route element={<AuthorizedRoute />}> */}
-        <Route element={<Layout />}>
-          <Route path="/" element={<HomeScreen />} />
+        <Route element={<AuthorizedRoute />}>
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomeScreen />} />
+          </Route>
         </Route>
-        {/* </Route> */}
 
-        {/* <Route element={<UnauthorizedRoute />}> */}
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="/auth/google/callback" element={<GoogleLoginCallbackScreen />} />
-        {/* </Route> */}
+        <Route element={<UnauthorizedRoute />}>
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/auth/google/callback" element={<GoogleLoginCallbackScreen />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

@@ -18,10 +18,9 @@ export function LoginScreen() {
       if (event.origin !== window.location.origin) return;
 
       if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-        const { idToken } = event.data;
-        if (idToken) {
-          console.log('idToken', idToken);
-          signInGoogle(idToken);
+        const { accessToken } = event.data;
+        if (accessToken) {
+          signInGoogle(accessToken);
         }
       } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
         console.error('Google authentication error:', event.data.error);

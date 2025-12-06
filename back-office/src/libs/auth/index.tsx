@@ -19,7 +19,7 @@ async function loadToken(query: () => Promise<{ accessToken: string }>) {
   const { accessToken } = await query();
 
   if (accessToken) {
-    httpClient.setAuthorization(accessToken);
+    httpClient.setAuthorization(`Bearer ${accessToken}`);
     localStorage.setItem('token', accessToken);
   }
 
@@ -77,15 +77,15 @@ export function AuthProvider({ user: initUser, children }: { user?: AdminModel; 
   return <UserContext.Provider value={userContext}>{children}</UserContext.Provider>;
 }
 
-export const useSignInGoogle: () => [(idToken: string) => void, { loading: boolean }] = () => {
+export const useSignInGoogle: () => [(accessToken: string) => void, { loading: boolean }] = () => {
   const context = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
   return [
     useCallback(
-      (idToken: string) => {
+      (accessToken: string) => {
         setLoading(true);
-        loadToken(() => authClient.post('/auth/token', { googleToken: idToken }))
+        loadToken(() => Promise.resolve({ accessToken }))
           .then(async () => context.setUser(await getSelf()))
           .catch((err) => console.log(err))
           .finally(() => setLoading(false));
