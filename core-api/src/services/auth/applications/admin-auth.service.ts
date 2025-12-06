@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { DddService } from '@libs/ddd';
 import { Transactional } from '@libs/decorators';
 import { GoogleService } from '@libs/google';
@@ -19,6 +19,10 @@ export class AdminAuthService extends DddService {
   @Transactional()
   async googleSignIn({ code }: { code: string }) {
     const { email, name, picture, sub } = await this.googleService.getAccessToken(code);
+
+    if (email !== 'jeangho293@gmail.com') {
+      throw new UnauthorizedException('You are not authorized to access this resource');
+    }
 
     let [admin] = await this.adminRepository.find({ googleSub: sub, email });
 
