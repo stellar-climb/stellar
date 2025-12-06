@@ -43,7 +43,7 @@ export function LoginScreen() {
 
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      redirect_uri: 'http://localhost:5173/auth/google/callback',
+      redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URL,
       response_type: 'code',
       scope: 'email profile',
       access_type: 'offline',
