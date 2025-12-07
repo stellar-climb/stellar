@@ -1,6 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { ListViewHeader, Pagination } from '@components';
+import { ListViewHeader, Pagination, CustomDataGrid, type GridColDef } from '@components';
 import { format, useQuery } from '@libs';
 import { adminRepository } from '@repositories';
 import { useState } from 'react';
@@ -25,17 +24,15 @@ export function AdminScreen() {
   // 5. form hooks
   // 6. calculate values
   const columns: GridColDef[] = [
-    { field: 'name', headerName: '이름', width: 100, headerClassName: 'super-app-theme--header' },
-    { field: 'email', headerName: '이메일', width: 100, flex: 1, headerClassName: 'super-app-theme--header' },
+    { field: 'name', headerName: '이름', width: 100 },
+    { field: 'email', headerName: '이메일', width: 100, flex: 1 },
     {
       field: 'createdAt',
       headerName: '가입일',
       width: 120,
       valueFormatter: (value) => format(value),
-      headerClassName: 'super-app-theme--header',
     },
   ];
-
   const rows = admins?.items || [];
   const totalCount = admins?.total || 0;
 
@@ -55,21 +52,7 @@ export function AdminScreen() {
             setSearch({ key: searchKey, value: searchValue });
           }}
         />
-        <DataGrid
-          rows={rows}
-          loading={loading}
-          columns={columns}
-          hideFooterPagination
-          hideFooter
-          showCellVerticalBorder
-          disableColumnMenu
-          disableColumnSorting
-          sx={{
-            '& .super-app-theme--header': {
-              backgroundColor: 'rgba(225, 230, 235, 0.55)',
-            },
-          }}
-        />
+        <CustomDataGrid rows={rows} loading={loading} columns={columns} />
         <Pagination page={page} limit={limit} totalCount={totalCount} onLimitChange={setLimit} onChange={setPage} />
       </Stack>
     </Box>
