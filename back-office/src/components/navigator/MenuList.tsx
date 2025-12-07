@@ -1,7 +1,7 @@
 import { ListItemButton, ListItemText, Collapse, ListItemIcon } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export function MenuList(props: {
   title: string;
@@ -34,7 +34,7 @@ export function MenuList(props: {
   // 8. handlers
   // 9. render
   return (
-    <>
+    <React.Fragment>
       <ListItemButton onClick={() => setOpen(!open)}>
         {icon && <ListItemIcon css={{ minWidth: '32px', color: 'inherit' }}>{icon}</ListItemIcon>}
         <ListItemText primary={title} />
@@ -53,6 +53,6 @@ export function MenuList(props: {
             </ListItemButton>
           ))}
       </Collapse>
-    </>
+    </React.Fragment>
   );
 }
