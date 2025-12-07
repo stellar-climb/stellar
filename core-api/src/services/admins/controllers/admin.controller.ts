@@ -1,8 +1,10 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AdminService } from '../applications/admin.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '@common/guards';
 import { Context, ContextKey } from '@common/context';
+import { AdminQueryDto, AdminResponseDto } from './dto';
+import { ApiCommonResponse } from '@libs/decorators';
 
 @ApiTags('[관리자] 관리자 멤버 API')
 @Controller('admins')
@@ -25,5 +27,22 @@ export class AdminController {
     // 3. Get result
     // 4. Send response
     return { data: admin };
+  }
+
+  /**
+   * 관리자 목록 조회 API
+   */
+  @Get('members')
+  @ApiCommonResponse(AdminResponseDto)
+  async list(@Query() query: AdminQueryDto) {
+    // 1. Destructure body, params, query
+    const { search, searchValue, ...options } = query;
+
+    // 2. Get context
+    // 3. Get result
+    const data = await this.adminService.list({ search, searchValue }, options);
+
+    // 4. Send response
+    return { data };
   }
 }
