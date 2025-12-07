@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 import { DddEvent } from './ddd-event';
+import { plainToInstance } from 'class-transformer';
 
 export class DddAggregate {
   private readonly events: DddEvent[] = [];
@@ -32,5 +33,9 @@ export class DddAggregate {
 
   getPublishedEvents() {
     return [...this.events];
+  }
+
+  toInstance<T>(args: new (...args: any[]) => T) {
+    return plainToInstance(args, this);
   }
 }

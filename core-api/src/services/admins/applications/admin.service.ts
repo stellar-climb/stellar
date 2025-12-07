@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DddService } from '@libs/ddd';
 import { AdminRepository } from '../repository/admin.repository';
 import { PaginationOptions } from '@libs/utils';
+import { AdminResponseDto } from '../controllers/dto';
 
 @Injectable()
 export class AdminService extends DddService {
@@ -15,6 +16,6 @@ export class AdminService extends DddService {
       this.adminRepository.count({ search, searchValue }),
     ]);
 
-    return { items: admins, total };
+    return { items: admins.map((admin) => admin.toInstance(AdminResponseDto)), total };
   }
 }
