@@ -1,4 +1,4 @@
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, Stack } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider } from '@mui/material';
 import { useSignOut, useUser } from '@libs';
 import { MenuList } from './MenuList';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -43,6 +43,7 @@ export function Navigator(props: { drawerWidth: number }) {
                 { path: '/users', label: '사용자' },
               ]}
             />
+            <MenuList title="커뮤니티 글 관리" />
           </List>
         </Box>
         <Box>

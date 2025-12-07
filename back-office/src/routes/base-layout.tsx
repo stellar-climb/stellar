@@ -20,8 +20,8 @@ export function Layout() {
       <AppBar
         position="fixed"
         sx={{
-          width: `calc(100% - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`,
+          width: '100%', // 전체 너비로 변경
+          zIndex: (theme) => theme.zIndex.drawer + 1, // Drawer 위로 올라오도록
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           boxShadow: 'none',
         }}
