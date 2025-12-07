@@ -1,4 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
+import { AdminStatus } from '../../domain/admin.entity';
+import { type CalendarDate } from '@common/types';
 
 @Exclude()
 export class AdminResponseDto {
@@ -10,6 +12,12 @@ export class AdminResponseDto {
 
   @Expose()
   name: string;
+
+  @Expose()
+  status: AdminStatus;
+
+  @Expose()
+  exitOn?: CalendarDate;
 
   @Expose()
   createdAt: Date;
