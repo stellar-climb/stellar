@@ -1,8 +1,9 @@
-import { Box, Stack } from '@mui/material';
+import { Box, Stack, Chip } from '@mui/material';
 import { ListViewHeader, Pagination, CustomDataGrid, type GridColDef } from '@components';
 import { format, useQuery } from '@libs';
 import { adminRepository } from '@repositories';
 import { useState } from 'react';
+import { AdminStatus, getAdminStatus } from '@models';
 
 export function AdminScreen() {
   // 1. destructure props
@@ -28,9 +29,23 @@ export function AdminScreen() {
     { field: 'email', headerName: '이메일', width: 100, flex: 1 },
     {
       field: 'createdAt',
-      headerName: '가입일',
+      headerName: '입사일',
       width: 120,
       valueFormatter: (value) => format(value),
+    },
+    {
+      field: 'status',
+      headerName: '상태',
+      width: 120,
+      renderCell: ({ value }) => {
+        return <Chip label={getAdminStatus(value)} color={value === AdminStatus.ACTIVE ? 'success' : 'error'} />;
+      },
+    },
+    {
+      field: 'exitOn',
+      headerName: '퇴사일',
+      width: 120,
+      valueFormatter: (value) => (value ? format(value) : '-'),
     },
   ];
   const rows = admins?.items || [];
