@@ -6,4 +6,6 @@ export interface AdminModel {
   name: string;
 
   profileImageUrl: string;
+
+  createdAt: Date;
 }

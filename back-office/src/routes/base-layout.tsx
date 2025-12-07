@@ -22,6 +22,8 @@ export function Layout() {
         sx={{
           width: `calc(100% - ${drawerWidth}px)`,
           ml: `${drawerWidth}px`,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          boxShadow: 'none',
         }}
       >
         <Toolbar>

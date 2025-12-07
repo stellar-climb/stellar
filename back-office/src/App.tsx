@@ -1,14 +1,17 @@
-import { AuthProvider, theme } from '@libs';
+import { AuthProvider, queryClient, theme } from '@libs';
 import { AppRouter } from '@routes';
 import { ThemeProvider } from '@mui/material';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <AppRouter />
-      </ThemeProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <AppRouter />
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

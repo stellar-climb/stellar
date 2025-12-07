@@ -1,4 +1,4 @@
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, Stack } from '@mui/material';
 import { useSignOut, useUser } from '@libs';
 import { MenuList } from './MenuList';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -33,7 +33,7 @@ export function Navigator(props: { drawerWidth: number }) {
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', mt: 8 }}>
         <Box sx={{ overflow: 'auto', flex: 1 }}>
-          <List>
+          <List component="nav">
             <MenuList title="홈" icon={<HomeIcon />} />
             <MenuList
               title="사용자 관리"
