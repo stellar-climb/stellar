@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useUser } from '@libs';
-import { HomeScreen, LoginScreen, GoogleLoginCallbackScreen } from '@screens';
+import { HomeScreen, LoginScreen, GoogleLoginCallbackScreen, AdminScreen, UserScreen } from '@screens';
 import { Layout } from './base-layout';
 
 function AuthorizedRoute() {
@@ -38,6 +38,8 @@ export function AppRouter() {
         <Route element={<AuthorizedRoute />}>
           <Route element={<Layout />}>
             <Route path="/" element={<HomeScreen />} />
+            <Route path="/members" element={<AdminScreen />} />
+            <Route path="/users" element={<UserScreen />} />
           </Route>
         </Route>
 

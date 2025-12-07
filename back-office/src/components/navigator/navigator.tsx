@@ -2,7 +2,7 @@ import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider } fr
 import { useSignOut, useUser } from '@libs';
 import { MenuList } from './MenuList';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import HomeIcon from '@mui/icons-material/Home';
 
 export function Navigator(props: { drawerWidth: number }) {
   // 1. destructure props
@@ -18,6 +18,7 @@ export function Navigator(props: { drawerWidth: number }) {
   // 6. calculate values
   // 7. effect hooks
   // 8. handlers
+  // 9. render
   return (
     <Drawer
       variant="permanent"
@@ -33,6 +34,7 @@ export function Navigator(props: { drawerWidth: number }) {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', mt: 8 }}>
         <Box sx={{ overflow: 'auto', flex: 1 }}>
           <List>
+            <MenuList title="홈" icon={<HomeIcon />} />
             <MenuList
               title="사용자 관리"
               icon={<AccountCircleIcon />}
