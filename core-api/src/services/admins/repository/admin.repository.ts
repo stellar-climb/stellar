@@ -16,7 +16,7 @@ export class AdminRepository extends DddRepository<Admin> {
         id: conditions.id,
         email: conditions.email,
         googleSub: conditions.googleSub,
-        ...checkLikeValue({ searchValue: conditions.searchValue, searchKey: conditions.search }),
+        ...checkLikeValue({ searchValue: conditions.searchValue, search: conditions.search }),
       }),
       ...convertOptions(options),
     });
@@ -28,7 +28,7 @@ export class AdminRepository extends DddRepository<Admin> {
         id: conditions.id,
         email: conditions.email,
         googleSub: conditions.googleSub,
-        ...checkLikeValue({ searchValue: conditions.searchValue, searchKey: conditions.search }),
+        ...checkLikeValue({ searchValue: conditions.searchValue, search: conditions.search }),
       }),
     });
   }

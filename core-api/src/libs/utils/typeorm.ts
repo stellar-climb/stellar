@@ -65,9 +65,9 @@ export function checkRangeValue(minValue?: any, maxValue?: any) {
  * @param searchValue 검색 값
  * @returns 검색 키워드와 검색 값
  */
-export function checkLikeValue({ searchKey, searchValue }: { searchKey?: string; searchValue?: string }) {
-  if (searchKey && searchValue) {
-    return { [searchKey]: ILike(`%${searchValue}%`) };
+export function checkLikeValue({ search, searchValue }: { search?: string; searchValue?: string }) {
+  if (search && searchValue) {
+    return { [search]: ILike(`%${searchValue}%`) };
   }
 
   return undefined;
