@@ -26,5 +26,22 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      defaultProps: {
+        fullWidth: false,
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        fullWidth: true,
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          padding: '20px 24px',
+        },
+      },
+    },
   },
 });

@@ -19,6 +19,11 @@ export const rolePolicyRepository = {
       },
     });
   },
+
+  async create({ name, description }: { name: string; description: string }) {
+    return httpClient.post<RolePolicyModel>('/policies/roles', { name, description });
+  },
 };
 
 queryKeyMap.set(rolePolicyRepository.list, ['role-policies']);
+queryKeyMap.set(rolePolicyRepository.create, ['role-policies']);
