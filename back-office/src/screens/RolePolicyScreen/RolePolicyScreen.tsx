@@ -1,10 +1,10 @@
-import { Box, Stack } from '@mui/material';
-import { CustomDataGrid, ListViewHeader, Pagination } from '@components';
+import { Box, Button, Stack } from '@mui/material';
+import { CustomDataGrid, DialogButton, ListViewHeader, Pagination, AddRolePolicyDialog } from '@components';
 import { useQuery } from '@libs';
 import { rolePolicyRepository } from '@repositories';
 import { useState } from 'react';
 import type { GridColDef } from '@mui/x-data-grid';
-import { format } from '@libs';
+import { format, gradients } from '@libs';
 
 export function RolePolicyScreen() {
   // 1. destructure props
@@ -37,13 +37,24 @@ export function RolePolicyScreen() {
   return (
     <Box>
       <Stack direction="column" spacing={2}>
-        <ListViewHeader
-          searchItems={[{ searchKey: 'name', label: '이름' }]}
-          onSearch={({ searchKey, searchValue }) => {
-            setPage(1);
-            setSearch({ key: searchKey, value: searchValue });
-          }}
-        />
+        <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <ListViewHeader
+            searchItems={[{ searchKey: 'name', label: '이름' }]}
+            onSearch={({ searchKey, searchValue }) => {
+              setPage(1);
+              setSearch({ key: searchKey, value: searchValue });
+            }}
+          />
+          <DialogButton
+            render={({ onOpen }) => (
+              <Button onClick={onOpen} css={{ background: gradients.primary, color: 'white' }}>
+                + ADD
+              </Button>
+            )}
+          >
+            {({ onClose, onKeyDown }) => <AddRolePolicyDialog onClose={onClose} onKeyDown={onKeyDown} />}
+          </DialogButton>
+        </Stack>
         <CustomDataGrid columns={columns} rows={rows} />
         <Pagination totalCount={total} page={page} limit={limit} onChange={setPage} onLimitChange={setLimit} />
       </Stack>
