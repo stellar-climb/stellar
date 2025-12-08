@@ -3,6 +3,7 @@ import { useSignOut, useUser } from '@libs';
 import { MenuList } from './MenuList';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
+import GavelIcon from '@mui/icons-material/Gavel';
 
 export function Navigator(props: { drawerWidth: number }) {
   // 1. destructure props
@@ -43,6 +44,7 @@ export function Navigator(props: { drawerWidth: number }) {
                 { path: '/users', label: '사용자' },
               ]}
             />
+            <MenuList title="정책 관리" icon={<GavelIcon />} menuItems={[{ path: '/policies/roles', label: '권한' }]} />
             <MenuList title="커뮤니티 글 관리" />
           </List>
         </Box>

@@ -36,7 +36,7 @@ export function MenuList(props: {
   return (
     <React.Fragment>
       <ListItemButton onClick={() => setOpen(!open)}>
-        {icon && <ListItemIcon css={{ minWidth: '32px', color: 'inherit' }}>{icon}</ListItemIcon>}
+        {icon && <ListItemIcon css={{ minWidth: '32px', color: '#000000' }}>{icon}</ListItemIcon>}
         <ListItemText primary={title} />
         {menuItems && menuItems.length > 0 && (open ? <ExpandLess /> : <ExpandMore />)}
       </ListItemButton>
