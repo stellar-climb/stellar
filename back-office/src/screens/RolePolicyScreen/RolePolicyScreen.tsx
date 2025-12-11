@@ -8,11 +8,10 @@ import {
   DeleteConfirmDialog,
   EditRolePolicyDialog,
 } from '@components';
-import { useMutation, useQuery } from '@libs';
+import { useMutation, useQuery, format, gradients } from '@libs';
 import { rolePolicyRepository } from '@repositories';
 import { useState } from 'react';
 import type { GridColDef } from '@mui/x-data-grid';
-import { format, gradients } from '@libs';
 import { useSnackbar } from 'notistack';
 import type { RolePolicyModel } from '@models';
 
@@ -92,7 +91,6 @@ export function RolePolicyScreen() {
       ),
     },
   ];
-
   const rows = rolePolicies?.items ?? [];
   const total = rolePolicies?.total ?? 0;
 
