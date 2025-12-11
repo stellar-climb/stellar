@@ -33,9 +33,13 @@ export function ListViewHeader(props: {
   };
 
   return (
-    <Stack direction="column" spacing={2} css={{ width: '100%' }}>
+    <Stack direction="column" spacing={6} css={{ width: '100%' }}>
       {/* 섹션 타이틀 */}
-      {title && <Typography variant="h5">{title}</Typography>}
+      {title && (
+        <Typography variant="h4" fontWeight={500}>
+          {title}
+        </Typography>
+      )}
       <Stack direction="row">
         <Stack
           spacing={2}
