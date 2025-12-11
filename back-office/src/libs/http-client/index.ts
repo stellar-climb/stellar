@@ -43,6 +43,11 @@ export const httpClient = (() => {
     async post<T>(url: string, data?: any): Promise<T> {
       return axiosInstance.post(url, data);
     },
+
+    async put<T>(url: string, data?: any): Promise<T> {
+      return axiosInstance.put(url, data);
+    },
+
     async delete<T>(url: string): Promise<T> {
       return axiosInstance.delete(url);
     },

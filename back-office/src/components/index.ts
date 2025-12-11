@@ -3,6 +3,7 @@ export * from './CustomDataGrid';
 export * from './DeleteConfirmDialog';
 export * from './DialogButton';
 export * from './DialogTitleGroup';
+export * from './EditRolePolicyDialog';
 export * from './ListViewHeader';
 export * from './Navigator';
 export * from './Pagination';

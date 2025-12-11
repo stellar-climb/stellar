@@ -6,6 +6,7 @@ import {
   Pagination,
   AddRolePolicyDialog,
   DeleteConfirmDialog,
+  EditRolePolicyDialog,
 } from '@components';
 import { useMutation, useQuery } from '@libs';
 import { rolePolicyRepository } from '@repositories';
@@ -13,6 +14,7 @@ import { useState } from 'react';
 import type { GridColDef } from '@mui/x-data-grid';
 import { format, gradients } from '@libs';
 import { useSnackbar } from 'notistack';
+import type { RolePolicyModel } from '@models';
 
 export function RolePolicyScreen() {
   // 1. destructure props
@@ -39,8 +41,7 @@ export function RolePolicyScreen() {
 
   // 5. form hooks
   // 6. calculate values
-
-  const columns: GridColDef[] = [
+  const columns: GridColDef<RolePolicyModel>[] = [
     { field: 'name', headerName: '이름', width: 100 },
     { field: 'description', headerName: '설명', width: 100 },
     { field: 'createdAt', headerName: '생성일', width: 120, flex: 1, valueFormatter: (value) => format(value) },
@@ -50,7 +51,7 @@ export function RolePolicyScreen() {
       align: 'center',
       headerAlign: 'center',
       width: 160,
-      renderCell: ({ row: { id } }) => (
+      renderCell: ({ row }) => (
         <Box
           sx={{
             display: 'flex',
@@ -61,9 +62,17 @@ export function RolePolicyScreen() {
             height: '100%',
           }}
         >
-          <Button size="small" onClick={() => {}}>
-            수정
-          </Button>
+          <DialogButton
+            render={({ onOpen }) => (
+              <Button color="primary" size="small" onClick={onOpen}>
+                수정
+              </Button>
+            )}
+          >
+            {({ onClose, onKeyDown }) => (
+              <EditRolePolicyDialog rolePolicy={row} onClose={onClose} onKeyDown={onKeyDown} />
+            )}
+          </DialogButton>
           <DialogButton
             render={({ onOpen }) => (
               <Button color="error" size="small" onClick={onOpen} loading={loading}>
@@ -75,7 +84,7 @@ export function RolePolicyScreen() {
               <DeleteConfirmDialog
                 onClose={onClose}
                 onKeyDown={onKeyDown}
-                onDelete={() => removeRolePolicy({ variables: { id } })}
+                onDelete={() => removeRolePolicy({ variables: { id: row.id } })}
               />
             )}
           </DialogButton>
