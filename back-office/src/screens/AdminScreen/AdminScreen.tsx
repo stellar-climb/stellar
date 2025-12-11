@@ -58,6 +58,7 @@ export function AdminScreen() {
     <Box>
       <Stack direction="column" spacing={2}>
         <ListViewHeader
+          title="관리자 목록 조회"
           searchItems={[
             { searchKey: 'name', label: '이름' },
             { searchKey: 'email', label: '이메일' },
