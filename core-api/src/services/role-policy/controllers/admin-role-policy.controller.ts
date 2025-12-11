@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { AdminRolePolicyService } from '../applications/admin-role-policy.service';
 import { RolePolicyCreateDto, RolePolicyQueryDto, RolePolicyUpdateDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -47,6 +47,20 @@ export class AdminRolePolicyController {
     // 2. Get context
     // 3. Get result
     await this.adminRolePolicyService.update({ id, ...body });
+
+    // 4. Send response
+    return { data: {} };
+  }
+
+  /**
+   * 역할 정책 삭제
+   */
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminRolePolicyService.remove({ id });
 
     // 4. Send response
     return { data: {} };
