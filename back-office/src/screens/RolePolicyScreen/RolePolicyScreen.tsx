@@ -1,14 +1,24 @@
 import { Box, Button, Stack } from '@mui/material';
-import { CustomDataGrid, DialogButton, ListViewHeader, Pagination, AddRolePolicyDialog } from '@components';
-import { useQuery } from '@libs';
+import {
+  CustomDataGrid,
+  DialogButton,
+  ListViewHeader,
+  Pagination,
+  AddRolePolicyDialog,
+  DeleteConfirmDialog,
+} from '@components';
+import { useMutation, useQuery } from '@libs';
 import { rolePolicyRepository } from '@repositories';
 import { useState } from 'react';
 import type { GridColDef } from '@mui/x-data-grid';
 import { format, gradients } from '@libs';
+import { useSnackbar } from 'notistack';
 
 export function RolePolicyScreen() {
   // 1. destructure props
   // 2. lib hooks
+  const { enqueueSnackbar } = useSnackbar();
+
   // 3. state hooks
   const [search, setSearch] = useState<{ key: string; value: string }>();
   const [page, setPage] = useState(1);
@@ -18,6 +28,14 @@ export function RolePolicyScreen() {
   const { data: rolePolicies } = useQuery(rolePolicyRepository.list, {
     variables: { page, limit, filter: search && search.value ? { search: search.key, searchValue: search.value } : {} },
   });
+  const [removeRolePolicy, { loading }] = useMutation(rolePolicyRepository.remove, {
+    onSuccess: () => {
+      enqueueSnackbar('삭제되었습니다.', { variant: 'success' });
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    },
+  });
 
   // 5. form hooks
   // 6. calculate values
@@ -26,6 +44,44 @@ export function RolePolicyScreen() {
     { field: 'name', headerName: '이름', width: 100 },
     { field: 'description', headerName: '설명', width: 100 },
     { field: 'createdAt', headerName: '생성일', width: 120, flex: 1, valueFormatter: (value) => format(value) },
+    {
+      field: 'id',
+      headerName: '',
+      align: 'center',
+      headerAlign: 'center',
+      width: 160,
+      renderCell: ({ row: { id } }) => (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <Button size="small" onClick={() => {}}>
+            수정
+          </Button>
+          <DialogButton
+            render={({ onOpen }) => (
+              <Button color="error" size="small" onClick={onOpen} loading={loading}>
+                삭제
+              </Button>
+            )}
+          >
+            {({ onClose, onKeyDown }) => (
+              <DeleteConfirmDialog
+                onClose={onClose}
+                onKeyDown={onKeyDown}
+                onDelete={() => removeRolePolicy({ variables: { id } })}
+              />
+            )}
+          </DialogButton>
+        </Box>
+      ),
+    },
   ];
 
   const rows = rolePolicies?.items ?? [];

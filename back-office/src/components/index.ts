@@ -1,5 +1,6 @@
 export * from './AddRolePolicyDialog';
 export * from './CustomDataGrid';
+export * from './DeleteConfirmDialog';
 export * from './DialogButton';
 export * from './DialogTitleGroup';
 export * from './ListViewHeader';

@@ -9,6 +9,12 @@ export const gradients = {
 
 export const theme = createTheme({
   components: {
+    MuiButton: {
+      defaultProps: {
+        color: 'primary',
+        variant: 'contained',
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         input: {

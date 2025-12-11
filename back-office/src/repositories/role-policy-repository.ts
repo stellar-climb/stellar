@@ -23,7 +23,12 @@ export const rolePolicyRepository = {
   async create({ name, description }: { name: string; description: string }) {
     return httpClient.post<RolePolicyModel>('/policies/roles', { name, description });
   },
+
+  async remove({ id }: { id: string }) {
+    return httpClient.delete<void>(`/policies/roles/${id}`);
+  },
 };
 
 queryKeyMap.set(rolePolicyRepository.list, ['role-policies']);
 queryKeyMap.set(rolePolicyRepository.create, ['role-policies']);
+queryKeyMap.set(rolePolicyRepository.remove, ['role-policies']);
