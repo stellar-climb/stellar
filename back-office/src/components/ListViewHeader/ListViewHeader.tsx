@@ -65,7 +65,7 @@ export function ListViewHeader(props: {
             }
           }
         }}
-        placeholder={label ?? '검색어를 입력하세요.'}
+        placeholder="검색어를 입력하세요."
         css={{ 'width': '340px', '& .MuiOutlinedInput-root': { borderRadius: '16px', paddingLeft: '4px' } }}
       />
     </Stack>

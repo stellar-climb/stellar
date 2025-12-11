@@ -14,6 +14,13 @@ export const theme = createTheme({
         color: 'primary',
         variant: 'contained',
       },
+      styleOverrides: {
+        root: {
+          '&:disabled': {
+            backgroundColor: '#e0e0e0',
+          },
+        },
+      },
     },
     MuiOutlinedInput: {
       styleOverrides: {
@@ -40,6 +47,11 @@ export const theme = createTheme({
     MuiTextField: {
       defaultProps: {
         fullWidth: true,
+        slotProps: {
+          inputLabel: {
+            shrink: true,
+          },
+        },
       },
     },
     MuiDialogActions: {

@@ -33,7 +33,7 @@ export function EditRolePolicyDialog(props: {
   const {
     register,
     handleSubmit,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isDirty, isValid },
     getValues,
   } = useForm({
     defaultValues: {
@@ -43,6 +43,8 @@ export function EditRolePolicyDialog(props: {
   });
 
   // 6. calculate values
+  const isDisabled = !isDirty || !isValid;
+
   // 7. effect hooks
   // 8. handlers
   // 9. render
@@ -58,6 +60,7 @@ export function EditRolePolicyDialog(props: {
       <DialogActions>
         <Button
           loading={loading}
+          disabled={isDisabled}
           onClick={handleSubmit(async () => {
             if (!hasChangedFields(dirtyFields)) {
               enqueueSnackbar('변경된 내용이 없습니다.', { variant: 'info' });
