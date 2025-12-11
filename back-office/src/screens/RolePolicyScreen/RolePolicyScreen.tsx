@@ -102,21 +102,24 @@ export function RolePolicyScreen() {
       <Stack direction="column" spacing={2}>
         <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <ListViewHeader
+            title="권한 정책 목록 조회"
             searchItems={[{ searchKey: 'name', label: '이름' }]}
             onSearch={({ searchKey, searchValue }) => {
               setPage(1);
               setSearch({ key: searchKey, value: searchValue });
             }}
+            addButton={
+              <DialogButton
+                render={({ onOpen }) => (
+                  <Button onClick={onOpen} css={{ background: gradients.primary, color: 'white' }}>
+                    + 추가
+                  </Button>
+                )}
+              >
+                {({ onClose, onKeyDown }) => <AddRolePolicyDialog onClose={onClose} onKeyDown={onKeyDown} />}
+              </DialogButton>
+            }
           />
-          <DialogButton
-            render={({ onOpen }) => (
-              <Button onClick={onOpen} css={{ background: gradients.primary, color: 'white' }}>
-                + ADD
-              </Button>
-            )}
-          >
-            {({ onClose, onKeyDown }) => <AddRolePolicyDialog onClose={onClose} onKeyDown={onKeyDown} />}
-          </DialogButton>
         </Stack>
         <CustomDataGrid columns={columns} rows={rows} />
         <Pagination totalCount={total} page={page} limit={limit} onChange={setPage} onLimitChange={setLimit} />
