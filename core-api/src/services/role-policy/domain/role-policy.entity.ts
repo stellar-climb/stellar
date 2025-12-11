@@ -25,4 +25,14 @@ export class RolePolicy extends DddAggregate {
       this.description = args.description;
     }
   }
+
+  update(args: { name?: string; description?: string }) {
+    const changedArgs = this.stripUnchanged(args);
+
+    if (!changedArgs) {
+      return;
+    }
+
+    Object.assign(this, changedArgs);
+  }
 }

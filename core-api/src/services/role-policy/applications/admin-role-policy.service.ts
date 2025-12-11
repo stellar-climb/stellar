@@ -16,7 +16,9 @@ export class AdminRolePolicyService extends DddService {
     const [existedRolePolicy] = await this.rolePolicyRepository.find({ name });
 
     if (existedRolePolicy) {
-      throw new BadRequestException('이미 존재하는 역할 정책입니다.', { cause: '이미 존재하는 역할 정책입니다.' });
+      throw new BadRequestException(`${name} 이름의 권한 정책이 이미 존재합니다.`, {
+        cause: `${name} 이름의 권한 정책이 이미 존재합니다.`,
+      });
     }
 
     const rolePolicy = new RolePolicy({ name, description });
@@ -30,5 +32,42 @@ export class AdminRolePolicyService extends DddService {
     ]);
 
     return { items: rolePolicies, total };
+  }
+
+  @Transactional()
+  async update({ id, name, description }: { id: number; name?: string; description?: string }) {
+    const [rolePolicy] = await this.rolePolicyRepository.find({ id });
+
+    if (!rolePolicy) {
+      throw new BadRequestException('해당 권한 정책을 찾을 수 없습니다.', {
+        cause: '해당 권한 정책을 찾을 수 없습니다.',
+      });
+    }
+
+    if (name) {
+      const [duplicatedRolePolicy] = await this.rolePolicyRepository.find({ name });
+
+      if (duplicatedRolePolicy) {
+        throw new BadRequestException(`${name} 이름의 권한 정책이 이미 존재합니다.`, {
+          cause: `${name} 이름의 권한 정책이 이미 존재합니다.`,
+        });
+      }
+    }
+
+    rolePolicy.update({ name, description });
+    await this.rolePolicyRepository.save([rolePolicy]);
+  }
+
+  @Transactional()
+  async remove({ id }: { id: number }) {
+    const [rolePolicy] = await this.rolePolicyRepository.find({ id });
+
+    if (!rolePolicy) {
+      throw new BadRequestException('해당 권한 정책을 찾을 수 없습니다.', {
+        cause: '해당 권한 정책을 찾을 수 없습니다.',
+      });
+    }
+
+    await this.rolePolicyRepository.softRemove([rolePolicy]);
   }
 }
