@@ -11,7 +11,7 @@ export class RolePolicy extends DddAggregate {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @Column()
