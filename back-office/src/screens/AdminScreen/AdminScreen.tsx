@@ -1,9 +1,10 @@
-import { Box, Stack, Chip } from '@mui/material';
-import { ListViewHeader, Pagination, CustomDataGrid, type GridColDef } from '@components';
+import { Box, Stack, Chip, Button } from '@mui/material';
+import { ListViewHeader, Pagination, CustomDataGrid, type GridColDef, DialogButton } from '@components';
 import { format, useQuery } from '@libs';
 import { adminRepository } from '@repositories';
 import { useState } from 'react';
-import { AdminStatus, getAdminStatus } from '@models';
+import { type AdminModel, AdminStatus, getAdminStatus } from '@models';
+import { EditAdminDialog } from 'components/EditAdminDialog';
 
 export function AdminScreen() {
   // 1. destructure props
@@ -24,7 +25,7 @@ export function AdminScreen() {
 
   // 5. form hooks
   // 6. calculate values
-  const columns: GridColDef[] = [
+  const columns: GridColDef<AdminModel>[] = [
     { field: 'name', headerName: '이름', width: 100 },
     { field: 'email', headerName: '이메일', width: 100, flex: 1 },
     {
@@ -46,6 +47,23 @@ export function AdminScreen() {
       headerName: '퇴사일',
       width: 120,
       valueFormatter: (value) => (value ? format(value) : '-'),
+    },
+    {
+      field: 'id',
+      headerName: '',
+      align: 'center',
+      width: 100,
+      renderCell: ({ row }) => (
+        <DialogButton
+          render={({ onOpen }) => (
+            <Button color="primary" size="small" onClick={onOpen}>
+              수정
+            </Button>
+          )}
+        >
+          {({ onClose, onKeyDown }) => <EditAdminDialog admin={row} onClose={onClose} onKeyDown={onKeyDown} />}
+        </DialogButton>
+      ),
     },
   ];
   const rows = admins?.items || [];
