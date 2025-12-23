@@ -40,7 +40,7 @@
       }
     }
   ],
-  "networkMode": "awsvpc",
+  "networkMode": "bridge",
   "requiresCompatibilities": ["EC2"],
   "executionRoleArn": "arn:aws:iam::684711272335:role/ecsTaskExecutionRole"
 }
