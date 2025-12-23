@@ -1,0 +1,46 @@
+{
+  "family": "core-api",
+  "containerDefinitions": [
+    {
+      "name": "core-api-container",
+      "image": "<IMAGE_URI>",
+      "cpu": 256,
+      "memoryReservation": 256,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 0,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/core-api",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "node -e 'const http = require(\"http\"); const options = { hostname: \"localhost\", port: 3000, path: \"/health\", timeout: 2000 }; const request = http.request(options, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); request.on(\"error\", () => { process.exit(1); }); request.end();'"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ],
+  "networkMode": "bridge",
+  "requiresCompatibilities": ["EC2"],
+  "executionRoleArn": "arn:aws:iam::684711272335:role/ecsTaskExecutionRole"
+}
