@@ -1,0 +1,126 @@
+# 워크플로우 이름
+name: CI/CD for Production Server
+
+# 트리거 조건: main 브랜치에 push 이벤트가 발생했을 때 실행
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "core-api/**"
+      - ".github/workflows/ci-cd.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  #######################
+  # 1. CI Job: 빌드 및 ECR 푸시
+  #######################
+  ci:
+    name: Build and Push to ECR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 1. 이미지 URI를 환경변수/결과값으로 먼저 정의합니다.
+      - name: Define Image URI
+        id: define-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "image_uri=$IMAGE_URI" >> $GITHUB_OUTPUT
+
+      # 2. docker/build-push-action 을 사용하여 빌드/푸시/캐시를 한 번에 처리합니다.
+      - name: Build, push, and cache Docker image
+        id: build-image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.define-image.outputs.image_uri }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 3. 아티팩트용 JSON 파일을 생성합니다.
+      - name: Create artifact file
+        run: echo '{"image":"${{ steps.define-image.outputs.image_uri }}"}' > imageDetail.json
+
+      # CD 잡에서 사용할 수 있도록 imageDetail.json 파일을 아티팩트로 업로드합니다.
+      - name: Upload artifact for CD job
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-detail
+          path: imageDetail.json
+          retention-days: 1
+
+  #######################
+  # 2. CD Job: ECS 배포
+  #######################
+  # cd:
+  #   name: Deploy to Amazon ECS
+  #   runs-on: ubuntu-latest
+  #   needs: ci
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+
+  #     # ci 잡이 업로드한 아티팩트를 다운로드합니다.
+  #     - name: Download artifact from CI job
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: image-detail
+
+  #     # 다운로드한 파일에서 이미지 URI를 읽어서 스텝의 결과값으로 설정합니다.
+  #     - name: Read image URI from artifact
+  #       id: image_details
+  #       run: |
+  #         IMAGE_URI=$(cat imageDetail.json | jq -r '.image')
+  #         echo "Image URI from artifact is: $IMAGE_URI"
+  #         echo "image_uri=$IMAGE_URI" >> $GITHUB_OUTPUT
+
+  #     - name: Render new task definition
+  #       id: render-task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         # 위에서 설정한 env.node_env(prod)를 사용 -> aws/taskdef.prod.json
+  #         task-definition: aws/taskdef.json
+  #         container-name: pudding-back-container
+  #         # 바로 이전 스텝(image_details)의 결과값을 사용합니다.
+  #         image: ${{ steps.image_details.outputs.image_uri }}
+
+  #     - name: Debug ECS Service and Cluster names
+  #       run: |
+  #         echo "ECS Service Name from secrets: ${{ secrets.ECS_SERVICE_NAME }}"
+  #         echo "ECS Cluster Name from secrets: ${{ secrets.ECS_CLUSTER_NAME }}"
+
+  #     - name: Deploy new task definition to Amazon ECS
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+  #       with:
+  #         task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+  #         service: ${{ secrets.ECS_SERVICE_NAME }}
+  #         cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+  #         wait-for-service-stability: false
