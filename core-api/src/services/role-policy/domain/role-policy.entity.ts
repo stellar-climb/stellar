@@ -1,5 +1,6 @@
 import { DddAggregate } from '@libs/ddd';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { RolePolicyUpdatedEvent } from './events';
 
 type Ctor = {
   name: string;
@@ -33,6 +34,9 @@ export class RolePolicy extends DddAggregate {
       return;
     }
 
+    const previous = { ...this };
     Object.assign(this, changedArgs);
+
+    this.publishEvent(new RolePolicyUpdatedEvent(this.id, previous, this));
   }
 }
