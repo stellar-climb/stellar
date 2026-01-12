@@ -4,5 +4,6 @@ import { DddEvent } from '@libs/ddd';
 import { Admin } from '@services/admins/domain/admin.entity';
 import { Role } from '@services/roles/domain/role.entity';
 import { RolePolicy } from '@services/role-policy/domain/role-policy.entity';
+import { History } from '@services/history/domain/history.entity';
 
-export default [Token, User, DddEvent, Admin, Role, RolePolicy];
+export default [Token, User, DddEvent, Admin, Role, RolePolicy, History];

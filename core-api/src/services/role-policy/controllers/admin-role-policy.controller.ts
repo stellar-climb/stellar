@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AdminRolePolicyService } from '../applications/admin-role-policy.service';
 import { RolePolicyCreateDto, RolePolicyQueryDto, RolePolicyUpdateDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from '@common/guards';
 
 @ApiTags('[관리자] 역할 정책')
 @Controller('admins/policies/roles')
+@UseGuards(AdminGuard)
 export class AdminRolePolicyController {
   constructor(private readonly adminRolePolicyService: AdminRolePolicyService) {}
 

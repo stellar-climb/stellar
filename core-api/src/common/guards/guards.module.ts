@@ -6,6 +6,6 @@ import { AdminRepository } from '@services/admins/repository/admin.repository';
 
 @Module({
   providers: [UserGuard, AdminGuard, UserRepository, AdminRepository],
-  exports: [UserGuard, AdminGuard],
+  exports: [UserGuard, AdminGuard, UserRepository, AdminRepository],
 })
 export class GuardsModule {}
