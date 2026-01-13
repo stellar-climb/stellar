@@ -3,7 +3,7 @@ import { DddAggregate } from '@libs/ddd';
 import { PrimaryGeneratedColumn, Column } from 'typeorm';
 
 type Ctor = {
-  adminId?: number;
+  adminId?: string;
   adminName?: string;
   entity: string;
   entityId: string;
@@ -23,7 +23,7 @@ export class History extends DddAggregate {
   entityId: string;
 
   @Column({ nullable: true })
-  adminId?: number;
+  adminId?: string;
 
   @Column()
   adminName: string;

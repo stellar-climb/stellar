@@ -1,6 +1,7 @@
 import { DddAggregate } from '@libs/ddd';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { RolePolicyUpdatedEvent } from './events';
+import { type Admin } from '@services/admins/domain/admin.entity';
 
 type Ctor = {
   name: string;
@@ -27,7 +28,7 @@ export class RolePolicy extends DddAggregate {
     }
   }
 
-  update(args: { name?: string; description?: string }) {
+  update(args: { name?: string; description?: string }, admin?: Admin) {
     const changedArgs = this.stripUnchanged(args);
 
     if (!changedArgs) {
@@ -37,6 +38,6 @@ export class RolePolicy extends DddAggregate {
     const previous = { ...this };
     Object.assign(this, changedArgs);
 
-    this.publishEvent(new RolePolicyUpdatedEvent(this.id, previous, this));
+    this.publishEvent(new RolePolicyUpdatedEvent(this.id, previous, this, admin));
   }
 }
