@@ -7,6 +7,7 @@ import {
   AddRolePolicyDialog,
   DeleteConfirmDialog,
   EditRolePolicyDialog,
+  HistorySection,
 } from '@components';
 import { useMutation, useQuery, format, gradients } from '@libs';
 import { rolePolicyRepository } from '@repositories';
@@ -99,6 +100,8 @@ export function RolePolicyScreen() {
   // 9. render
   return (
     <Box>
+      <HistorySection entity="rolePolicy" entityId={1} />
+
       <Stack direction="column" spacing={2}>
         <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <ListViewHeader

@@ -3,7 +3,7 @@ import { queryKeyMap, httpClient } from '@libs';
 
 export const historyRepository = {
   async list() {
-    return httpClient.get<{ items: HistoryModel[]; total: number }>('/admins/histories', {});
+    return httpClient.get<{ items: HistoryModel[]; total: number }>('/histories', {});
   },
 };
 
