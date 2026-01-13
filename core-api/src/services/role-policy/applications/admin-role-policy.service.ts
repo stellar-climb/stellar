@@ -4,6 +4,7 @@ import { RolePolicyRepository } from '../repository/role-policy.repository';
 import { Transactional } from '@libs/decorators';
 import { RolePolicy } from '../domain/role-policy.entity';
 import { PaginationOptions } from '@libs/utils';
+import { Admin } from '@services/admins/domain/admin.entity';
 
 @Injectable()
 export class AdminRolePolicyService extends DddService {
@@ -35,7 +36,7 @@ export class AdminRolePolicyService extends DddService {
   }
 
   @Transactional()
-  async update({ id, name, description }: { id: number; name?: string; description?: string }) {
+  async update({ id, name, description, admin }: { id: number; name?: string; description?: string; admin?: Admin }) {
     const [rolePolicy] = await this.rolePolicyRepository.find({ id });
 
     if (!rolePolicy) {
@@ -54,7 +55,7 @@ export class AdminRolePolicyService extends DddService {
       }
     }
 
-    rolePolicy.update({ name, description });
+    rolePolicy.update({ name, description }, admin);
     await this.rolePolicyRepository.save([rolePolicy]);
   }
 

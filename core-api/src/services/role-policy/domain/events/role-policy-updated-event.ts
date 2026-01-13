@@ -14,8 +14,8 @@ export class RolePolicyUpdatedEvent extends DddEvent {
     super();
 
     this.rolePolicyId = rolePolicyId;
-    this.before = before;
-    this.after = after;
+    this.before = this.toPlain(before);
+    this.after = this.toPlain(after);
     this.admin = admin;
   }
 }

@@ -3,12 +3,17 @@ import { AdminRolePolicyService } from '../applications/admin-role-policy.servic
 import { RolePolicyCreateDto, RolePolicyQueryDto, RolePolicyUpdateDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '@common/guards';
+import { Context, ContextKey } from '@common/context';
+import { Admin } from '@services/admins/domain/admin.entity';
 
 @ApiTags('[관리자] 역할 정책')
 @Controller('admins/policies/roles')
 @UseGuards(AdminGuard)
 export class AdminRolePolicyController {
-  constructor(private readonly adminRolePolicyService: AdminRolePolicyService) {}
+  constructor(
+    private readonly adminRolePolicyService: AdminRolePolicyService,
+    private readonly context: Context
+  ) {}
 
   /**
    * 역할 정책 생성
@@ -47,8 +52,10 @@ export class AdminRolePolicyController {
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: RolePolicyUpdateDto) {
     // 1. Destructure body, params, query
     // 2. Get context
+    const admin = this.context.get<Admin>(ContextKey.ADMIN);
+
     // 3. Get result
-    await this.adminRolePolicyService.update({ id, ...body });
+    await this.adminRolePolicyService.update({ id, ...body, admin });
 
     // 4. Send response
     return { data: {} };

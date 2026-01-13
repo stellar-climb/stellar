@@ -1,3 +1,4 @@
+import { instanceToPlain } from 'class-transformer';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 export enum DddEventStatus {
@@ -48,5 +49,9 @@ export class DddEvent {
 
   setTxId(txId: string) {
     this.txId = txId;
+  }
+
+  protected toPlain(data: Record<string, any>) {
+    return instanceToPlain(data);
   }
 }
