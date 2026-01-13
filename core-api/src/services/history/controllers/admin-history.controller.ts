@@ -9,6 +9,9 @@ import { AdminGuard } from '@common/guards';
 export class AdminHistoryController {
   constructor(private readonly adminHistoryService: AdminHistoryService) {}
 
+  /**
+   * 변경 이력 히스토리 목록 조회
+   */
   @Get()
   async list() {
     // 1. Destructure body, params, query
