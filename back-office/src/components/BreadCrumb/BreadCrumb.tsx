@@ -26,7 +26,15 @@ export function BreadCrumb(props: { items: { label: string; path: string }[] }) 
     >
       {items.map((item) => (
         <Link key={item.path} to={item.path} css={{ textDecoration: 'none' }}>
-          <Typography css={{ color: isCurrentPath(item.path) ? '#015dee' : 'gray' }}>{item.label}</Typography>
+          <Typography
+            css={{
+              ...(isCurrentPath(item.path)
+                ? { textDecoration: 'underline', color: 'black' }
+                : { textDecoration: 'none', color: 'gray' }),
+            }}
+          >
+            {item.label}
+          </Typography>
         </Link>
       ))}
     </MuiBreadcrumbs>
