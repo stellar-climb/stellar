@@ -97,7 +97,10 @@ export function ListViewHeader(props: {
                 }
               }}
               placeholder="검색어를 입력하세요."
-              css={{ 'width': '340px', '& .MuiOutlinedInput-root': { borderRadius: '16px', paddingLeft: '4px' } }}
+              css={{
+                'width': '340px',
+                '& .MuiOutlinedInput-root': { borderRadius: '16px', paddingLeft: '4px', backgroundColor: '#FFFFFF' },
+              }}
             />
           </Stack>
         )}

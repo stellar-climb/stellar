@@ -24,6 +24,10 @@ export const theme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        // notchedOutline: {
+        //   borderWidth: '1px 1px 1px 0',
+        //   borderRadius: '0px 4px 4px 0px',
+        // },
         input: {
           padding: '12px 14px',
         },
