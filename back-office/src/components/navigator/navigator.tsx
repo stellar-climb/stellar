@@ -40,8 +40,8 @@ export function Navigator(props: { drawerWidth: number }) {
               title="사용자 관리"
               icon={<AccountCircleIcon />}
               menuItems={[
-                { path: '/members', label: '관리자' },
                 { path: '/users', label: '사용자' },
+                { path: '/artists', label: '아티스트' },
               ]}
             />
             <MenuList title="정책 관리" icon={<GavelIcon />} menuItems={[{ path: '/policies/roles', label: '권한' }]} />
