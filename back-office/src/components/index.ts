@@ -5,6 +5,7 @@ export * from './DeleteConfirmDialog';
 export * from './DialogButton';
 export * from './DialogTitleGroup';
 export * from './EditRolePolicyDialog';
+export * from './FileUploadButton';
 export * from './FormRow';
 export * from './HistorySection';
 export * from './ListViewHeader';

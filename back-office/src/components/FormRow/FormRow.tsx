@@ -28,7 +28,7 @@ export function FormRow(props: { label: string; input: React.ReactNode }) {
     <Grid container>
       {/* 왼쪽 라벨 영역 */}
       <Grid
-        size={{ xs: 3, sm: 2 }}
+        size={{ xs: 3, sm: 3 }}
         css={{
           backgroundColor: '#efefef',
           display: 'flex',
@@ -45,7 +45,7 @@ export function FormRow(props: { label: string; input: React.ReactNode }) {
 
       {/* 오른쪽 입력 영역 */}
       <Grid
-        size={{ xs: 9, sm: 10 }}
+        size={{ xs: 9, sm: 9 }}
         css={{
           ...tableInputStyle,
           backgroundColor: 'white',
