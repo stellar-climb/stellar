@@ -15,14 +15,17 @@ export function Section(props: { children: ReactNode; className?: string }) {
   // 9. render
   return (
     <Box
-      className={className}
       css={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
         backgroundColor: 'white',
         padding: '24px',
         borderRadius: '12px',
         border: '1px solid #eef2f6',
         boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
       }}
+      className={className}
     >
       {children}
     </Box>

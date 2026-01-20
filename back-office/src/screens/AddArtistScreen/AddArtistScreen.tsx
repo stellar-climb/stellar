@@ -1,4 +1,4 @@
-import { Box, Stack, TextField } from '@mui/material';
+import { Box, Grid, Stack, TextField, Typography } from '@mui/material';
 import { ListViewHeader, BreadCrumb, Section, FormRow } from '@components';
 import { Form, useForm } from 'react-hook-form';
 import FileUploadButton from '../../components/FileUploadButton/FileUploadButton';
@@ -41,8 +41,19 @@ export function AddArtistScreen() {
           <FormRow
             label="프로필 사진"
             input={
-              <Box css={{ width: '100%', height: '120px', border: '1px solid #ccc' }}>
+              <Box
+                sx={{
+                  'width': '100%',
+                  'border': '2px dashed #ccc',
+                  'borderRadius': '0 4px 4px 0',
+                  'padding': 10,
+                  'textAlign': 'center',
+                  'cursor': 'pointer',
+                  '&:hover': { bgcolor: 'action.hover' },
+                }}
+              >
                 <FileUploadButton />
+                <Typography>파일을 이 영역으로 드래그하거나 클릭하세요.</Typography>
               </Box>
             }
           />
