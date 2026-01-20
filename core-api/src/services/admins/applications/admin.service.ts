@@ -12,7 +12,7 @@ export class AdminService extends DddService {
 
   async list({ search, searchValue }: { search?: string; searchValue?: string }, options?: PaginationOptions) {
     const [admins, total] = await Promise.all([
-      this.adminRepository.find({ search, searchValue }, options),
+      this.adminRepository.find({ search, searchValue }, { options }),
       this.adminRepository.count({ search, searchValue }),
     ]);
 

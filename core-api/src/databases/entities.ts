@@ -5,5 +5,6 @@ import { Admin } from '@services/admins/domain/admin.entity';
 import { Role } from '@services/roles/domain/role.entity';
 import { RolePolicy } from '@services/role-policy/domain/role-policy.entity';
 import { History } from '@services/history/domain/history.entity';
+import { Artist } from '@services/artists/domain/artist.entity';
 
-export default [Token, User, DddEvent, Admin, Role, RolePolicy, History];
+export default [Token, User, DddEvent, Admin, Role, RolePolicy, History, Artist];

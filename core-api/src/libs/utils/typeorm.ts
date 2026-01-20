@@ -11,30 +11,30 @@ export interface PaginationOptions {
   order?: 'ASC' | 'DESC';
 }
 
-export interface TypeormRelationOptions<T> extends PaginationOptions {
+export interface TypeormRelationOptions<T> {
   relations?: FindOptionsRelations<T>;
 
   options?: PaginationOptions;
 }
 
-export const convertOptions = <T>(options?: TypeormRelationOptions<T>) => {
+export const convertOptions = <T>(args?: TypeormRelationOptions<T>) => {
   let skip;
   let take;
   let order;
 
-  if (options && options.page) {
-    skip = ((options.page || 1) - 1) * (options.limit || 1);
+  if (args && args.options && args.options.page) {
+    skip = ((args.options.page || 1) - 1) * (args.options.limit || 1);
   }
 
-  if (options && options.limit) {
-    take = options.limit;
+  if (args && args.options && args.options.limit) {
+    take = args.options.limit;
   }
 
-  if (options && options.sort && options.order) {
-    order = { [options.sort]: options.order };
+  if (args && args.options && args.options.sort && args.options.order) {
+    order = { [args.options.sort]: args.options.order };
   }
 
-  return { skip, take, order, relations: options?.relations };
+  return { skip, take, order, relations: args?.relations };
 };
 
 /**

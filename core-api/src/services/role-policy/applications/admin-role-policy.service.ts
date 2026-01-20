@@ -28,7 +28,7 @@ export class AdminRolePolicyService extends DddService {
 
   async list({ search, searchValue }: { search: string; searchValue?: string }, options?: PaginationOptions) {
     const [rolePolicies, total] = await Promise.all([
-      this.rolePolicyRepository.find({ search, searchValue }, options),
+      this.rolePolicyRepository.find({ search, searchValue }, { options }),
       this.rolePolicyRepository.count({ search, searchValue }),
     ]);
 

@@ -4,6 +4,7 @@ import { AdminAuthModule } from './auth/admin-auth.module';
 import { AdminRoleModule } from './roles/admin-role.module';
 import { AdminRolePolicyModule } from './role-policy/admin-role-policy.module';
 import { AdminHistoryModule } from './history/admin-history.module';
+import { AdminArtistModule } from './artists/admin-artist.module';
 
 export default [
   AdminUserModule,
@@ -12,4 +13,5 @@ export default [
   AdminRoleModule,
   AdminRolePolicyModule,
   AdminHistoryModule,
+  AdminArtistModule,
 ];

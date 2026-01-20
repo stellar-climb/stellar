@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DddRepository } from '@libs/ddd';
 import { Role } from '../domain/role.entity';
-import { convertOptions, PaginationOptions, stripUndefined } from '@libs/utils';
+import { convertOptions, type TypeormRelationOptions, stripUndefined } from '@libs/utils';
 
 @Injectable()
 export class RoleRepository extends DddRepository<Role> {
   entityClass = Role;
 
-  async find(condition: { id?: number; userId?: string; name?: string }, options?: PaginationOptions) {
+  async find(condition: { id?: number; userId?: string; name?: string }, options?: TypeormRelationOptions<Role>) {
     return this.entityManager.find(this.entityClass, {
       where: stripUndefined({
         id: condition.id,
