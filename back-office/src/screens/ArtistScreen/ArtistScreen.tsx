@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mui/material';
-import { CustomDataGrid, ListViewHeader, Pagination } from '@components';
+import { BreadCrumb, CustomDataGrid, ListViewHeader, Pagination } from '@components';
 import { useState } from 'react';
-import { gradients, useQuery } from '@libs';
+import { format, gradients, useQuery } from '@libs';
 import { artistRepository } from '@repositories';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { ArtistModel } from '@models';
@@ -36,6 +36,7 @@ export function ArtistScreen() {
   // 9. render
   return (
     <Stack direction="column" spacing={2}>
+      <BreadCrumb items={[{ label: '아티스트', path: '/artists' }]} />
       <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <ListViewHeader
           title="아티스트"

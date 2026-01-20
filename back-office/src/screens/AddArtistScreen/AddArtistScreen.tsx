@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { ListViewHeader } from '@components';
+import { ListViewHeader, BreadCrumb } from '@components';
 
 export function AddArtistScreen() {
   // 1. destructure props
@@ -12,7 +12,14 @@ export function AddArtistScreen() {
   // 8. handlers
   // 9. render
   return (
-    <Stack>
+    <Stack spacing={2}>
+      <BreadCrumb
+        items={[
+          { label: '아티스트', path: '/artists' },
+          { label: '등록', path: '/artists/add' },
+        ]}
+      />
+
       <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <ListViewHeader title="아티스트 등록" />
       </Stack>

@@ -1,4 +1,5 @@
 export * from './AddRolePolicyDialog';
+export * from './BreadCrumb';
 export * from './CustomDataGrid';
 export * from './DeleteConfirmDialog';
 export * from './DialogButton';
