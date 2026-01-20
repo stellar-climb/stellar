@@ -30,7 +30,7 @@ export function AddArtistScreen() {
         <ListViewHeader title="아티스트 등록" />
       </Stack>
       <Section css={{ width: '480px' }}>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <FormRow label="이름" input={<TextField {...register('name')} />} />
           <FormRow label="이름" input={<TextField {...register('name')} />} />
         </Stack>
