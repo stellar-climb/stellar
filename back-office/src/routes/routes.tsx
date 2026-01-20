@@ -8,6 +8,7 @@ import {
   UserScreen,
   RolePolicyScreen,
   ArtistScreen,
+  AddArtistScreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -48,6 +49,7 @@ export function AppRouter() {
             <Route path="/" element={<HomeScreen />} />
             <Route path="/artists">
               <Route index element={<ArtistScreen />} />
+              <Route path="add" element={<AddArtistScreen />} />
             </Route>
             <Route path="/policies">
               <Route path="roles" element={<RolePolicyScreen />} />
