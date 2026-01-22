@@ -11,6 +11,7 @@ export function ArtistScreen() {
   // 1. destructure props
   // 2. lib hooks
   const navigate = useNavigate();
+
   // 3. state hooks
   const [search, setSearch] = useState<{ key: string; value: string }>();
   const [page, setPage] = useState(1);
