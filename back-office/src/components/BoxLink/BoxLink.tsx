@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 export function BoxLink(props: { children: React.ReactNode; to: string; replace?: boolean }) {

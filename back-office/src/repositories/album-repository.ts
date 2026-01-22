@@ -35,7 +35,13 @@ export const albumRepository = {
   }) {
     return httpClient.post<Promise<void>>('/albums', { title, subTitle, publisher, coverImageUrl, bannerImageUrl });
   },
+
+  async retrieve({ albumId }: { albumId: number }) {
+    console.log(albumId);
+    return httpClient.get<Promise<AlbumModel>>(`/albums/${albumId}`);
+  },
 };
 
 queryKeyMap.set(albumRepository.list, ['Album']);
 queryKeyMap.set(albumRepository.create, ['Album']);
+queryKeyMap.set(albumRepository.retrieve, ['Album']);
