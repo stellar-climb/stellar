@@ -1,5 +1,6 @@
 export * from './AddAlbumDialog';
 export * from './AddRolePolicyDialog';
+export * from './BoxLink';
 export * from './BreadCrumb';
 export * from './CustomDataGrid';
 export * from './DeleteConfirmDialog';

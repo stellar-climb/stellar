@@ -27,6 +27,7 @@ export const CustomDataGrid = forwardRef<HTMLDivElement, CustomDataGridProps>(
         showCellVerticalBorder
         disableColumnMenu
         disableColumnSorting
+        disableRowSelectionOnClick
         sx={{
           '& .super-app-theme--header': {
             backgroundColor: 'rgba(225, 230, 235, 0.55)',

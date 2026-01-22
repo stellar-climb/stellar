@@ -4,12 +4,11 @@ import {
   HomeScreen,
   LoginScreen,
   GoogleLoginCallbackScreen,
-  AdminScreen,
-  UserScreen,
   RolePolicyScreen,
   ArtistScreen,
   AddArtistScreen,
-  AlbumSreen,
+  AlbumScreen,
+  AlbumDetailScreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -57,7 +56,8 @@ export function AppRouter() {
             </Route>
 
             <Route path="/albums">
-              <Route index element={<AlbumSreen />} />
+              <Route index element={<AlbumScreen />} />
+              <Route path=":id" element={<AlbumDetailScreen />} />
             </Route>
           </Route>
         </Route>

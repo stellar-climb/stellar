@@ -7,6 +7,7 @@ import {
   type GridColDef,
   DialogButton,
   AddAlbumDialog,
+  BoxLink,
 } from '@components';
 import { useState } from 'react';
 import { albumRepository } from '@repositories';
@@ -14,9 +15,10 @@ import { gradients, useQuery } from '@libs';
 import { format } from '@libs';
 import type { AlbumModel } from '@models';
 
-export function AlbumSreen() {
+export function AlbumScreen() {
   // 1. destructure props
   // 2. lib hooks
+
   // 3. state hooks
   const [search, setSearch] = useState<{ key: string; value: string }>();
   const [page, setPage] = useState(1);
@@ -30,7 +32,12 @@ export function AlbumSreen() {
   // 5. form hooks
   // 6. calculate values
   const columns: GridColDef<AlbumModel>[] = [
-    { field: 'id', headerName: 'ID', width: 80 },
+    {
+      field: 'id',
+      headerName: 'ID',
+      width: 80,
+      renderCell: ({ value }) => <BoxLink to={`/albums/${value}`}>{value}</BoxLink>,
+    },
     { field: 'title', headerName: '앨범명', width: 120 },
     { field: 'subTitle', headerName: '부재', width: 120 },
     { field: 'publisher', headerName: '발매사', width: 120 },
