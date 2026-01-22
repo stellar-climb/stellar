@@ -9,6 +9,7 @@ import {
   RolePolicyScreen,
   ArtistScreen,
   AddArtistScreen,
+  AlbumSreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -53,6 +54,10 @@ export function AppRouter() {
             </Route>
             <Route path="/policies">
               <Route path="roles" element={<RolePolicyScreen />} />
+            </Route>
+
+            <Route path="/albums">
+              <Route index element={<AlbumSreen />} />
             </Route>
           </Route>
         </Route>

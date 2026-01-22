@@ -4,6 +4,7 @@ import { MenuList } from './MenuList';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import GavelIcon from '@mui/icons-material/Gavel';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 
 export function Navigator(props: { drawerWidth: number }) {
   // 1. destructure props
@@ -44,6 +45,7 @@ export function Navigator(props: { drawerWidth: number }) {
                 { path: '/artists', label: '아티스트' },
               ]}
             />
+            <MenuList title="콘텐츠 관리" icon={<AudiotrackIcon />} menuItems={[{ path: '/albums', label: '앨범' }]} />
             <MenuList title="정책 관리" icon={<GavelIcon />} menuItems={[{ path: '/policies/roles', label: '권한' }]} />
             <MenuList title="커뮤니티 글 관리" />
           </List>

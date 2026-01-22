@@ -1,4 +1,5 @@
 export * from './admin-model';
+export * from './album-model';
 export * from './artist-model';
 export * from './history-model';
 export * from './role-policy-model';
