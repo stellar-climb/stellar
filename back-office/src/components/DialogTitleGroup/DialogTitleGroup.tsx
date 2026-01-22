@@ -1,4 +1,4 @@
-import { DialogTitle, IconButton, Stack } from '@mui/material';
+import { DialogTitle, Divider, IconButton, Stack } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 
 export function DialogTitleGroup(props: { title: string; onClose: () => void }) {
@@ -14,11 +14,14 @@ export function DialogTitleGroup(props: { title: string; onClose: () => void }) 
   // 8. handlers
   // 9. render
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center" css={{ padding: '20px 24px' }}>
-      <DialogTitle css={{ padding: 0 }}>{title}</DialogTitle>
-      <IconButton onClick={onClose} css={{ color: 'black', width: '24px', height: '24px' }}>
-        <CloseIcon />
-      </IconButton>
+    <Stack>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" css={{ padding: '20px 24px' }}>
+        <DialogTitle css={{ padding: 0 }}>{title}</DialogTitle>
+        <IconButton onClick={onClose} css={{ color: 'black', width: '24px', height: '24px' }}>
+          <CloseIcon />
+        </IconButton>
+      </Stack>
+      <Divider />
     </Stack>
   );
 }

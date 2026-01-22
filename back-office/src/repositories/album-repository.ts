@@ -19,6 +19,23 @@ export const albumRepository = {
       },
     });
   },
+
+  async create({
+    coverImageUrl,
+    bannerImageUrl,
+    title,
+    subTitle,
+    publisher,
+  }: {
+    coverImageUrl: string;
+    bannerImageUrl?: string;
+    title: string;
+    subTitle: string;
+    publisher: string;
+  }) {
+    return httpClient.post<Promise<void>>('/albums', { title, subTitle, publisher, coverImageUrl, bannerImageUrl });
+  },
 };
 
 queryKeyMap.set(albumRepository.list, ['Album']);
+queryKeyMap.set(albumRepository.create, ['Album']);

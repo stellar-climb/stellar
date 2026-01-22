@@ -1,3 +1,4 @@
+export * from './AddAlbumDialog';
 export * from './AddRolePolicyDialog';
 export * from './BreadCrumb';
 export * from './CustomDataGrid';

@@ -1,8 +1,16 @@
-import { Stack } from '@mui/material';
-import { BreadCrumb, ListViewHeader, CustomDataGrid, Pagination, type GridColDef } from '@components';
+import { Button, Stack } from '@mui/material';
+import {
+  BreadCrumb,
+  ListViewHeader,
+  CustomDataGrid,
+  Pagination,
+  type GridColDef,
+  DialogButton,
+  AddAlbumDialog,
+} from '@components';
 import { useState } from 'react';
 import { albumRepository } from '@repositories';
-import { useQuery } from '@libs';
+import { gradients, useQuery } from '@libs';
 import { format } from '@libs';
 import type { AlbumModel } from '@models';
 
@@ -22,9 +30,17 @@ export function AlbumSreen() {
   // 5. form hooks
   // 6. calculate values
   const columns: GridColDef<AlbumModel>[] = [
-    { field: 'name', headerName: '이름', width: 100 },
-    { field: 'description', headerName: '설명', width: 100 },
-    { field: 'createdAt', headerName: '생성일', width: 120, flex: 1, valueFormatter: (value) => format(value) },
+    { field: 'id', headerName: 'ID', width: 80 },
+    { field: 'title', headerName: '앨범명', width: 120 },
+    { field: 'subTitle', headerName: '부재', width: 120 },
+    { field: 'publisher', headerName: '발매사', width: 120 },
+    {
+      field: 'createdAt',
+      headerName: '생성일',
+      width: 120,
+      flex: 1,
+      valueFormatter: (value) => format(value),
+    },
   ];
   const rows = albums?.items ?? [];
   const total = albums?.total ?? 0;
@@ -43,6 +59,17 @@ export function AlbumSreen() {
             setPage(1);
             setSearch({ key: searchKey, value: searchValue });
           }}
+          addButton={
+            <DialogButton
+              render={({ onOpen }) => (
+                <Button onClick={onOpen} css={{ background: gradients.primary, color: 'white' }}>
+                  + 추가
+                </Button>
+              )}
+            >
+              {({ onClose, onKeyDown }) => <AddAlbumDialog onClose={onClose} onKeyDown={onKeyDown} />}
+            </DialogButton>
+          }
         />
       </Stack>
       <CustomDataGrid columns={columns} rows={rows} />
