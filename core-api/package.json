@@ -21,6 +21,7 @@
     "generate:swagger": "npm run build && SWAGGER_GEN=true SWAGGER_GEN=true node dist/swagger/generate-swagger.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.972.0",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
