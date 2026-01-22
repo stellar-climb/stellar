@@ -6,6 +6,7 @@ import { AdminRolePolicyModule } from './role-policy/admin-role-policy.module';
 import { AdminHistoryModule } from './history/admin-history.module';
 import { AdminArtistModule } from './artists/admin-artist.module';
 import { AdminTagModule } from './tags/admin-tag.module';
+import { AdminAlbumModule } from './albums/admin-album.module';
 
 export default [
   AdminUserModule,
@@ -16,4 +17,5 @@ export default [
   AdminHistoryModule,
   AdminArtistModule,
   AdminTagModule,
+  AdminAlbumModule,
 ];
