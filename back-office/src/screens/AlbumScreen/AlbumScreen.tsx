@@ -53,7 +53,7 @@ export function AlbumSreen() {
       <BreadCrumb items={[{ label: '앨범', path: '/albums' }]} />
       <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <ListViewHeader
-          title="앨범"
+          title="앨범 목록"
           searchItems={[{ searchKey: 'name', label: '이름' }]}
           onSearch={({ searchKey, searchValue }) => {
             setPage(1);

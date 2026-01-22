@@ -1,4 +1,4 @@
-import { ListItemButton, ListItemText, Collapse, ListItemIcon } from '@mui/material';
+import { ListItemButton, ListItemText, Collapse, ListItemIcon, Typography, Stack } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -47,9 +47,12 @@ export function MenuList(props: {
               key={item.path}
               onClick={() => navigate(item.path)}
               selected={location.pathname === item.path}
-              css={{ paddingLeft: '40px' }}
+              css={{ paddingLeft: '48px' }}
             >
-              <ListItemText primary={item.label} />
+              <Stack direction="row" spacing={1} css={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Typography>●</Typography>
+                <ListItemText primary={item.label} />
+              </Stack>
             </ListItemButton>
           ))}
       </Collapse>
