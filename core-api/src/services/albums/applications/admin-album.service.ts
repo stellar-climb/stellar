@@ -46,10 +46,10 @@ export class AdminAlbumService extends DddService {
     return { items: albums, total };
   }
 
-  async retreive({ id }: { id: number }) {
+  async retrieve({ id }: { id: number }) {
     const [album] = await this.albumRepository.find({ id });
 
-    if (album) {
+    if (!album) {
       throw new BadRequestException('등록되지 않은 앨범입니다.', { cause: '등록되지 않은 앨범입니다.' });
     }
 

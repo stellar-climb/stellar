@@ -44,11 +44,11 @@ export class AdminAlbumController {
    * 앨범 상세 조회
    */
   @Get(':id')
-  async retreive(@Param('id', ParseIntPipe) id: number) {
+  async retrieve(@Param('id', ParseIntPipe) id: number) {
     // 1. Destructure body, params, query
     // 2. Get context
     // 3. Get result
-    const data = await this.adminAlbumService.retreive({ id });
+    const data = await this.adminAlbumService.retrieve({ id });
 
     // 4. Send response
     return { data };
