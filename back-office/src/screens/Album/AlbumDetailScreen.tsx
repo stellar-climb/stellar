@@ -1,5 +1,5 @@
-import { Stack } from '@mui/material';
-import { BreadCrumb, ListViewHeader } from '../../components';
+import { Stack, TextField, Typography } from '@mui/material';
+import { BreadCrumb, FormRow, FromTypography, ListViewHeader, Section } from '../../components';
 
 export function AlbumDetailScreen(props: { albumId: number }) {
   // 1. destructure props
@@ -22,21 +22,12 @@ export function AlbumDetailScreen(props: { albumId: number }) {
         ]}
       />
       <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <ListViewHeader
-          title="앨범 상세 정보"
-          // addButton={
-          //   <DialogButton
-          //     render={({ onOpen }) => (
-          //       <Button onClick={onOpen} css={{ background: gradients.primary, color: 'white' }}>
-          //         + 추가
-          //       </Button>
-          //     )}
-          //   >
-          //     {({ onClose, onKeyDown }) => <AddAlbumDialog onClose={onClose} onKeyDown={onKeyDown} />}
-          //   </DialogButton>
-          // }
-        />
+        <ListViewHeader title="앨범 상세 정보" />
       </Stack>
+
+      <Section css={{ width: '480px' }}>
+        <FormRow label="앨범명" input={<FromTypography>앨범명</FromTypography>} />
+      </Section>
     </Stack>
   );
 }

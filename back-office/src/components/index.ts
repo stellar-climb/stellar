@@ -9,6 +9,7 @@ export * from './DialogTitleGroup';
 export * from './EditRolePolicyDialog';
 export * from './FileUploadButton';
 export * from './FormRow';
+export * from './FormTypography';
 export * from './HistorySection';
 export * from './ListViewHeader';
 export * from './Navigator';
