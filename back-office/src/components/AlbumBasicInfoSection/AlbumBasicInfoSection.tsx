@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@libs';
 import { albumRepository } from '@repositories';
-import { FormRow, FromTypography } from '@components';
-import { Button, CircularProgress, IconButton, Stack, TextField, Typography } from '@mui/material';
+import { ConfirmDialog, FormRow, FromTypography } from '@components';
+import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,6 +23,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
   const { enqueueSnackbar } = useSnackbar();
 
   // 3. state hooks
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   // 4. query hooks
@@ -34,6 +35,15 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
     },
     onError: () => {
       enqueueSnackbar('앨범 정보 저장에 실패했습니다.', { variant: 'error' });
+    },
+  });
+  const [changeIsOpen] = useMutation(albumRepository.changeOpen, {
+    onSuccess: () => {
+      setIsConfirmDialogOpen(false);
+      enqueueSnackbar('앨범 공개/비공개가 변경되었습니다.', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('앨범 공개/비공개 변경에 실패했습니다.', { variant: 'error' });
     },
   });
 
@@ -68,6 +78,10 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
   }, [album, reset]);
 
   // 8. handlers
+  const handleSwitchClick = () => {
+    setIsConfirmDialogOpen(true);
+  };
+
   // 9. render
   return (
     <>
@@ -76,14 +90,24 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
       ) : (
         <Stack spacing={1}>
           <Stack direction="row" spacing={1} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6">앨범 기본 정보</Typography>
+            <Stack direction="row" spacing={3} css={{ alignItems: 'center', justifyContent: 'center' }}>
+              <Typography variant="h6">앨범 기본 정보</Typography>
+              <Stack direction="row" spacing={1} css={{ alignItems: 'center' }}>
+                <Chip
+                  label={album.isOpen ? '공개' : '비공개'}
+                  color={album.isOpen ? 'success' : 'error'}
+                  css={{ width: '64px' }}
+                />
+                <Switch checked={album.isOpen} onChange={handleSwitchClick} />
+              </Stack>
+            </Stack>
             {isEditing ? (
               <Stack direction="row" spacing={1}>
                 <Button
                   loading={updateLoading}
                   disabled={isSumittable}
                   onClick={handleSubmit(async ({ title, subTitle, publisher }) => {
-                    updateAlbum({ variables: { albumId, title, subTitle, publisher } });
+                    await updateAlbum({ variables: { albumId, title, subTitle, publisher } });
                   })}
                   css={{ height: '40px' }}
                 >
@@ -138,6 +162,30 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               )
             }
           />
+
+          {/* ConfirmDialog Open */}
+          <ConfirmDialog
+            open={isConfirmDialogOpen}
+            handleClose={() => setIsConfirmDialogOpen(false)}
+            handleConfirm={() => changeIsOpen({ variables: { albumId, isOpen: !album.isOpen } })}
+            css={{ width: '720px' }}
+          >
+            <Stack>
+              <Typography>
+                앨범이{' '}
+                <span css={{ textDecoration: 'underline', fontWeight: 'bold', color: album.isOpen ? 'red' : 'green' }}>
+                  {album.isOpen ? '비공개' : '공개'}
+                </span>{' '}
+                상태로 변경되면 해당 앨범에 포함된 모든 노래가{' '}
+                <span css={{ textDecoration: 'underline', fontWeight: 'bold', color: album.isOpen ? 'red' : 'green' }}>
+                  {album.isOpen ? '비공개' : '공개'}
+                </span>{' '}
+                상태로 변경됩니다.
+              </Typography>
+              <br />
+              <Typography>변경하시겠습니까?</Typography>
+            </Stack>
+          </ConfirmDialog>
         </Stack>
       )}
     </>

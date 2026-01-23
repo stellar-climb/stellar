@@ -1,4 +1,4 @@
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, Chip } from '@mui/material';
 import {
   BreadCrumb,
   ListViewHeader,
@@ -41,6 +41,12 @@ export function AlbumScreen() {
     { field: 'title', headerName: '앨범명', width: 120 },
     { field: 'subTitle', headerName: '부재', width: 120 },
     { field: 'publisher', headerName: '발매사', width: 120 },
+    {
+      field: 'isOpen',
+      headerName: '공개 여부',
+      width: 120,
+      renderCell: ({ value }) => <Chip label={value ? '공개' : '비공개'} color={value ? 'success' : 'error'} />,
+    },
     {
       field: 'createdAt',
       headerName: '생성일',

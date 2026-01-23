@@ -3,6 +3,7 @@ export * from './AddRolePolicyDialog';
 export * from './AlbumBasicInfoSection';
 export * from './BoxLink';
 export * from './BreadCrumb';
+export * from './ConfirmDialog';
 export * from './CustomDataGrid';
 export * from './DeleteConfirmDialog';
 export * from './DialogButton';

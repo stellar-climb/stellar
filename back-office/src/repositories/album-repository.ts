@@ -53,9 +53,14 @@ export const albumRepository = {
   }) {
     return httpClient.put<Promise<void>>(`/albums/${albumId}`, { title, subTitle, publisher });
   },
+
+  async changeOpen({ albumId, isOpen }: { albumId: number; isOpen: boolean }) {
+    return httpClient.put<Promise<void>>(`/albums/${albumId}/open`, { isOpen });
+  },
 };
 
 queryKeyMap.set(albumRepository.list, ['Album']);
 queryKeyMap.set(albumRepository.create, ['Album']);
 queryKeyMap.set(albumRepository.retrieve, ['Album']);
 queryKeyMap.set(albumRepository.update, ['Album']);
+queryKeyMap.set(albumRepository.changeOpen, ['Album']);

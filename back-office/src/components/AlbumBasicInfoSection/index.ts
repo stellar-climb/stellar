@@ -1,1 +1,1 @@
-export * from './AlbumBasicInfoSceion';
+export * from './AlbumBasicInfoSection';
