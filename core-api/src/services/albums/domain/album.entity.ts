@@ -66,4 +66,8 @@ export class Album extends DddAggregate {
 
     Object.assign(this, changedArgs);
   }
+
+  changeOpen(isOpen: boolean) {
+    this.isOpen = isOpen;
+  }
 }

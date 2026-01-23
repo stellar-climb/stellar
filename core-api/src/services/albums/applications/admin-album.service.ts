@@ -101,4 +101,16 @@ export class AdminAlbumService extends DddService {
 
     await this.albumRepository.softRemove([album]);
   }
+
+  @Transactional()
+  async changeOpen({ id, isOpen }: { id: number; isOpen: boolean }) {
+    const [album] = await this.albumRepository.find({ id });
+
+    if (!album) {
+      throw new BadRequestException('등록되지 않은 앨범입니다.', { cause: '등록되지 않은 앨범입니다.' });
+    }
+
+    album.changeOpen(isOpen);
+    await this.albumRepository.save([album]);
+  }
 }

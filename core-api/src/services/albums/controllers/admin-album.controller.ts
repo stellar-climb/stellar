@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminAlbumService } from '../applications/admin-album.service';
 import { AdminGuard } from '@common/guards';
-import { AdminAlbumQueryDto, AlbumCreateDto, AlbumUpdateDto } from './dto';
+import { AdminAlbumQueryDto, AlbumCreateDto, AlbumUpdateDto, AlbumChangeOpenDto } from './dto';
 
 @ApiTags('[관리자] 앨범 API')
 @Controller('admins/albums')
@@ -70,6 +70,7 @@ export class AdminAlbumController {
   /**
    * 앨범 삭제
    */
+  @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     // 1. Destructure body, params, query
     // 2. Get context
@@ -78,5 +79,19 @@ export class AdminAlbumController {
 
     // 4. Send response
     return { data: {} };
+  }
+
+  /**
+   * 앨범 공개/비공개 변경
+   */
+  @Put(':id/open')
+  async changeOpen(@Param('id', ParseIntPipe) id: number, @Body() body: AlbumChangeOpenDto) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminAlbumService.changeOpen({ id, ...body });
+
+    // 4. Send response
+    return {};
   }
 }
