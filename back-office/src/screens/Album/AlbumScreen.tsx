@@ -52,7 +52,7 @@ export function AlbumScreen() {
       headerName: '생성일',
       width: 120,
       flex: 1,
-      valueFormatter: (value) => format(value),
+      valueFormatter: (value) => format(value, 'YYYY-MM-DD HH:mm:ss'),
     },
   ];
   const rows = albums?.items ?? [];

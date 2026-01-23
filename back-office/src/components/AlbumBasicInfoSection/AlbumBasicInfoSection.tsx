@@ -64,7 +64,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
   });
 
   // 6. calculate values
-  const isSumittable = !isDirty || !isValid;
+  const isSubmittable = !isDirty || !isValid;
 
   // 7. effect hooks
   useEffect(() => {
@@ -105,7 +105,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               <Stack direction="row" spacing={1}>
                 <Button
                   loading={updateLoading}
-                  disabled={isSumittable}
+                  disabled={isSubmittable}
                   onClick={handleSubmit(async ({ title, subTitle, publisher }) => {
                     await updateAlbum({ variables: { albumId, title, subTitle, publisher } });
                   })}
