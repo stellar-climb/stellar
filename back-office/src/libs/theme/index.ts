@@ -22,7 +22,6 @@ export const theme = createTheme({
         },
       },
     },
-
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
@@ -30,6 +29,16 @@ export const theme = createTheme({
         },
         input: {
           padding: '12px 14px',
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          height: '100%',
+          minHeight: '23px',
+          display: 'flex',
+          alignItems: 'center',
         },
       },
     },
