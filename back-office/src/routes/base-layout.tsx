@@ -47,7 +47,7 @@ export function Layout() {
         }}
       >
         <Toolbar />
-        <Box sx={{ padding: '16px' }}>
+        <Box sx={{ padding: '16px', height: 'calc(100vh - 112px)' }}>
           <Outlet />
         </Box>
       </Box>

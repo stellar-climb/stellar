@@ -91,8 +91,8 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
         <Stack spacing={1}>
           <Stack direction="row" spacing={1} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Stack direction="row" spacing={3} css={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Typography variant="h6" css={{ width: '120px' }}>
-                앨범 기본 정보
+              <Typography variant="h6" css={{ width: '80px' }}>
+                앨범 정보
               </Typography>
               <Stack direction="row" spacing={1} css={{ alignItems: 'center' }}>
                 <Chip

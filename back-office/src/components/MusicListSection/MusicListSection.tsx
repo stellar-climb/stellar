@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { CustomDataGrid } from '../CustomDataGrid';
-import { Stack, Typography, Chip } from '@mui/material';
-import { albumRepository } from '@repositories';
-import { type AlbumModel } from '@models';
-import { useQuery } from '@libs';
+import { Box, Stack, Typography } from '@mui/material';
+import { musicRepository } from '@repositories';
+import { type MusicModel, getMusicStatusLabel } from '@models';
+import { format, useQuery } from '@libs';
 import type { GridColDef } from '../CustomDataGrid';
 import { Pagination } from '../Pagination';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export function MusicListSection(props: { albumId: number }) {
   // 1. destructure props
@@ -13,42 +14,92 @@ export function MusicListSection(props: { albumId: number }) {
 
   // 2. lib hooks
   // 3. state hooks
-  const [search, setSearch] = useState<{ key: string; value: string }>();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
   // 4. query hooks
-  const { data: albums } = useQuery(albumRepository.list, {
-    variables: { page, limit, filter: search && search.value ? { search: search.key, searchValue: search.value } : {} },
+  const { data: musics, loading } = useQuery(musicRepository.getMusicsByAlbumId, {
+    variables: { albumId, page, limit },
   });
 
   // 5. form hooks
   // 6. calculate values
-  const columns: GridColDef<AlbumModel>[] = [
-    { field: 'title', headerName: '앨범명', width: 120 },
-    { field: 'subTitle', headerName: '부재', width: 120 },
-    { field: 'publisher', headerName: '발매사', width: 120 },
+  const columns: GridColDef<MusicModel>[] = [
+    { field: 'id', headerName: 'ID', width: 80 },
+    { field: 'title', headerName: '곡명', width: 120 },
+    { field: 'lyricist', headerName: '작사가', width: 120 },
+    { field: 'songwriter', headerName: '작곡가', width: 120 },
+    { field: 'status', headerName: '상태', width: 80, renderCell: ({ value }) => getMusicStatusLabel(value) },
     {
-      field: 'isOpen',
-      headerName: '공개 여부',
+      field: 'expectedPublishOn',
+      headerName: '공개 일자',
       width: 120,
+      valueFormatter: (value) => (value ? format(value, 'YYYY-MM-DD') : '-'),
+    },
+    {
+      field: 'isAdultContent',
+      headerName: '성인 여부',
+      width: 120,
+      renderCell: ({ value }) =>
+        value ? (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <CheckCircleIcon color="success" />
+          </Box>
+        ) : (
+          ''
+        ),
+    },
+    {
+      field: 'isMain',
+      headerName: '대표곡 여부',
+      align: 'center',
+      width: 120,
+      renderCell: ({ value }) =>
+        value ? (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <CheckCircleIcon color="success" />
+          </Box>
+        ) : (
+          ''
+        ),
+    },
+    {
+      field: 'createdAt',
+      flex: 1,
+      headerName: '생성일',
+      valueFormatter: (value) => format(value, 'YYYY-MM-DD HH:mm:ss'),
     },
   ];
-  const rows = albums?.items ?? [];
-  const total = albums?.total ?? 0;
+  const rows = musics?.items ?? [];
+  const total = musics?.total ?? 0;
+
   // 7. effect hooks
   // 8. handlers
   // 9. render
   return (
-    <Stack spacing={2} css={{ maxHeight: '720px', overflow: 'auto' }}>
+    <Stack spacing={2} css={{ overflow: 'hidden' }}>
       <Stack direction="row" spacing={1} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row" spacing={3} css={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Typography variant="h6" css={{ width: '120px' }}>
-            음악 리스트
+          <Typography variant="h6" css={{ width: '240px' }}>
+            음악 리스트 (총 {total}곡)
           </Typography>
         </Stack>
       </Stack>
-      <CustomDataGrid rows={rows} columns={columns} />
+      <CustomDataGrid rows={rows} columns={columns} loading={loading} />
       <Pagination totalCount={total} page={page} limit={limit} onChange={setPage} onLimitChange={setLimit} />
     </Stack>
   );
