@@ -9,5 +9,6 @@ import { Artist } from '@services/artists/domain/artist.entity';
 import { Tag } from '@services/tags/domain/tag.entity';
 import { Album } from '@services/albums/domain/album.entity';
 import { File } from '@services/files/domain/file.entity';
+import { Music } from '@services/music/domain/music.entity';
 
-export default [Token, User, DddEvent, Admin, Role, RolePolicy, History, Artist, Tag, Album, File];
+export default [Token, User, DddEvent, Admin, Role, RolePolicy, History, Artist, Tag, Album, File, Music];
