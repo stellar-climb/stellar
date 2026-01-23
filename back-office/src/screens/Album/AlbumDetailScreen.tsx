@@ -1,5 +1,5 @@
-import { Stack } from '@mui/material';
-import { BreadCrumb, ListViewHeader, Section, AlbumBasicInfoSection } from '@components';
+import { Grid, Stack } from '@mui/material';
+import { BreadCrumb, ListViewHeader, Section, AlbumBasicInfoSection, MusicListSection } from '@components';
 import { useParams } from 'react-router-dom';
 
 export function AlbumDetailScreen() {
@@ -9,7 +9,6 @@ export function AlbumDetailScreen() {
 
   // 3. state hooks
   // 4. query hooks
-
   // 5. form hooks
   // 6. calculate values
   // 7. effect hooks
@@ -27,9 +26,18 @@ export function AlbumDetailScreen() {
         <ListViewHeader title="앨범 상세 정보" />
       </Stack>
 
-      <Section css={{ maxWidth: '480px' }}>
-        <AlbumBasicInfoSection albumId={Number(id)} />
-      </Section>
+      <Grid container spacing={4} gap={2}>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Section>
+            <AlbumBasicInfoSection albumId={Number(id)} />
+          </Section>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Section>
+            <MusicListSection albumId={Number(id)} />
+          </Section>
+        </Grid>
+      </Grid>
     </Stack>
   );
 }

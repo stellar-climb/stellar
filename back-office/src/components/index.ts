@@ -14,6 +14,7 @@ export * from './FormRow';
 export * from './FormTypography';
 export * from './HistorySection';
 export * from './ListViewHeader';
+export * from './MusicListSection';
 export * from './Navigator';
 export * from './Pagination';
 export * from './Section';

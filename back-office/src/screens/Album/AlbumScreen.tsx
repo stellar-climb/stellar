@@ -67,7 +67,11 @@ export function AlbumScreen() {
       <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <ListViewHeader
           title="앨범 목록"
-          searchItems={[{ searchKey: 'name', label: '이름' }]}
+          searchItems={[
+            { searchKey: 'title', label: '앨범명' },
+            { searchKey: 'subTitle', label: '부재' },
+            { searchKey: 'publisher', label: '발매사' },
+          ]}
           onSearch={({ searchKey, searchValue }) => {
             setPage(1);
             setSearch({ key: searchKey, value: searchValue });

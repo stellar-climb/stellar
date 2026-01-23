@@ -62,7 +62,7 @@ export function ListViewHeader(props: {
           >
             {/* 검색 아이콘 및 검색 옵션 메뉴 */}
             {searchItems.length > 1 && (
-              <IconButton onClick={handleOpen} css={{ backgroundColor: '#f1f3f5' }}>
+              <IconButton onClick={handleOpen} css={{ backgroundColor: '#d6d1d1ff' }}>
                 <FilterListIcon />
               </IconButton>
             )}

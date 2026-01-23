@@ -28,14 +28,14 @@ export function FormRow(props: { label: string; input: React.ReactNode; required
     <Grid container>
       {/* 왼쪽 라벨 영역 */}
       <Grid
-        size={{ xs: 3, sm: 3 }}
         css={{
+          width: '120px', // ⭐ 고정 너비 설정
+          // minWidth: LABEL_WIDTH,   // 화면이 줄어들어도 찌그러지지 않게 방지
           backgroundColor: '#efefef',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: '4px 0 0 4px',
-          borderColor: 'rgba(0, 0, 0, 0.23)',
         }}
       >
         {required && <Typography css={{ color: 'red', marginRight: '4px' }}>*</Typography>}
@@ -46,12 +46,13 @@ export function FormRow(props: { label: string; input: React.ReactNode; required
 
       {/* 오른쪽 입력 영역 */}
       <Grid
-        size={{ xs: 9, sm: 9 }}
         css={{
+          flex: 1,
           ...tableInputStyle,
           backgroundColor: 'white',
           display: 'flex',
           alignItems: 'center',
+          minWidth: 0,
         }}
       >
         {input}
