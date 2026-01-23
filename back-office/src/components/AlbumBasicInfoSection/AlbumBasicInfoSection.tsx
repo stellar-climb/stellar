@@ -168,15 +168,14 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
             open={isConfirmDialogOpen}
             handleClose={() => setIsConfirmDialogOpen(false)}
             handleConfirm={() => changeIsOpen({ variables: { albumId, isOpen: !album.isOpen } })}
-            css={{ width: '720px' }}
           >
-            <Stack>
+            <Stack css={{ width: '480px' }}>
               <Typography>
                 앨범이{' '}
                 <span css={{ textDecoration: 'underline', fontWeight: 'bold', color: album.isOpen ? 'red' : 'green' }}>
                   {album.isOpen ? '비공개' : '공개'}
                 </span>{' '}
-                상태로 변경되면 해당 앨범에 포함된 모든 노래가{' '}
+                상태로 변경되면 해당 앨범에 포함된 모든 노래 중 예상 오픈일자가 오늘보다 이전인 노래가{' '}
                 <span css={{ textDecoration: 'underline', fontWeight: 'bold', color: album.isOpen ? 'red' : 'green' }}>
                   {album.isOpen ? '비공개' : '공개'}
                 </span>{' '}

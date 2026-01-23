@@ -63,9 +63,9 @@ export function AddAlbumDialog(props: { onClose: () => void; onKeyDown: React.Ke
       <DialogTitleGroup title="앨범 등록" onClose={onClose} />
       <DialogContent css={{ width: '520px' }}>
         <Stack direction="column" spacing={1}>
-          <FormRow label="앨범명" input={<TextField {...register('title')} />} />
-          <FormRow label="부재" input={<TextField {...register('subTitle')} />} />
-          <FormRow label="발매사" input={<TextField {...register('publisher')} />} />
+          <FormRow required label="앨범명" input={<TextField {...register('title')} />} />
+          <FormRow required label="부재" input={<TextField {...register('subTitle')} />} />
+          <FormRow required label="발매사" input={<TextField {...register('publisher')} />} />
         </Stack>
       </DialogContent>
       <DialogActions>
