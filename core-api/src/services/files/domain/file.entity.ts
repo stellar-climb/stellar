@@ -4,8 +4,7 @@ import { DddAggregate } from '@libs/ddd';
 type Ctor = {
   filename: string;
   publicUrl: string;
-  type: string;
-  isCommitted: boolean;
+  contentType: string;
 };
 
 @Entity()
@@ -20,7 +19,7 @@ export class File extends DddAggregate {
   publicUrl: string;
 
   @Column()
-  type: string;
+  contentType: string;
 
   @Column()
   isCommitted: boolean;
@@ -31,8 +30,10 @@ export class File extends DddAggregate {
     if (args) {
       this.filename = args.filename;
       this.publicUrl = args.publicUrl;
-      this.type = args.type;
-      this.isCommitted = args.isCommitted;
+      this.contentType = args.contentType;
+
+      // NOTE: 초기화
+      this.isCommitted = false;
     }
   }
 }

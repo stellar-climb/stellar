@@ -62,6 +62,19 @@ export class ConfigsService {
     return config;
   }
 
+  get aws() {
+    const config = {
+      region: this.configService.get('AWS_REGION'),
+      accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+      apiUrl: this.configService.get('AWS_API_URL'),
+      bucketName: this.configService.get('AWS_S3_BUCKET'),
+    };
+
+    this.validateConfig(config, 'aws');
+    return config;
+  }
+
   private validateConfig(config: Record<string, any>, name: string) {
     if (process.env.SWAGGER_GEN) {
       return;

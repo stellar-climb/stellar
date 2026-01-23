@@ -1,8 +1,8 @@
 import { Controller, Post, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AdminGuard } from '../../../common/guards';
+import { AdminGuard } from '@common/guards';
 import { AdminFileService } from '../applications/admin-file.service';
-import { Context } from '../../../common/context';
+import { Context } from '@common/context';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('[관리자] 파일 API')
@@ -24,6 +24,7 @@ export class AdminFileController {
     // 2. Get context
     // 3. Get result
     const data = await this.adminFileService.uploadFile({ file });
+
     // 4. Send response
     return { data };
   }
