@@ -10,9 +10,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useSnackbar } from 'notistack';
 
 const yupSchema = yup.object({
-  title: yup.string().optional(),
-  subTitle: yup.string().optional(),
-  publisher: yup.string().optional(),
+  title: yup.string().min(1, '앨범명은 최소 1글자 이상이어야 합니다').optional(),
+  subTitle: yup.string().min(1, '부재는 최소 1글자 이상이어야 합니다').optional(),
+  publisher: yup.string().min(1, '발매사는 최소 1글자 이상이어야 합니다').optional(),
 });
 
 export function AlbumBasicInfoSection(props: { albumId: number }) {
@@ -42,7 +42,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
     reset,
     register,
     handleSubmit,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
   } = useForm({
     defaultValues: {
       title: '',
@@ -50,6 +50,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
       publisher: '',
     },
     resolver: yupResolver(yupSchema),
+    mode: 'onChange',
   });
 
   // 6. calculate values
@@ -106,18 +107,35 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
           </Stack>
           <FormRow
             label="앨범명"
-            input={isEditing ? <TextField {...register('title')} /> : <FromTypography>{album.title}</FromTypography>}
+            required
+            input={
+              isEditing ? (
+                <TextField {...register('title')} error={!!errors.title?.message} />
+              ) : (
+                <FromTypography>{album.title}</FromTypography>
+              )
+            }
           />
           <FormRow
             label="부재"
+            required
             input={
-              isEditing ? <TextField {...register('subTitle')} /> : <FromTypography>{album.subTitle}</FromTypography>
+              isEditing ? (
+                <TextField {...register('subTitle')} error={!!errors.subTitle?.message} />
+              ) : (
+                <FromTypography>{album.subTitle}</FromTypography>
+              )
             }
           />
           <FormRow
             label="발매사"
+            required
             input={
-              isEditing ? <TextField {...register('publisher')} /> : <FromTypography>{album.publisher}</FromTypography>
+              isEditing ? (
+                <TextField {...register('publisher')} error={!!errors.publisher?.message} />
+              ) : (
+                <FromTypography>{album.publisher}</FromTypography>
+              )
             }
           />
         </Stack>

@@ -12,9 +12,9 @@ const tableInputStyle = {
   },
 };
 
-export function FormRow(props: { label: string; input: React.ReactNode }) {
+export function FormRow(props: { label: string; input: React.ReactNode; required?: boolean }) {
   // 1. destructure props
-  const { label, input } = props;
+  const { label, input, required = false } = props;
 
   // 2. lib hooks
   // 3. state hooks
@@ -38,6 +38,7 @@ export function FormRow(props: { label: string; input: React.ReactNode }) {
           borderColor: 'rgba(0, 0, 0, 0.23)',
         }}
       >
+        {required && <Typography css={{ color: 'red', marginRight: '4px' }}>*</Typography>}
         <Typography variant="subtitle2" css={{ color: 'black', textAlign: 'center' }}>
           {label}
         </Typography>
