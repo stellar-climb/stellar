@@ -16,6 +16,7 @@ import queues from '@common/event-box/queues';
         ...configsService.mysql,
         entities,
         synchronize: configsService.isProduction() ? false : true,
+        timezone: 'Z',
       }),
     }),
     BullModule.forRootAsync({
