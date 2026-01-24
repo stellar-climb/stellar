@@ -1,16 +1,14 @@
 import { Button, Stack } from '@mui/material';
-import { BreadCrumb, CustomDataGrid, ListViewHeader, Pagination } from '@components';
+import { BreadCrumb, CustomDataGrid, DialogButton, ListViewHeader, Pagination, AddArtistDialog } from '@components';
 import { useState } from 'react';
 import { format, gradients, useQuery } from '@libs';
 import { artistRepository } from '@repositories';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { ArtistModel } from '@models';
-import { useNavigate } from 'react-router-dom';
 
 export function ArtistScreen() {
   // 1. destructure props
   // 2. lib hooks
-  const navigate = useNavigate();
 
   // 3. state hooks
   const [search, setSearch] = useState<{ key: string; value: string }>();
@@ -47,9 +45,15 @@ export function ArtistScreen() {
             setSearch({ key: searchKey, value: searchValue });
           }}
           addButton={
-            <Button onClick={() => navigate('add')} css={{ background: gradients.primary, color: 'white' }}>
-              + 추가
-            </Button>
+            <DialogButton
+              render={({ onOpen }) => (
+                <Button onClick={onOpen} css={{ background: gradients.primary }}>
+                  + 추가
+                </Button>
+              )}
+            >
+              {({ onClose, onKeyDown }) => <AddArtistDialog onClose={onClose} onKeyDown={onKeyDown} />}
+            </DialogButton>
           }
         />
       </Stack>

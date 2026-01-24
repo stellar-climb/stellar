@@ -1,4 +1,3 @@
-export * from './AddArtistScreen';
 export * from './AdminScreen';
 export * from './Album';
 export * from './ArtistScreen';

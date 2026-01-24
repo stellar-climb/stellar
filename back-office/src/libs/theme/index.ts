@@ -55,6 +55,7 @@ export const theme = createTheme({
     MuiDialog: {
       defaultProps: {
         fullWidth: false,
+        maxWidth: false,
       },
     },
     MuiTextField: {
