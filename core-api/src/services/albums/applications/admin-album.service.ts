@@ -80,14 +80,6 @@ export class AdminAlbumService extends DddService {
 
     album.update({ coverImageUrl, bannerImageUrl, title, subTitle, publisher });
 
-    const [duplicatedAlbum] = await this.albumRepository.find({ title, publisher });
-
-    if (duplicatedAlbum) {
-      throw new BadRequestException(`이미 동일한 제목(${title})과 발매사(${publisher})로 등록된 앨범이 존재합니다.`, {
-        cause: '이미 동일한 제목과 발매사로 등록된 앨범이 존재합니다.',
-      });
-    }
-
     await this.albumRepository.save([album]);
   }
 
