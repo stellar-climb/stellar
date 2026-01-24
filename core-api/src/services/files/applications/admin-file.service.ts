@@ -24,6 +24,8 @@ export class AdminFileService extends DddService {
       filename,
     });
 
-    return this.fileRepository.save([newFile]);
+    await this.fileRepository.save([newFile]);
+
+    return { url: newFile.publicUrl };
   }
 }

@@ -17,7 +17,7 @@ export class AdminFileController {
   /**
    * 파일 업로드
    */
-  @Post()
+  @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() file: Express.Multer.File) {
     // 1. Destructure body, params, query

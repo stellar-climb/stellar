@@ -4,7 +4,7 @@ import { ConfigsService } from '@configs';
 
 @Injectable()
 export class AwsService {
-  private readonly logger: Logger;
+  private readonly logger = new Logger(AwsService.name);
 
   private readonly s3Client: S3Client;
 
@@ -29,6 +29,7 @@ export class AwsService {
         Body: file.buffer,
         ContentType: file.mimetype,
       });
+
       await this.s3Client.send(command);
 
       return {
@@ -37,7 +38,7 @@ export class AwsService {
         filename: file.originalname,
       };
     } catch (error) {
-      this.logger.error(`S3 upload failed: ${error.message}`);
+      this.logger.error(`S3 upload failed: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }
