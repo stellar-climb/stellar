@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@libs';
 import { albumRepository } from '@repositories';
-import { ConfirmDialog, FormRow, FromTypography } from '@components';
+import { ConfirmDialog, FileUploadButton, FormRow, FromTypography } from '@components';
 import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -131,6 +131,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               </IconButton>
             )}
           </Stack>
+          <FileUploadButton onFilesChange={(files) => console.log(files)} />
           <FormRow
             label="앨범명"
             required

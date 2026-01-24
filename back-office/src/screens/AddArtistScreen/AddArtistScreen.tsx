@@ -1,7 +1,6 @@
 import { Box, Grid, Stack, TextField, Typography } from '@mui/material';
 import { ListViewHeader, BreadCrumb, Section, FormRow } from '@components';
 import { Form, useForm } from 'react-hook-form';
-import FileUploadButton from '../../components/FileUploadButton/FileUploadButton';
 
 export function AddArtistScreen() {
   // 1. destructure props
