@@ -12,9 +12,9 @@ const tableInputStyle = {
   },
 };
 
-export function FormRow(props: { label: string; input: React.ReactNode; required?: boolean }) {
+export function FormRow(props: { label: string; input: React.ReactNode; required?: boolean; className?: string }) {
   // 1. destructure props
-  const { label, input, required = false } = props;
+  const { label, input, required = false, className } = props;
 
   // 2. lib hooks
   // 3. state hooks
@@ -25,7 +25,7 @@ export function FormRow(props: { label: string; input: React.ReactNode; required
   // 8. handlers
   // 9. render
   return (
-    <Grid container>
+    <Grid container className={className}>
       {/* 왼쪽 라벨 영역 */}
       <Grid
         css={{

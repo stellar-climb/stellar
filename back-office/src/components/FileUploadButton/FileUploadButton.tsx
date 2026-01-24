@@ -31,6 +31,7 @@ interface UploadFileState {
 
 interface FileUploadButtonProps {
   onUploadComplete: (urls: string[]) => void;
+  initialFiles?: string[];
   maxFiles?: number; // 부모에서 설정 가능 (기본값 5)
   maxSize?: number;
   accept?: Record<string, string[]>;
@@ -42,6 +43,7 @@ interface FileUploadButtonProps {
 export function FileUploadButton(props: FileUploadButtonProps) {
   const {
     onUploadComplete,
+    initialFiles = [],
     maxFiles = 5, // 기본값 5개
     maxSize = 5242880,
     accept = { 'image/*': ['.png', '.jpg', '.jpeg'] },
@@ -50,7 +52,17 @@ export function FileUploadButton(props: FileUploadButtonProps) {
 
   const theme = useTheme();
   const { uploadFile } = useFileUpload();
-  const [fileList, setFileList] = useState<UploadFileState[]>([]);
+  const [fileList, setFileList] = useState<UploadFileState[]>(() => {
+    if (initialFiles.length > 0) {
+      return initialFiles.map((url) => ({
+        file: new File([], '기존 이미지'),
+        preview: url,
+        status: 'success',
+        s3Url: url,
+      }));
+    }
+    return [];
+  });
   const prevUrlsRef = useRef<string[]>([]);
 
   // ⭐ [핵심 1] 현재 제한 도달 여부 계산

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useQuery, useMutation } from '@libs';
+import { useQuery, useMutation, getDirtyValues } from '@libs';
 import { albumRepository } from '@repositories';
 import { ConfirmDialog, FileUploadButton, FormRow, FromTypography } from '@components';
-import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch } from '@mui/material';
+import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch, Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -53,7 +53,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
     reset,
     register,
     handleSubmit,
-    formState: { isValid, isDirty, errors },
+    formState: { isValid, isDirty, errors, dirtyFields },
     setValue,
   } = useForm({
     defaultValues: {
@@ -113,7 +113,9 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
                   loading={updateLoading}
                   disabled={isSubmittable}
                   onClick={handleSubmit(async ({ title, subTitle, publisher, coverImageUrl }) => {
-                    await updateAlbum({ variables: { albumId, title, subTitle, publisher, coverImageUrl } });
+                    const dirtyValues = getDirtyValues(dirtyFields, { title, subTitle, publisher, coverImageUrl });
+
+                    await updateAlbum({ variables: { albumId, ...dirtyValues } });
                   })}
                   css={{ height: '40px' }}
                 >
@@ -135,15 +137,37 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               </IconButton>
             )}
           </Stack>
-          {isEditing && (
-            <FileUploadButton
-              onUploadComplete={(urls) => {
-                if (urls.length > 0) {
-                  setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
-                }
-              }}
-            />
-          )}
+          <FormRow
+            label="커버 사진"
+            required
+            input={
+              isEditing ? (
+                <FileUploadButton
+                  maxFiles={1}
+                  initialFiles={[album.coverImageUrl]}
+                  onUploadComplete={(urls) => {
+                    if (urls.length > 0) {
+                      setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
+                    } else {
+                      setValue('coverImageUrl', '', { shouldDirty: true, shouldValidate: true });
+                    }
+                  }}
+                />
+              ) : (
+                <Box
+                  component="img"
+                  src={album.coverImageUrl}
+                  alt="Album Cover"
+                  css={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    border: '1px solid #e0e0e0',
+                  }}
+                />
+              )
+            }
+          />
           <FormRow
             label="앨범명"
             required
