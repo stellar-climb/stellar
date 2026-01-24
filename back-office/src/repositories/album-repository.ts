@@ -45,13 +45,15 @@ export const albumRepository = {
     title,
     subTitle,
     publisher,
+    coverImageUrl,
   }: {
     albumId: number;
     title?: string;
     subTitle?: string;
     publisher?: string;
+    coverImageUrl?: string;
   }) {
-    return httpClient.put<Promise<void>>(`/albums/${albumId}`, { title, subTitle, publisher });
+    return httpClient.put<Promise<void>>(`/albums/${albumId}`, { title, subTitle, publisher, coverImageUrl });
   },
 
   async changeOpen({ albumId, isOpen }: { albumId: number; isOpen: boolean }) {

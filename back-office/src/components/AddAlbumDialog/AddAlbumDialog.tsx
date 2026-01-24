@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, TextField, Button, DialogActions, Stack } from '@mui/material';
-import { DialogTitleGroup, FormRow } from '@components';
+import { DialogTitleGroup, FormRow, FileUploadButton } from '@components';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@libs';
 import { useSnackbar } from 'notistack';
@@ -9,8 +9,7 @@ import { albumRepository } from '@repositories';
 
 const yupSchema = yup
   .object({
-    coverImageUrl: yup.string().required('커버 이미지를 입력해주세요.'),
-    bannerImageUrl: yup.string().optional(),
+    coverImageUrl: yup.string().required('커버 이미지를 등록해주세요.'),
     title: yup.string().required('앨범명을 입력해주세요.'),
     subTitle: yup.string().required('부재를 입력해주세요.'),
     publisher: yup.string().required('발매사를 입력해주세요.'),
@@ -28,7 +27,7 @@ export function AddAlbumDialog(props: { onClose: () => void; onKeyDown: React.Ke
   // 4. query hooks
   const [createAlbum, { loading }] = useMutation(albumRepository.create, {
     onSuccess: () => {
-      enqueueSnackbar('권한 정책이 생성되었습니다.', { variant: 'success' });
+      enqueueSnackbar('앨범이 등록되었습니다.', { variant: 'success' });
       onClose();
     },
     onError: (error) => {
@@ -40,11 +39,11 @@ export function AddAlbumDialog(props: { onClose: () => void; onKeyDown: React.Ke
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { isDirty, isValid },
   } = useForm({
     defaultValues: {
-      coverImageUrl: 'temp',
-      bannerImageUrl: 'temp',
+      coverImageUrl: '',
       title: '',
       subTitle: '',
       publisher: '',
@@ -63,6 +62,21 @@ export function AddAlbumDialog(props: { onClose: () => void; onKeyDown: React.Ke
       <DialogTitleGroup title="앨범 등록" onClose={onClose} />
       <DialogContent css={{ width: '520px' }}>
         <Stack direction="column" spacing={1}>
+          <FormRow
+            required
+            label="커버 사진"
+            input={
+              <FileUploadButton
+                maxFiles={1}
+                onUploadComplete={(urls) => {
+                  if (urls.length > 0) {
+                    setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
+                  }
+                }}
+              />
+            }
+          />
+
           <FormRow required label="앨범명" input={<TextField {...register('title')} />} />
           <FormRow required label="부재" input={<TextField {...register('subTitle')} />} />
           <FormRow required label="발매사" input={<TextField {...register('publisher')} />} />
@@ -73,8 +87,8 @@ export function AddAlbumDialog(props: { onClose: () => void; onKeyDown: React.Ke
           loading={loading}
           disabled={isDisabled}
           type="submit"
-          onClick={handleSubmit(async ({ title, subTitle, publisher, coverImageUrl, bannerImageUrl }) => {
-            await createAlbum({ variables: { title, subTitle, publisher, coverImageUrl, bannerImageUrl } });
+          onClick={handleSubmit(async ({ title, subTitle, publisher, coverImageUrl }) => {
+            await createAlbum({ variables: { title, subTitle, publisher, coverImageUrl } });
           })}
         >
           저장

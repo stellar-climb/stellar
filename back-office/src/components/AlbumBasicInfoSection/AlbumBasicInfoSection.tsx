@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useSnackbar } from 'notistack';
 
 const yupSchema = yup.object({
+  coverImageUrl: yup.string().required('커버 이미지는 필수입니다'),
   title: yup.string().min(1, '앨범명은 최소 1글자 이상이어야 합니다').optional(),
   subTitle: yup.string().min(1, '부재는 최소 1글자 이상이어야 합니다').optional(),
   publisher: yup.string().min(1, '발매사는 최소 1글자 이상이어야 합니다').optional(),
@@ -25,7 +26,6 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
   // 3. state hooks
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
   // 4. query hooks
   const { data: album, loading } = useQuery(albumRepository.retrieve, { variables: { albumId } });
@@ -54,11 +54,13 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
     register,
     handleSubmit,
     formState: { isValid, isDirty, errors },
+    setValue,
   } = useForm({
     defaultValues: {
       title: '',
       subTitle: '',
       publisher: '',
+      coverImageUrl: '',
     },
     resolver: yupResolver(yupSchema),
     mode: 'onChange',
@@ -74,6 +76,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
         title: album.title,
         subTitle: album.subTitle,
         publisher: album.publisher,
+        coverImageUrl: album.coverImageUrl,
       });
     }
   }, [album, reset]);
@@ -109,8 +112,8 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
                 <Button
                   loading={updateLoading}
                   disabled={isSubmittable}
-                  onClick={handleSubmit(async ({ title, subTitle, publisher }) => {
-                    await updateAlbum({ variables: { albumId, title, subTitle, publisher } });
+                  onClick={handleSubmit(async ({ title, subTitle, publisher, coverImageUrl }) => {
+                    await updateAlbum({ variables: { albumId, title, subTitle, publisher, coverImageUrl } });
                   })}
                   css={{ height: '40px' }}
                 >
@@ -132,7 +135,15 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               </IconButton>
             )}
           </Stack>
-          <FileUploadButton onUploadComplete={(urls) => setUploadedUrls(urls)} />
+          {isEditing && (
+            <FileUploadButton
+              onUploadComplete={(urls) => {
+                if (urls.length > 0) {
+                  setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
+                }
+              }}
+            />
+          )}
           <FormRow
             label="앨범명"
             required
