@@ -25,6 +25,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
   // 3. state hooks
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
   // 4. query hooks
   const { data: album, loading } = useQuery(albumRepository.retrieve, { variables: { albumId } });
@@ -131,7 +132,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               </IconButton>
             )}
           </Stack>
-          <FileUploadButton onFilesChange={(files) => console.log(files)} />
+          <FileUploadButton onUploadComplete={(urls) => setUploadedUrls(urls)} />
           <FormRow
             label="앨범명"
             required
