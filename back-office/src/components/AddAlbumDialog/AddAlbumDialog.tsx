@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, TextField, Button, DialogActions, Stack } from '@mui/material';
+import { Dialog, DialogContent, TextField, Button, DialogActions, Stack, Typography } from '@mui/material';
 import { DialogTitleGroup, FormRow, FileUploadButton } from '@components';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@libs';
@@ -68,6 +68,7 @@ export function AddAlbumDialog(props: { onClose: () => void; onKeyDown: React.Ke
             input={
               <FileUploadButton
                 maxFiles={1}
+                description="이미지 파일만 업로드 가능"
                 onUploadComplete={(urls) => {
                   if (urls.length > 0) {
                     setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });

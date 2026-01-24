@@ -12,7 +12,12 @@ const tableInputStyle = {
   },
 };
 
-export function FormRow(props: { label: string; input: React.ReactNode; required?: boolean; className?: string }) {
+export function FormRow(props: {
+  label: React.ReactNode;
+  input: React.ReactNode;
+  required?: boolean;
+  className?: string;
+}) {
   // 1. destructure props
   const { label, input, required = false, className } = props;
 

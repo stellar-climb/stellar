@@ -36,9 +36,8 @@ interface FileUploadButtonProps {
   maxSize?: number;
   accept?: Record<string, string[]>;
   width?: string;
+  description?: string;
 }
-
-// ... (formatBytes 함수 동일) ...
 
 export function FileUploadButton(props: FileUploadButtonProps) {
   const {
@@ -48,6 +47,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     maxSize = 5242880,
     accept = { 'image/*': ['.png', '.jpg', '.jpeg'] },
     width = '100%',
+    description = '',
   } = props;
 
   const theme = useTheme();
@@ -251,6 +251,10 @@ export function FileUploadButton(props: FileUploadButtonProps) {
                 : isDragActive
                 ? '여기에 파일을 놓으세요'
                 : '파일 선택 또는 드래그'}
+            </Typography>
+
+            <Typography variant="caption" color={isLimitReached ? 'text.disabled' : 'textPrimary'}>
+              {description}
             </Typography>
 
             {/* ⭐ [핵심 3] 사용자에게 현재 상태/최대 개수 알려주기 */}
