@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { CustomDataGrid } from '../CustomDataGrid';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, IconButton, Stack, Typography } from '@mui/material';
 import { musicRepository } from '@repositories';
 import { type MusicModel, getMusicStatusLabel } from '@models';
 import { format, useQuery } from '@libs';
 import type { GridColDef } from '../CustomDataGrid';
 import { Pagination } from '../Pagination';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { MusicDetailDrawer } from '../MusicDetailDrawer';
+import PageviewIcon from '@mui/icons-material/Pageview';
 
 export function MusicListSection(props: { albumId: number }) {
   // 1. destructure props
@@ -16,6 +18,7 @@ export function MusicListSection(props: { albumId: number }) {
   // 3. state hooks
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [selectedMusicId, setSelectedMusicId] = useState<number | null>(null);
 
   // 4. query hooks
   const { data: musics, loading } = useQuery(musicRepository.getMusicsByAlbumId, {
@@ -83,6 +86,22 @@ export function MusicListSection(props: { albumId: number }) {
       headerName: '생성일',
       valueFormatter: (value) => format(value, 'YYYY-MM-DD HH:mm:ss'),
     },
+    {
+      field: 'actions',
+      headerName: '조회',
+      width: 80,
+      renderCell: ({ row: { id } }) => (
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedMusicId(id);
+          }}
+          css={{ width: '48px', height: '48px' }}
+        >
+          <PageviewIcon css={{ width: '48px', height: '48px' }} color="primary" />
+        </IconButton>
+      ),
+    },
   ];
   const rows = musics?.items ?? [];
   const total = musics?.total ?? 0;
@@ -101,6 +120,9 @@ export function MusicListSection(props: { albumId: number }) {
       </Stack>
       <CustomDataGrid rows={rows} columns={columns} loading={loading} />
       <Pagination totalCount={total} page={page} limit={limit} onChange={setPage} onLimitChange={setLimit} />
+
+      {/* Drawer 영역 */}
+      <MusicDetailDrawer musicId={selectedMusicId} onClose={() => setSelectedMusicId(null)} />
     </Stack>
   );
 }

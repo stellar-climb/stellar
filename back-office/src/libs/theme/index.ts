@@ -81,5 +81,10 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDrawer: {
+      defaultProps: {
+        transitionDuration: 400,
+      },
+    },
   },
 });
