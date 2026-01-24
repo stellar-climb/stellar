@@ -126,7 +126,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     // ... 기존 스타일 동일 ...
     border: '2px dashed',
     borderColor: isLimitReached ? theme.palette.grey[300] : theme.palette.grey[400], // 비활성 시 연하게
-    borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(2),
     textAlign: 'center' as const,
     cursor: isLimitReached ? 'not-allowed' : 'pointer', // 마우스 커서 변경
