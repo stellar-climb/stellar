@@ -122,7 +122,7 @@ export function MusicListSection(props: { albumId: number }) {
       <Pagination totalCount={total} page={page} limit={limit} onChange={setPage} onLimitChange={setLimit} />
 
       {/* Drawer 영역 */}
-      <MusicDetailDrawer musicId={selectedMusicId} onClose={() => setSelectedMusicId(null)} />
+      <MusicDetailDrawer albumId={albumId} musicId={selectedMusicId} onClose={() => setSelectedMusicId(null)} />
     </Stack>
   );
 }

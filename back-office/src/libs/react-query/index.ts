@@ -13,11 +13,13 @@ export const useQuery = <T extends Record<string, any>, R>(
   queryFn: (...args: T[]) => Promise<R>,
   options?: {
     variables?: T;
+    enabled?: boolean;
   }
 ) => {
   const { isLoading: loading, ...result } = useReactQuery({
     queryKey: [...queryKeyMap.get(queryFn), ...Object.values(options?.variables || {})],
     queryFn: () => (options?.variables ? queryFn(options?.variables) : queryFn({} as T)),
+    enabled: options?.enabled,
   });
 
   return { loading, ...result };
