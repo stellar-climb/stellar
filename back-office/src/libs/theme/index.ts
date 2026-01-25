@@ -87,5 +87,22 @@ export const theme = createTheme({
         transitionDuration: 400,
       },
     },
+    MuiToggleButtonGroup: {
+      defaultProps: {
+        fullWidth: true,
+        exclusive: true,
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+          height: '43px',
+          border: '1px solid #0000003b',
+          color: '#000000',
+        },
+      },
+    },
   },
 });

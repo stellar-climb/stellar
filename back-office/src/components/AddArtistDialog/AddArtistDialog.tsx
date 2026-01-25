@@ -1,6 +1,17 @@
-import { Dialog, DialogContent, TextField, Button, DialogActions, Stack, Typography, Grid } from '@mui/material';
+import {
+  Dialog,
+  DialogContent,
+  TextField,
+  Button,
+  DialogActions,
+  Stack,
+  Typography,
+  Grid,
+  ToggleButtonGroup,
+  ToggleButton,
+} from '@mui/material';
 import { DialogTitleGroup, FormRow, FileUploadButton } from '@components';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,6 +31,7 @@ export function AddArtistDialog(props: { onClose: () => void; onKeyDown: React.K
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { isDirty, isValid },
   } = useForm({
     defaultValues: {
@@ -43,7 +55,7 @@ export function AddArtistDialog(props: { onClose: () => void; onKeyDown: React.K
   return (
     <Dialog open onKeyDown={onKeyDown}>
       <DialogTitleGroup title="아티스트 등록" onClose={onClose} />
-      <DialogContent css={{ width: '640px' }}>
+      <DialogContent css={{ width: '720px' }}>
         <Stack direction="column" spacing={1}>
           <FormRow
             required
@@ -72,10 +84,40 @@ export function AddArtistDialog(props: { onClose: () => void; onKeyDown: React.K
 
           <Grid container spacing={1}>
             <Grid size={{ xs: 6 }}>
-              <FormRow required label="타입" input={<TextField {...register('type')} />} />
+              <FormRow
+                required
+                label="타입"
+                input={
+                  <Controller
+                    control={control}
+                    name="type"
+                    render={({ field }) => (
+                      <ToggleButtonGroup color="primary" {...field} exclusive>
+                        <ToggleButton value="voice_artist">보아</ToggleButton>
+                        <ToggleButton value="creator">크리에이터</ToggleButton>
+                      </ToggleButtonGroup>
+                    )}
+                  />
+                }
+              />
             </Grid>
             <Grid size={{ xs: 6 }}>
-              <FormRow required label="상태" input={<TextField {...register('status')} />} />
+              <FormRow
+                required
+                label="상태"
+                input={
+                  <Controller
+                    control={control}
+                    name="status"
+                    render={({ field }) => (
+                      <ToggleButtonGroup color="primary" {...field} exclusive>
+                        <ToggleButton value="voice_artist">준비</ToggleButton>
+                        <ToggleButton value="creator">공개</ToggleButton>
+                      </ToggleButtonGroup>
+                    )}
+                  />
+                }
+              />
             </Grid>
           </Grid>
 
