@@ -74,4 +74,23 @@ export class Music extends DddAggregate {
       this.status = MusicStatus.PREPARE;
     }
   }
+
+  update(args: {
+    thumbnailImageUrl?: string;
+    title?: string;
+    lyricist?: string;
+    songwriter?: string;
+    lyrics?: string;
+    expectedPublishOn?: CalendarDate;
+    isAdultContent?: boolean;
+    isMain?: boolean;
+  }) {
+    const changedArgs = this.stripUnchanged(args);
+
+    if (!changedArgs) {
+      return;
+    }
+
+    Object.assign(this, changedArgs);
+  }
 }

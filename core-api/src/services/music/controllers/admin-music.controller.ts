@@ -1,9 +1,9 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminMusicService } from '../applications/admin-music.service';
 import { UseGuards } from '@nestjs/common';
 import { AdminGuard } from '@common/guards';
-import { MusicCreateDto } from './dto';
+import { MusicCreateDto, MusicUpdateDto } from './dto';
 
 @ApiTags('[관리자] 음악 API')
 @Controller('admins')
@@ -51,5 +51,23 @@ export class AdminMusicController {
 
     // 4. Send response
     return { data };
+  }
+
+  /**
+   * 앨범 내 음악 수정
+   */
+  @Put('albums/:albumId/musics/:musicId')
+  async update(
+    @Param('albumId', ParseIntPipe) albumId: number,
+    @Param('musicId', ParseIntPipe) musicId: number,
+    @Body() body: MusicUpdateDto
+  ) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminMusicService.update({ albumId, id: musicId, ...body });
+
+    // 4. Send response
+    return { data: {} };
   }
 }

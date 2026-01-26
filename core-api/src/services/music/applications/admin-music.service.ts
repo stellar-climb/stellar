@@ -72,4 +72,48 @@ export class AdminMusicService extends DddService {
 
     return music;
   }
+
+  @Transactional()
+  async update({
+    albumId,
+    id,
+    thumbnailImageUrl,
+    title,
+    expectedPublishOn,
+    lyricist,
+    songwriter,
+    lyrics,
+    isAdultContent,
+    isMain,
+  }: {
+    albumId: number;
+    id: number;
+    thumbnailImageUrl?: string;
+    title?: string;
+    expectedPublishOn?: string;
+    lyricist?: string;
+    songwriter?: string;
+    lyrics?: string;
+    isAdultContent?: boolean;
+    isMain?: boolean;
+  }) {
+    const [music] = await this.musicRepository.find({ albumId, id });
+
+    if (!music) {
+      throw new BadRequestException('음악을 찾을 수 없습니다.', { cause: '음악을 찾을 수 없습니다.' });
+    }
+
+    music.update({
+      thumbnailImageUrl,
+      title,
+      lyricist,
+      songwriter,
+      lyrics,
+      expectedPublishOn,
+      isAdultContent,
+      isMain,
+    });
+
+    await this.musicRepository.save([music]);
+  }
 }
