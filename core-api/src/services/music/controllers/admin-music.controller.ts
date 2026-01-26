@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Put } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminMusicService } from '../applications/admin-music.service';
 import { UseGuards } from '@nestjs/common';
@@ -66,6 +66,20 @@ export class AdminMusicController {
     // 2. Get context
     // 3. Get result
     await this.adminMusicService.update({ albumId, id: musicId, ...body });
+
+    // 4. Send response
+    return { data: {} };
+  }
+
+  /**
+   * 앨범 내 음악 삭제
+   */
+  @Delete('albums/:albumId/musics/:musicId')
+  async remove(@Param('albumId', ParseIntPipe) albumId: number, @Param('musicId', ParseIntPipe) musicId: number) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminMusicService.remove({ albumId, id: musicId });
 
     // 4. Send response
     return { data: {} };
