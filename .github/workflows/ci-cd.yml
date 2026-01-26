@@ -3,7 +3,7 @@ name: CI/CD for Production Server
 on:
   push:
     branches:
-      - main
+      - dev
     paths:
       - "core-api/**"
       - ".github/workflows/ci-cd.yml"
