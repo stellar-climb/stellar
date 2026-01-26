@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery, useMutation, getDirtyValues } from '@libs';
+import { useQuery, useMutation, getDirtyValues, queryClient } from '@libs';
 import { albumRepository } from '@repositories';
 import { ConfirmDialog, FileUploadButton, FormRow, FromTypography } from '@components';
 import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch, Box } from '@mui/material';
@@ -39,9 +39,10 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
     },
   });
   const [changeIsOpen] = useMutation(albumRepository.changeOpen, {
-    onSuccess: () => {
+    onSuccess: async () => {
       setIsConfirmDialogOpen(false);
       enqueueSnackbar('앨범 공개/비공개가 변경되었습니다.', { variant: 'success' });
+      await queryClient.invalidateQueries({ queryKey: ['Music'] });
     },
     onError: () => {
       enqueueSnackbar('앨범 공개/비공개 변경에 실패했습니다.', { variant: 'error' });
