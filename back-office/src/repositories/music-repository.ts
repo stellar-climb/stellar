@@ -47,8 +47,44 @@ export const musicRepository = {
   async retrieve({ id, albumId }: { id: number; albumId: number }) {
     return httpClient.get<MusicModel>(`/albums/${albumId}/musics/${id}`);
   },
+
+  async update({
+    id,
+    albumId,
+    thumbnailImageUrl,
+    title,
+    lyricist,
+    songwriter,
+    lyrics,
+    expectedPublishOn,
+    isAdultContent,
+    isMain,
+  }: {
+    id: number;
+    albumId: number;
+    thumbnailImageUrl?: string;
+    title?: string;
+    lyricist?: string;
+    songwriter?: string;
+    lyrics?: string;
+    expectedPublishOn?: string;
+    isAdultContent?: boolean;
+    isMain?: boolean;
+  }) {
+    return httpClient.put<MusicModel>(`/albums/${albumId}/musics/${id}`, {
+      thumbnailImageUrl,
+      title,
+      lyricist,
+      songwriter,
+      lyrics,
+      expectedPublishOn,
+      isAdultContent,
+      isMain,
+    });
+  },
 };
 
 queryKeyMap.set(musicRepository.create, ['Music']);
 queryKeyMap.set(musicRepository.getMusicsByAlbumId, ['Music']);
 queryKeyMap.set(musicRepository.retrieve, ['Music']);
+queryKeyMap.set(musicRepository.update, ['Music']);

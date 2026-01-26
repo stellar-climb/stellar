@@ -13,16 +13,19 @@ import {
   Grid,
 } from '@mui/material';
 import { musicRepository } from '@repositories';
-import { gradients, useQuery } from '@libs';
+import { getDirtyValues, useQuery, useMutation } from '@libs';
 import EditIcon from '@mui/icons-material/Edit';
 import { FileUploadButton, FormRow, FromTypography } from '@components';
 import { Controller, useForm } from 'react-hook-form';
+import { useSnackbar } from 'notistack';
 
 export function MusicDetailDrawer(props: { albumId: number; musicId: number | null; onClose: () => void }) {
   // 1. destructure props
   const { albumId, musicId, onClose } = props;
 
   // 2. lib hooks
+  const { enqueueSnackbar } = useSnackbar();
+
   // 3. state hooks
   const [isEditing, setIsEditing] = useState(false);
 
@@ -31,9 +34,26 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
     variables: { id: musicId!, albumId },
     enabled: !!musicId,
   });
+  const [updateMusic, { loading: isMusicUpdating }] = useMutation(musicRepository.update, {
+    onSuccess: () => {
+      enqueueSnackbar('수정되었습니다.', { variant: 'success' });
+      setIsEditing(false);
+      onClose();
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    },
+  });
 
   // 5. form hooks
-  const { setValue, register, reset, control } = useForm({
+  const {
+    setValue,
+    handleSubmit,
+    register,
+    reset,
+    control,
+    formState: { isDirty, isValid, dirtyFields },
+  } = useForm({
     defaultValues: {
       thumbnailImageUrl: '',
       title: '',
@@ -47,6 +67,8 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
   });
 
   // 6. calculate values
+  const isSubmittable = !isDirty || !isValid;
+
   // 7. effect hooks
   useEffect(() => {
     if (music) {
@@ -80,7 +102,24 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
               <Typography variant="h6">상세 정보</Typography>
               {isEditing ? (
                 <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Button css={{ background: gradients.primary }}>저장</Button>
+                  <Button
+                    disabled={isSubmittable}
+                    onClick={handleSubmit(async (data) => {
+                      const values = getDirtyValues(dirtyFields, data);
+
+                      if (musicId) {
+                        await updateMusic({
+                          variables: {
+                            id: musicId,
+                            albumId,
+                            ...values,
+                          },
+                        });
+                      }
+                    })}
+                  >
+                    저장
+                  </Button>
                   <Button
                     color="error"
                     onClick={() => {
