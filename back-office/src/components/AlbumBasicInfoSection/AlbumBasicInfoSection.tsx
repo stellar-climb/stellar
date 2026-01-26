@@ -202,6 +202,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               )
             }
           />
+          <FormRow label="발매일" input={<TextField disabled value={album.publishedOn || '-'} />} />
 
           {/* ConfirmDialog Open */}
           <ConfirmDialog

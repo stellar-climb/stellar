@@ -87,10 +87,10 @@ export function AddMusicDialog(props: { albumId: number; onClose: () => void; on
 
           <Grid container spacing={2}>
             <Grid size={{ md: 6 }}>
-              <FormRow required label="앨범명" input={<TextField {...register('title')} />} />
+              <FormRow required label="노래명" input={<TextField {...register('title')} />} />
             </Grid>
             <Grid size={{ md: 6 }}>
-              <FormRow required label="발매일" input={<TextField {...register('expectedPublishOn')} />} />
+              <FormRow required label="예상 발매일" input={<TextField {...register('expectedPublishOn')} />} />
             </Grid>
           </Grid>
 
