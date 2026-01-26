@@ -82,9 +82,14 @@ export const musicRepository = {
       isMain,
     });
   },
+
+  async remove({ id, albumId }: { id: number; albumId: number }) {
+    return httpClient.delete<void>(`/albums/${albumId}/musics/${id}`);
+  },
 };
 
 queryKeyMap.set(musicRepository.create, ['Music']);
 queryKeyMap.set(musicRepository.getMusicsByAlbumId, ['Music']);
 queryKeyMap.set(musicRepository.retrieve, ['Music']);
 queryKeyMap.set(musicRepository.update, ['Music']);
+queryKeyMap.set(musicRepository.remove, ['Music']);

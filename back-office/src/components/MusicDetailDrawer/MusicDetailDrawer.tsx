@@ -15,7 +15,8 @@ import {
 import { musicRepository } from '@repositories';
 import { getDirtyValues, useQuery, useMutation } from '@libs';
 import EditIcon from '@mui/icons-material/Edit';
-import { FileUploadButton, FormRow, FromTypography } from '@components';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteConfirmDialog, DialogButton, FileUploadButton, FormRow, FromTypography } from '@components';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 
@@ -34,10 +35,19 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
     variables: { id: musicId!, albumId },
     enabled: !!musicId,
   });
-  const [updateMusic, { loading: isMusicUpdating }] = useMutation(musicRepository.update, {
+  const [updateMusic] = useMutation(musicRepository.update, {
     onSuccess: () => {
       enqueueSnackbar('수정되었습니다.', { variant: 'success' });
       setIsEditing(false);
+      onClose();
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    },
+  });
+  const [removeMusic] = useMutation(musicRepository.remove, {
+    onSuccess: () => {
+      enqueueSnackbar('삭제되었습니다.', { variant: 'success' });
       onClose();
     },
     onError: (error) => {
@@ -130,9 +140,30 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
                   </Button>
                 </Stack>
               ) : (
-                <IconButton onClick={() => setIsEditing(true)}>
-                  <EditIcon />
-                </IconButton>
+                <Stack direction="row">
+                  <IconButton onClick={() => setIsEditing(true)}>
+                    <EditIcon />
+                  </IconButton>
+                  <DialogButton
+                    render={({ onOpen }) => (
+                      <IconButton onClick={onOpen}>
+                        <DeleteIcon color="error" />
+                      </IconButton>
+                    )}
+                  >
+                    {({ onClose, onKeyDown }) => (
+                      <DeleteConfirmDialog
+                        onClose={onClose}
+                        onKeyDown={onKeyDown}
+                        onDelete={async () => {
+                          await removeMusic({ variables: { id: musicId!, albumId } });
+                          setIsEditing(false);
+                          onClose();
+                        }}
+                      />
+                    )}
+                  </DialogButton>
+                </Stack>
               )}
             </Stack>
             <Divider css={{ padding: '4px 0' }} />
