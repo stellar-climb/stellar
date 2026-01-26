@@ -78,6 +78,7 @@ export class Music extends DddAggregate {
   update(args: {
     thumbnailImageUrl?: string;
     title?: string;
+    status?: MusicStatus;
     lyricist?: string;
     songwriter?: string;
     lyrics?: string;

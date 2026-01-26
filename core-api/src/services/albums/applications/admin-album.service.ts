@@ -1,13 +1,18 @@
 import { DddService } from '@libs/ddd';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AlbumRepository } from '../repository/album.repository';
-import { PaginationOptions } from '@libs/utils';
+import { addDays, PaginationOptions, today } from '@libs/utils';
 import { Transactional } from '@libs/decorators';
 import { Album } from '../domain/album.entity';
+import { MusicRepository } from '@services/music/repository/music.repository';
+import { MusicStatus } from '@services/music/domain/music.entity';
 
 @Injectable()
 export class AdminAlbumService extends DddService {
-  constructor(private readonly albumRepository: AlbumRepository) {
+  constructor(
+    private readonly albumRepository: AlbumRepository,
+    private readonly musicRepository: MusicRepository
+  ) {
     super();
   }
 
@@ -96,13 +101,21 @@ export class AdminAlbumService extends DddService {
 
   @Transactional()
   async changeOpen({ id, isOpen }: { id: number; isOpen: boolean }) {
-    const [album] = await this.albumRepository.find({ id });
+    const [[album], musics] = await Promise.all([
+      this.albumRepository.find({ id }),
+      this.musicRepository.find({
+        albumId: id,
+        maxExpectedPublishOn: addDays(today('YYYY-MM-DD'), 1, 'day'),
+      }),
+    ]);
 
     if (!album) {
       throw new BadRequestException('등록되지 않은 앨범입니다.', { cause: '등록되지 않은 앨범입니다.' });
     }
 
     album.changeOpen(isOpen);
-    await this.albumRepository.save([album]);
+    musics.forEach((music) => music.update({ status: isOpen ? MusicStatus.PUBLISH : MusicStatus.INACTIVE }));
+
+    await Promise.all([this.albumRepository.save([album]), this.musicRepository.save(musics)]);
   }
 }
