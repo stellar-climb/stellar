@@ -20,6 +20,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useFileUpload } from '@libs';
+import { Height } from '@mui/icons-material';
 
 // ... (인터페이스 및 헬퍼 함수 기존과 동일) ...
 interface UploadFileState {
@@ -36,6 +37,7 @@ interface FileUploadButtonProps {
   maxSize?: number;
   accept?: Record<string, string[]>;
   width?: string;
+  height?: string;
   description?: string;
 }
 
@@ -47,6 +49,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     maxSize = 5242880,
     accept = { 'image/*': ['.png', '.jpg', '.jpeg'] },
     width = '100%',
+    height = '100%',
     description = '',
   } = props;
 
@@ -229,7 +232,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
   );
 
   return (
-    <Box width={width}>
+    <Box width={width} height={height}>
       <Box {...getRootProps()} sx={{ ...defaultStyle, ...(isDragActive ? activeStyle : {}) }}>
         <input {...getInputProps()} />
 
@@ -249,8 +252,8 @@ export function FileUploadButton(props: FileUploadButtonProps) {
               {isLimitReached
                 ? '최대 업로드 개수 도달'
                 : isDragActive
-                ? '여기에 파일을 놓으세요'
-                : '파일 선택 또는 드래그'}
+                  ? '여기에 파일을 놓으세요'
+                  : '파일 선택 또는 드래그'}
             </Typography>
 
             <Typography variant="caption" color={isLimitReached ? 'text.disabled' : 'textPrimary'}>

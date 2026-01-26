@@ -2,6 +2,39 @@ import type { MusicModel } from '@models';
 import { queryKeyMap, httpClient } from '@libs';
 
 export const musicRepository = {
+  async create({
+    albumId,
+    thumbnailImageUrl,
+    title,
+    expectedPublishOn,
+    lyricist,
+    songwriter,
+    lyrics,
+    isAdultContent,
+    isMain,
+  }: {
+    albumId: number;
+    thumbnailImageUrl: string;
+    title: string;
+    expectedPublishOn: string;
+    lyricist: string;
+    songwriter: string;
+    lyrics?: string;
+    isAdultContent: boolean;
+    isMain: boolean;
+  }) {
+    return httpClient.post<MusicModel>(`/albums/${albumId}/musics`, {
+      thumbnailImageUrl,
+      title,
+      expectedPublishOn,
+      lyricist,
+      songwriter,
+      lyrics,
+      isAdultContent,
+      isMain,
+    });
+  },
+
   async getMusicsByAlbumId({ albumId, page, limit }: { albumId: number; page: number; limit: number }) {
     return httpClient.get<{ items: MusicModel[]; total: number }>(`/albums/${albumId}/musics`, {
       params: {
@@ -16,5 +49,6 @@ export const musicRepository = {
   },
 };
 
+queryKeyMap.set(musicRepository.create, ['Music']);
 queryKeyMap.set(musicRepository.getMusicsByAlbumId, ['Music']);
 queryKeyMap.set(musicRepository.retrieve, ['Music']);

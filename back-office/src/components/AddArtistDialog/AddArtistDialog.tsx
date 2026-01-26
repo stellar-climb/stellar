@@ -92,7 +92,7 @@ export function AddArtistDialog(props: { onClose: () => void; onKeyDown: React.K
                     control={control}
                     name="type"
                     render={({ field }) => (
-                      <ToggleButtonGroup color="primary" {...field} exclusive>
+                      <ToggleButtonGroup color="primary" {...field}>
                         <ToggleButton value="voice_artist">보아</ToggleButton>
                         <ToggleButton value="creator">크리에이터</ToggleButton>
                       </ToggleButtonGroup>
@@ -110,7 +110,7 @@ export function AddArtistDialog(props: { onClose: () => void; onKeyDown: React.K
                     control={control}
                     name="status"
                     render={({ field }) => (
-                      <ToggleButtonGroup color="primary" {...field} exclusive>
+                      <ToggleButtonGroup color="primary" {...field}>
                         <ToggleButton value="voice_artist">준비</ToggleButton>
                         <ToggleButton value="creator">공개</ToggleButton>
                       </ToggleButtonGroup>

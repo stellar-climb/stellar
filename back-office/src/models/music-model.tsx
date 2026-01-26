@@ -9,6 +9,7 @@ export enum MusicStatus {
 
 export interface MusicModel {
   id: number;
+  thumbnailImageUrl: string;
   albumId: number;
   title: string;
   lyricist: string;

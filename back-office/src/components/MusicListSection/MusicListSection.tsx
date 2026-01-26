@@ -1,14 +1,18 @@
 import { useState } from 'react';
-import { CustomDataGrid } from '../CustomDataGrid';
-import { Box, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 import { musicRepository } from '@repositories';
 import { type MusicModel, getMusicStatusLabel } from '@models';
-import { format, useQuery } from '@libs';
-import type { GridColDef } from '../CustomDataGrid';
-import { Pagination } from '../Pagination';
+import { format, gradients, useQuery } from '@libs';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { MusicDetailDrawer } from '../MusicDetailDrawer';
 import PageviewIcon from '@mui/icons-material/Pageview';
+import {
+  AddMusicDialog,
+  DialogButton,
+  CustomDataGrid,
+  type GridColDef,
+  MusicDetailDrawer,
+  Pagination,
+} from '@components';
 
 export function MusicListSection(props: { albumId: number }) {
   // 1. destructure props
@@ -117,6 +121,15 @@ export function MusicListSection(props: { albumId: number }) {
             음악 리스트 (총 {total}곡)
           </Typography>
         </Stack>
+        <DialogButton
+          render={({ onOpen }) => (
+            <Button onClick={onOpen} css={{ background: gradients.primary }}>
+              + 등록
+            </Button>
+          )}
+        >
+          {({ onClose, onKeyDown }) => <AddMusicDialog albumId={albumId} onClose={onClose} onKeyDown={onKeyDown} />}
+        </DialogButton>
       </Stack>
       <CustomDataGrid rows={rows} columns={columns} loading={loading} />
       <Pagination totalCount={total} page={page} limit={limit} onChange={setPage} onLimitChange={setLimit} />

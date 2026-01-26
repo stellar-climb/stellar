@@ -1,5 +1,6 @@
 export * from './AddAlbumDialog';
 export * from './AddArtistDialog';
+export * from './AddMusicDialog';
 export * from './AddRolePolicyDialog';
 export * from './AlbumBasicInfoSection';
 export * from './BoxLink';
