@@ -1,4 +1,4 @@
-import { Stack, Button } from '@mui/material';
+import { Stack, Button, MenuItem } from '@mui/material';
 import {
   ListViewHeader,
   DialogButton,
@@ -7,6 +7,8 @@ import {
   type GridColDef,
   BreadCrumb,
   AddTagDialog,
+  MoreIconButton,
+  EditTagDialog,
 } from '@components';
 import { gradients, useQuery, format } from '@libs';
 import { useState } from 'react';
@@ -55,6 +57,20 @@ export function TagScreen() {
       headerName: '수정일',
       flex: 1,
       valueFormatter: (value) => format(value, 'YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      field: '',
+      headerName: '',
+      width: 60,
+      renderCell: ({ row }) => (
+        <MoreIconButton
+          editButton={
+            <DialogButton render={({ onOpen }) => <Button onClick={onOpen}>수정</Button>}>
+              {({ onClose, onKeyDown }) => <EditTagDialog tag={row} onClose={onClose} onKeyDown={onKeyDown} />}
+            </DialogButton>
+          }
+        />
+      ),
     },
   ];
   const rows = tags?.items ?? [];
