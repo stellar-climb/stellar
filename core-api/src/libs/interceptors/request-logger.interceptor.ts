@@ -14,8 +14,6 @@ export class RequestLoggerInterceptor implements NestInterceptor {
 
     const startTime = Date.now();
 
-    console.log(new Date());
-
     return next.handle().pipe(
       tap(() => {
         this.logger.log(
