@@ -1,6 +1,7 @@
-import { Box, Drawer, Typography } from '@mui/material';
-import { musicRepository } from '../../repositories';
-import { useQuery } from '../../libs';
+import { useState } from 'react';
+import { Box, CircularProgress, Drawer, Typography } from '@mui/material';
+import { musicRepository } from '@repositories';
+import { useQuery } from '@libs';
 
 export function MusicDetailDrawer(props: { albumId: number; musicId: number | null; onClose: () => void }) {
   // 1. destructure props
@@ -8,8 +9,10 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
 
   // 2. lib hooks
   // 3. state hooks
+  const [isEditing, setIsEditing] = useState(false);
+
   // 4. query hooks
-  const { data: music } = useQuery(musicRepository.retrieve, {
+  const { data: music, loading } = useQuery(musicRepository.retrieve, {
     variables: { id: musicId!, albumId },
     enabled: !!musicId,
   });
@@ -21,7 +24,7 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
   return (
     <Drawer open={!!musicId} anchor="right" onClose={onClose} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Box css={{ width: '480px', padding: '16px' }}>
-        <Typography variant="h6">{music?.title}</Typography>
+        {loading || !music ? <CircularProgress /> : <Typography variant="h6">{music?.title}</Typography>}
       </Box>
     </Drawer>
   );
