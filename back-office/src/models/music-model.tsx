@@ -14,7 +14,7 @@ export interface MusicModel {
   title: string;
   lyricist: string;
   songwriter: string;
-  lyrics: string | null;
+  lyrics?: string;
   status: MusicStatus;
   expectedPublishOn: CalendarDate | null;
   isAdultContent: boolean;

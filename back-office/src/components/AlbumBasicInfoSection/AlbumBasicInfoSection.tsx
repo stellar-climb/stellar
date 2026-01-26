@@ -126,7 +126,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
                     setIsEditing(false);
                     reset();
                   }}
-                  css={{ backgroundColor: 'red', height: '40px' }}
+                  css={{ backgroundColor: 'red' }}
                 >
                   취소
                 </Button>
