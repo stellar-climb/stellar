@@ -8,6 +8,7 @@ import {
   ArtistScreen,
   AlbumScreen,
   AlbumDetailScreen,
+  TagScreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -56,6 +57,10 @@ export function AppRouter() {
             <Route path="/albums">
               <Route index element={<AlbumScreen />} />
               <Route path=":id" element={<AlbumDetailScreen />} />
+            </Route>
+
+            <Route path="/tags">
+              <Route index element={<TagScreen />} />
             </Route>
           </Route>
         </Route>

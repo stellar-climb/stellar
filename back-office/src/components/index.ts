@@ -2,6 +2,7 @@ export * from './AddAlbumDialog';
 export * from './AddArtistDialog';
 export * from './AddMusicDialog';
 export * from './AddRolePolicyDialog';
+export * from './AddTagDialog';
 export * from './AlbumBasicInfoSection';
 export * from './BoxLink';
 export * from './BreadCrumb';

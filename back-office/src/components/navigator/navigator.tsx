@@ -45,7 +45,14 @@ export function Navigator(props: { drawerWidth: number }) {
                 { path: '/artists', label: '아티스트' },
               ]}
             />
-            <MenuList title="콘텐츠 관리" icon={<AudiotrackIcon />} menuItems={[{ path: '/albums', label: '앨범' }]} />
+            <MenuList
+              title="콘텐츠 관리"
+              icon={<AudiotrackIcon />}
+              menuItems={[
+                { path: '/albums', label: '앨범' },
+                { path: '/tags', label: '태그' },
+              ]}
+            />
             <MenuList title="정책 관리" icon={<GavelIcon />} menuItems={[{ path: '/policies/roles', label: '권한' }]} />
             <MenuList title="커뮤니티 글 관리" />
           </List>
