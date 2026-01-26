@@ -10,10 +10,10 @@ export enum MusicStatus {
 
 type Ctor = {
   albumId: number;
+  thumbnailImageUrl: string;
   title: string;
   lyricist: string;
   songwriter: string;
-  status: MusicStatus;
   lyrics?: string;
   expectedPublishOn?: CalendarDate;
   isAdultContent: boolean;
@@ -28,6 +28,9 @@ export class Music extends DddAggregate {
 
   @Column()
   albumId: number;
+
+  @Column()
+  thumbnailImageUrl: string;
 
   @Column()
   title: string;
@@ -58,6 +61,7 @@ export class Music extends DddAggregate {
 
     if (args) {
       this.albumId = args.albumId;
+      this.thumbnailImageUrl = args.thumbnailImageUrl;
       this.title = args.title;
       this.lyricist = args.lyricist;
       this.songwriter = args.songwriter;

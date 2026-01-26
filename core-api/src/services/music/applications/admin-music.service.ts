@@ -1,12 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { DddService } from '@libs/ddd';
 import { MusicRepository } from '../repository/music.repository';
 import { type PaginationOptions } from '@libs/utils';
+import { Transactional } from '@libs/decorators';
+import { Music } from '../domain/music.entity';
 
 @Injectable()
 export class AdminMusicService extends DddService {
   constructor(private readonly musicRepository: MusicRepository) {
     super();
+  }
+
+  @Transactional()
+  async create({
+    albumId,
+    thumbnailImageUrl,
+    title,
+    expectedPublishOn,
+    lyricist,
+    songwriter,
+    lyrics,
+    isAdultContent,
+    isMain,
+  }: {
+    albumId: number;
+    thumbnailImageUrl: string;
+    title: string;
+    expectedPublishOn?: string;
+    lyricist: string;
+    songwriter: string;
+    lyrics?: string;
+    isAdultContent: boolean;
+    isMain: boolean;
+  }) {
+    const [duplicatedMusic] = await this.musicRepository.find({ albumId, title });
+
+    if (duplicatedMusic) {
+      throw new BadRequestException('이미 앨범에 등록된 음악명입니다.', { cause: '이미 앨범에 등록된 음악명입니다.' });
+    }
+
+    const music = new Music({
+      albumId,
+      thumbnailImageUrl,
+      title,
+      lyricist,
+      songwriter,
+      lyrics,
+      expectedPublishOn,
+      isAdultContent,
+      isMain,
+    });
+
+    await this.musicRepository.save([music]);
   }
 
   async list({ albumId }: { albumId?: number }, options?: PaginationOptions) {

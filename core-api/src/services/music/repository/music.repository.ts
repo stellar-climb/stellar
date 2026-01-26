@@ -7,21 +7,23 @@ import { Injectable } from '@nestjs/common';
 export class MusicRepository extends DddRepository<Music> {
   entityClass = Music;
 
-  async find(conditions: { id?: number; albumId?: number }, options?: TypeormRelationOptions<Music>) {
+  async find(conditions: { id?: number; albumId?: number; title?: string }, options?: TypeormRelationOptions<Music>) {
     return this.entityManager.find(this.entityClass, {
       where: stripUndefined({
         id: conditions.id,
         albumId: conditions.albumId,
+        title: conditions.title,
       }),
       ...convertOptions(options),
     });
   }
 
-  async count(conditions: { id?: number; albumId?: number }) {
+  async count(conditions: { id?: number; albumId?: number; title?: string }) {
     return this.entityManager.count(this.entityClass, {
       where: stripUndefined({
         id: conditions.id,
         albumId: conditions.albumId,
+        title: conditions.title,
       }),
     });
   }
