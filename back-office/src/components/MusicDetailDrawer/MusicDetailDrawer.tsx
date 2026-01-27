@@ -22,8 +22,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { DeleteConfirmDialog, DialogButton, FileUploadButton, FormRow, FormBox } from '@components';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 
 export function MusicDetailDrawer(props: { albumId: number; musicId: number | null; onClose: () => void }) {
   // 1. destructure props
@@ -41,11 +39,10 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
     enabled: !!musicId,
   });
   const { data: tags } = useQuery(tagRepository.list);
-  const [updateMusic] = useMutation(musicRepository.update, {
+  const [updateMusic, { loading: updateLoading }] = useMutation(musicRepository.update, {
     onSuccess: () => {
       enqueueSnackbar('수정되었습니다.', { variant: 'success' });
       setIsEditing(false);
-      onClose();
     },
     onError: (error) => {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -121,7 +118,7 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
               {isEditing ? (
                 <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
                   <Button
-                    disabled={isSubmittable}
+                    disabled={isSubmittable || updateLoading}
                     onClick={handleSubmit(async (data) => {
                       const values = getDirtyValues(dirtyFields, data);
 
@@ -272,12 +269,12 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
                           value={value}
                           onChange={onChange}
                           renderValue={(selected) => (
-                            <Box>
+                            <Stack direction="row" spacing={1}>
                               {selected.map((id) => {
                                 const tag = tags?.items.find((tag) => Number(tag.id) === Number(id));
                                 return <Chip key={id} label={tag?.name} />;
                               })}
-                            </Box>
+                            </Stack>
                           )}
                         >
                           {tags &&
@@ -291,9 +288,11 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
                     />
                   ) : (
                     <FormBox>
-                      {music.tags.map((tag) => {
-                        return <Chip key={tag.id} label={tag.name} />;
-                      })}
+                      <Stack direction="row" spacing={1} css={{ width: '100%' }}>
+                        {music.tags.map((tag) => {
+                          return <Chip key={tag.id} label={tag.name} />;
+                        })}
+                      </Stack>
                     </FormBox>
                   )
                 }

@@ -59,6 +59,7 @@ export const musicRepository = {
     expectedPublishOn,
     isAdultContent,
     isMain,
+    tagIds,
   }: {
     id: number;
     albumId: number;
@@ -70,6 +71,7 @@ export const musicRepository = {
     expectedPublishOn?: string;
     isAdultContent?: boolean;
     isMain?: boolean;
+    tagIds?: number[];
   }) {
     return httpClient.put<MusicModel>(`/albums/${albumId}/musics/${id}`, {
       thumbnailImageUrl,
@@ -80,6 +82,7 @@ export const musicRepository = {
       expectedPublishOn,
       isAdultContent,
       isMain,
+      tagIds,
     });
   },
 
