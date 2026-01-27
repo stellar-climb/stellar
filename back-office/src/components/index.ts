@@ -15,7 +15,7 @@ export * from './EditRolePolicyDialog';
 export * from './EditTagDialog';
 export * from './FileUploadButton';
 export * from './FormRow';
-export * from './FormTypography';
+export * from './FormBox';
 export * from './HistorySection';
 export * from './ListViewHeader';
 export * from './MoreIconButton';

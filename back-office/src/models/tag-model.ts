@@ -4,4 +4,8 @@ export interface TagModel {
   category: string;
 
   name: string;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }

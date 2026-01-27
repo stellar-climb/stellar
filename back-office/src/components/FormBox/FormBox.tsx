@@ -1,6 +1,6 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
-export function FromTypography(props: { children: React.ReactNode }) {
+export function FormBox(props: { children: React.ReactNode }) {
   // 1. destructure props
   const { children } = props;
 
@@ -26,7 +26,7 @@ export function FromTypography(props: { children: React.ReactNode }) {
         alignItems: 'center',
       }}
     >
-      <Typography>{children}</Typography>
+      {children}
     </Box>
   );
 }

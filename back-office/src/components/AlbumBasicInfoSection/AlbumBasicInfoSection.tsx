@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, getDirtyValues, queryClient } from '@libs';
 import { albumRepository } from '@repositories';
-import { ConfirmDialog, FileUploadButton, FormRow, FromTypography } from '@components';
+import { ConfirmDialog, FileUploadButton, FormRow, FormBox } from '@components';
 import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch, Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -176,7 +176,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               isEditing ? (
                 <TextField {...register('title')} error={!!errors.title?.message} />
               ) : (
-                <FromTypography>{album.title}</FromTypography>
+                <FormBox>{album.title}</FormBox>
               )
             }
           />
@@ -187,7 +187,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               isEditing ? (
                 <TextField {...register('subTitle')} error={!!errors.subTitle?.message} />
               ) : (
-                <FromTypography>{album.subTitle}</FromTypography>
+                <FormBox>{album.subTitle}</FormBox>
               )
             }
           />
@@ -198,7 +198,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
               isEditing ? (
                 <TextField {...register('publisher')} error={!!errors.publisher?.message} />
               ) : (
-                <FromTypography>{album.publisher}</FromTypography>
+                <FormBox>{album.publisher}</FormBox>
               )
             }
           />

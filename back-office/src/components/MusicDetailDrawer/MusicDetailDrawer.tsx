@@ -11,14 +11,19 @@ import {
   Typography,
   Checkbox,
   Grid,
+  MenuItem,
+  Select,
+  Chip,
 } from '@mui/material';
-import { musicRepository } from '@repositories';
+import { musicRepository, tagRepository } from '@repositories';
 import { getDirtyValues, useQuery, useMutation } from '@libs';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DeleteConfirmDialog, DialogButton, FileUploadButton, FormRow, FromTypography } from '@components';
+import { DeleteConfirmDialog, DialogButton, FileUploadButton, FormRow, FormBox } from '@components';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 export function MusicDetailDrawer(props: { albumId: number; musicId: number | null; onClose: () => void }) {
   // 1. destructure props
@@ -35,6 +40,7 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
     variables: { id: musicId!, albumId },
     enabled: !!musicId,
   });
+  const { data: tags } = useQuery(tagRepository.list);
   const [updateMusic] = useMutation(musicRepository.update, {
     onSuccess: () => {
       enqueueSnackbar('수정되었습니다.', { variant: 'success' });
@@ -72,6 +78,7 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
       lyrics: '',
       isAdultContent: false,
       isMain: false,
+      tagIds: [] as number[],
     },
     mode: 'onChange',
   });
@@ -90,6 +97,7 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
         lyrics: music.lyrics,
         isAdultContent: music.isAdultContent,
         isMain: music.isMain,
+        tagIds: music.tags.map((tag) => Number(tag.id)),
       });
     }
   }, [music, reset, setIsEditing]);
@@ -203,31 +211,17 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
               <FormRow
                 label="제목"
                 required
-                input={
-                  isEditing ? <TextField {...register('title')} /> : <FromTypography> {music.title}</FromTypography>
-                }
+                input={isEditing ? <TextField {...register('title')} /> : <FormBox> {music.title}</FormBox>}
               />
               <FormRow
                 label="작사가"
                 required
-                input={
-                  isEditing ? (
-                    <TextField {...register('lyricist')} />
-                  ) : (
-                    <FromTypography> {music.lyricist}</FromTypography>
-                  )
-                }
+                input={isEditing ? <TextField {...register('lyricist')} /> : <FormBox> {music.lyricist}</FormBox>}
               />
               <FormRow
                 label="작곡가 "
                 required
-                input={
-                  isEditing ? (
-                    <TextField {...register('songwriter')} />
-                  ) : (
-                    <FromTypography> {music.songwriter}</FromTypography>
-                  )
-                }
+                input={isEditing ? <TextField {...register('songwriter')} /> : <FormBox> {music.songwriter}</FormBox>}
               />
 
               <Grid container spacing={2}>
@@ -262,6 +256,49 @@ export function MusicDetailDrawer(props: { albumId: number; musicId: number | nu
                   />
                 </Grid>
               </Grid>
+
+              <FormRow
+                required
+                label="태그"
+                input={
+                  isEditing ? (
+                    <Controller
+                      control={control}
+                      name="tagIds"
+                      render={({ field: { onChange, value } }) => (
+                        <Select
+                          fullWidth
+                          multiple
+                          value={value}
+                          onChange={onChange}
+                          renderValue={(selected) => (
+                            <Box>
+                              {selected.map((id) => {
+                                const tag = tags?.items.find((tag) => Number(tag.id) === Number(id));
+                                return <Chip key={id} label={tag?.name} />;
+                              })}
+                            </Box>
+                          )}
+                        >
+                          {tags &&
+                            tags?.items.map((tag) => (
+                              <MenuItem key={tag.id} value={tag.id}>
+                                {tag.name}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      )}
+                    />
+                  ) : (
+                    <FormBox>
+                      {music.tags.map((tag) => {
+                        return <Chip key={tag.id} label={tag.name} />;
+                      })}
+                    </FormBox>
+                  )
+                }
+              />
+
               <FormRow
                 label="가사"
                 input={

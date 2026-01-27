@@ -1,5 +1,6 @@
 import type { CalendarDate } from '../libs';
 import { Chip } from '@mui/material';
+import type { TagModel } from './tag-model';
 
 export enum MusicStatus {
   PREPARE = 'PREPARE',
@@ -19,6 +20,7 @@ export interface MusicModel {
   expectedPublishOn: CalendarDate | null;
   isAdultContent: boolean;
   isMain: boolean;
+  tags: TagModel[];
   createdAt: string;
   updatedAt: string;
 }
