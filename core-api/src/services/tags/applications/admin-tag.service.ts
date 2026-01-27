@@ -34,7 +34,7 @@ export class AdminTagService extends DddService {
 
   @Transactional()
   async update({ id, category, name }: { id: number; category?: string; name?: string }) {
-    const [tag] = await this.tagRepository.find({ id });
+    const [tag] = await this.tagRepository.find({ ids: [id] });
 
     if (!tag) {
       throw new BadRequestException('존재하지 않는 태그입니다.', { cause: '존재하지 않는 태그입니다.' });
@@ -53,7 +53,7 @@ export class AdminTagService extends DddService {
 
   @Transactional()
   async remove({ id }: { id: number }) {
-    const [tag] = await this.tagRepository.find({ id });
+    const [tag] = await this.tagRepository.find({ ids: [id] });
 
     if (!tag) {
       throw new BadRequestException('존재하지 않는 태그입니다.', { cause: '존재하지 않는 태그입니다.' });

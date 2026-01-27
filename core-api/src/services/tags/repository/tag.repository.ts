@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { DddRepository } from '@libs/ddd';
 import { Tag } from '../domain/tag.entity';
-import { checkLikeValue, convertOptions, type TypeormRelationOptions } from '@libs/utils';
+import { checkInValue, checkLikeValue, convertOptions, type TypeormRelationOptions } from '@libs/utils';
 
 @Injectable()
 export class TagRepository extends DddRepository<Tag> {
   entityClass = Tag;
 
   async find(
-    conditions: { id?: number; category?: string; name?: string; search?: string; searchValue?: string },
+    conditions: { ids?: number[]; category?: string; name?: string; search?: string; searchValue?: string },
     options?: TypeormRelationOptions<Tag>
   ): Promise<Tag[]> {
     return this.entityManager.find(this.entityClass, {
       where: {
-        id: conditions.id,
+        id: checkInValue(conditions.ids),
         category: conditions.category,
         name: conditions.name,
         ...checkLikeValue({ search: conditions.search, searchValue: conditions.searchValue }),
@@ -22,10 +22,10 @@ export class TagRepository extends DddRepository<Tag> {
     });
   }
 
-  async count(conditions: { id?: number; category?: string; name?: string; search?: string; searchValue?: string }) {
+  async count(conditions: { ids?: number[]; category?: string; name?: string; search?: string; searchValue?: string }) {
     return this.entityManager.count(this.entityClass, {
       where: {
-        id: conditions.id,
+        id: checkInValue(conditions.ids),
         category: conditions.category,
         name: conditions.name,
         ...checkLikeValue({ search: conditions.search, searchValue: conditions.searchValue }),

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index, ManyToMany, JoinTable } from 'typeorm';
 import { DddAggregate } from '@libs/ddd';
 import type { CalendarDate } from '@common/types';
+import { Tag } from '@services/tags/domain/tag.entity';
 
 export enum MusicStatus {
   PREPARE = 'PREPARE',
@@ -18,6 +19,7 @@ type Ctor = {
   expectedPublishOn?: CalendarDate;
   isAdultContent: boolean;
   isMain: boolean;
+  tags: Tag[];
 };
 
 @Entity()
@@ -56,6 +58,10 @@ export class Music extends DddAggregate {
   @Column()
   isMain: boolean;
 
+  @ManyToMany(() => Tag, (tag) => tag.musics, { cascade: true })
+  @JoinTable()
+  tags: Tag[];
+
   constructor(args: Ctor) {
     super();
 
@@ -69,6 +75,7 @@ export class Music extends DddAggregate {
       this.expectedPublishOn = args.expectedPublishOn;
       this.isAdultContent = args.isAdultContent;
       this.isMain = args.isMain;
+      // this.tags = args.tags;
 
       // NOTE: 초기화
       this.status = MusicStatus.PREPARE;
@@ -85,6 +92,7 @@ export class Music extends DddAggregate {
     expectedPublishOn?: CalendarDate;
     isAdultContent?: boolean;
     isMain?: boolean;
+    tags?: Tag[];
   }) {
     const changedArgs = this.stripUnchanged(args);
 

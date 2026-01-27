@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class MusicCreateDto {
   @IsString()
@@ -26,4 +26,8 @@ export class MusicCreateDto {
 
   @IsBoolean()
   isMain: boolean;
+
+  @IsArray()
+  @IsNumber({}, { each: true })
+  tagIds: number[];
 }

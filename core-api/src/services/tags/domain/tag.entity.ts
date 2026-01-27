@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import { DddAggregate } from '@libs/ddd';
+import { Music } from '@services/music/domain/music.entity';
 
 type Ctor = {
   category: string;
@@ -16,6 +17,9 @@ export class Tag extends DddAggregate {
 
   @Column()
   name: string;
+
+  @ManyToMany(() => Music, (music) => music.tags)
+  musics: Music[];
 
   constructor(args: Ctor) {
     super();

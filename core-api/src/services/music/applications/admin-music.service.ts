@@ -4,10 +4,14 @@ import { MusicRepository } from '../repository/music.repository';
 import { type PaginationOptions } from '@libs/utils';
 import { Transactional } from '@libs/decorators';
 import { Music } from '../domain/music.entity';
+import { TagRepository } from '@services/tags/repository/tag.repository';
 
 @Injectable()
 export class AdminMusicService extends DddService {
-  constructor(private readonly musicRepository: MusicRepository) {
+  constructor(
+    private readonly musicRepository: MusicRepository,
+    private readonly tagRepository: TagRepository
+  ) {
     super();
   }
 
@@ -22,6 +26,7 @@ export class AdminMusicService extends DddService {
     lyrics,
     isAdultContent,
     isMain,
+    tagIds,
   }: {
     albumId: number;
     thumbnailImageUrl: string;
@@ -32,12 +37,15 @@ export class AdminMusicService extends DddService {
     lyrics?: string;
     isAdultContent: boolean;
     isMain: boolean;
+    tagIds: number[];
   }) {
     const [duplicatedMusic] = await this.musicRepository.find({ albumId, title });
 
     if (duplicatedMusic) {
       throw new BadRequestException('이미 앨범에 등록된 음악명입니다.', { cause: '이미 앨범에 등록된 음악명입니다.' });
     }
+
+    const tags = await this.tagRepository.find({ ids: tagIds });
 
     const music = new Music({
       albumId,
@@ -49,6 +57,7 @@ export class AdminMusicService extends DddService {
       expectedPublishOn,
       isAdultContent,
       isMain,
+      tags,
     });
 
     await this.musicRepository.save([music]);
