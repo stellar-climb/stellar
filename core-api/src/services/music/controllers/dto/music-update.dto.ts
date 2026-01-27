@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsBoolean, IsOptional, IsDateString, IsArray, IsNumber } from 'class-validator';
 import type { CalendarDate } from '@common/types';
 
 export class MusicUpdateDto {
@@ -33,4 +33,9 @@ export class MusicUpdateDto {
   @IsBoolean()
   @IsOptional()
   isMain?: boolean;
+
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @IsOptional()
+  tagIds?: number[];
 }

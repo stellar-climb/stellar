@@ -94,6 +94,7 @@ export class AdminMusicService extends DddService {
     lyrics,
     isAdultContent,
     isMain,
+    tagIds,
   }: {
     albumId: number;
     id: number;
@@ -105,12 +106,15 @@ export class AdminMusicService extends DddService {
     lyrics?: string;
     isAdultContent?: boolean;
     isMain?: boolean;
+    tagIds?: number[];
   }) {
     const [music] = await this.musicRepository.find({ albumId, id });
 
     if (!music) {
       throw new BadRequestException('음악을 찾을 수 없습니다.', { cause: '음악을 찾을 수 없습니다.' });
     }
+
+    const tags = tagIds ? await this.tagRepository.find({ ids: tagIds }) : undefined;
 
     music.update({
       thumbnailImageUrl,
@@ -121,6 +125,7 @@ export class AdminMusicService extends DddService {
       expectedPublishOn,
       isAdultContent,
       isMain,
+      tags,
     });
 
     await this.musicRepository.save([music]);
