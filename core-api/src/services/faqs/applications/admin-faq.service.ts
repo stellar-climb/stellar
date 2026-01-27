@@ -3,6 +3,7 @@ import { DddService } from '@libs/ddd';
 import { FaqRepository } from '../repository/faq.repository';
 import { Transactional } from '@libs/decorators';
 import { Faq, type FaqType } from '../domain/faq.entity';
+import { type PaginationOptions } from '@libs/utils';
 
 @Injectable()
 export class AdminFaqService extends DddService {
@@ -22,5 +23,23 @@ export class AdminFaqService extends DddService {
     return this.faqRepository.save([faq]);
   }
 
-  async list() {}
+  async list({ search, searchValue }: { search?: string; searchValue?: string }, options: PaginationOptions) {
+    const [faqs, total] = await Promise.all([
+      this.faqRepository.find({ search, searchValue }, { options }),
+      this.faqRepository.count({ search, searchValue }),
+    ]);
+
+    return { items: faqs, total };
+  }
+
+  @Transactional()
+  async remove({ id }: { id: number }) {
+    const [faq] = await this.faqRepository.find({ id });
+
+    if (!faq) {
+      throw new BadRequestException('존재하지 않는 FAQ입니다.', { cause: '존재하지 않는 FAQ입니다.' });
+    }
+
+    return this.faqRepository.softRemove([faq]);
+  }
 }

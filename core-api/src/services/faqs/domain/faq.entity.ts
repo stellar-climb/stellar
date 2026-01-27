@@ -3,6 +3,12 @@ import { DddAggregate } from '@libs/ddd';
 
 export enum FaqType {
   ACCOUNT = 'account',
+  CONTENT = 'content',
+  PAYMENT = 'payment',
+  POINT = 'point',
+  OTHER = 'other',
+  PARTNER = 'partner',
+  APP = 'app',
 }
 
 export enum FaqStatus {
