@@ -9,15 +9,19 @@ import {
   AddTagDialog,
   MoreIconButton,
   EditTagDialog,
+  DeleteConfirmDialog,
 } from '@components';
-import { gradients, useQuery, format } from '@libs';
+import { gradients, useQuery, format, useMutation } from '@libs';
 import { useState } from 'react';
 import { tagRepository } from '@repositories';
 import type { TagModel } from '@models';
+import { useSnackbar } from 'notistack';
 
 export function TagScreen() {
   // 1. destructure props
   // 2. lib hooks
+  const { enqueueSnackbar } = useSnackbar();
+
   // 3. state hooks
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -26,6 +30,10 @@ export function TagScreen() {
   // 4. query hooks
   const { data: tags, loading } = useQuery(tagRepository.list, {
     variables: { page, limit, filter: search && search.value ? { search: search.key, searchValue: search.value } : {} },
+  });
+  const [removeTag] = useMutation(tagRepository.remove, {
+    onSuccess: () => enqueueSnackbar('태그가 삭제되었습니다.', { variant: 'success' }),
+    onError: (error) => enqueueSnackbar(error.message, { variant: 'error' }),
   });
 
   // 5. form hooks
@@ -65,8 +73,19 @@ export function TagScreen() {
       renderCell: ({ row }) => (
         <MoreIconButton
           editButton={
-            <DialogButton render={({ onOpen }) => <Button onClick={onOpen}>수정</Button>}>
+            <DialogButton render={({ onOpen }) => <MenuItem onClick={onOpen}>수정</MenuItem>}>
               {({ onClose, onKeyDown }) => <EditTagDialog tag={row} onClose={onClose} onKeyDown={onKeyDown} />}
+            </DialogButton>
+          }
+          deleteButton={
+            <DialogButton render={({ onOpen }) => <MenuItem onClick={onOpen}>삭제</MenuItem>}>
+              {({ onClose, onKeyDown }) => (
+                <DeleteConfirmDialog
+                  onClose={onClose}
+                  onDelete={() => removeTag({ variables: { id: Number(row.id) } })}
+                  onKeyDown={onKeyDown}
+                />
+              )}
             </DialogButton>
           }
         />
