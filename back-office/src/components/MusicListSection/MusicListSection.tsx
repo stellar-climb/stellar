@@ -114,7 +114,7 @@ export function MusicListSection(props: { albumId: number }) {
   // 8. handlers
   // 9. render
   return (
-    <Stack spacing={2} css={{ overflow: 'hidden' }}>
+    <Stack spacing={2} css={{ height: '800px', overflow: 'hidden' }}>
       <Stack direction="row" spacing={1} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row" spacing={3} css={{ alignItems: 'center', justifyContent: 'center' }}>
           <Typography variant="h6" css={{ width: '240px' }}>

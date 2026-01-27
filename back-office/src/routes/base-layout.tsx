@@ -2,7 +2,8 @@ import { Box, AppBar, Toolbar, Typography } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { Navigator } from '@components';
 
-const drawerWidth = 240;
+export const drawerWidth = 240;
+export const headerHeight = 64;
 
 export function Layout() {
   // 1. destructure props
@@ -47,7 +48,7 @@ export function Layout() {
         }}
       >
         <Toolbar />
-        <Box sx={{ padding: '16px', height: 'calc(100vh - 112px)' }}>
+        <Box sx={{ padding: '16px' }}>
           <Outlet />
         </Box>
       </Box>
