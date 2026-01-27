@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, getDirtyValues, queryClient } from '@libs';
 import { albumRepository } from '@repositories';
-import { ConfirmDialog, FileUploadButton, FormRow, FormBox } from '@components';
+import { ConfirmDialog, FileUploadButton, FormRow, FormBox, DialogButton, DeleteConfirmDialog } from '@components';
 import { Button, CircularProgress, IconButton, Stack, TextField, Typography, Chip, Switch, Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSnackbar } from 'notistack';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom';
 
 const yupSchema = yup.object({
   coverImageUrl: yup.string().required('커버 이미지는 필수입니다'),
@@ -22,6 +24,7 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
 
   // 2. lib hooks
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   // 3. state hooks
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -34,8 +37,8 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
       enqueueSnackbar('앨범 정보가 저장되었습니다.', { variant: 'success' });
       setIsEditing(false);
     },
-    onError: () => {
-      enqueueSnackbar('앨범 정보 저장에 실패했습니다.', { variant: 'error' });
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
     },
   });
   const [changeIsOpen] = useMutation(albumRepository.changeOpen, {
@@ -44,8 +47,17 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
       enqueueSnackbar('앨범 공개/비공개가 변경되었습니다.', { variant: 'success' });
       await queryClient.invalidateQueries({ queryKey: ['Music'] });
     },
-    onError: () => {
-      enqueueSnackbar('앨범 공개/비공개 변경에 실패했습니다.', { variant: 'error' });
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    },
+  });
+  const [removeAlbum] = useMutation(albumRepository.remove, {
+    onSuccess: () => {
+      enqueueSnackbar('앨범이 삭제되었습니다.', { variant: 'success' });
+      navigate('/albums', { replace: true });
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
     },
   });
 
@@ -133,9 +145,26 @@ export function AlbumBasicInfoSection(props: { albumId: number }) {
                 </Button>
               </Stack>
             ) : (
-              <IconButton onClick={() => setIsEditing(true)}>
-                <EditIcon />
-              </IconButton>
+              <Stack direction="row" spacing={1}>
+                <IconButton onClick={() => setIsEditing(true)}>
+                  <EditIcon />
+                </IconButton>
+                <DialogButton
+                  render={({ onOpen }) => (
+                    <IconButton onClick={onOpen}>
+                      <DeleteIcon color="error" />
+                    </IconButton>
+                  )}
+                >
+                  {({ onClose, onKeyDown }) => (
+                    <DeleteConfirmDialog
+                      onDelete={() => removeAlbum({ variables: { albumId } })}
+                      onClose={onClose}
+                      onKeyDown={onKeyDown}
+                    />
+                  )}
+                </DialogButton>
+              </Stack>
             )}
           </Stack>
           <FormRow

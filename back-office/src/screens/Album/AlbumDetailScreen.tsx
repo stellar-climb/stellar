@@ -1,6 +1,7 @@
-import { Grid, Stack } from '@mui/material';
+import { Grid, IconButton, Stack } from '@mui/material';
 import { BreadCrumb, ListViewHeader, Section, AlbumBasicInfoSection, MusicListSection } from '@components';
 import { useParams } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export function AlbumDetailScreen() {
   // 1. destructure props
@@ -22,7 +23,7 @@ export function AlbumDetailScreen() {
           { label: '앨범 상세 정보', path: `/albums/${id}` },
         ]}
       />
-      <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <Stack direction="row" css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <ListViewHeader title="앨범 상세 정보" />
       </Stack>
 
