@@ -28,6 +28,10 @@ export class AlbumPublishService extends DddService {
       throw new BadRequestException('등록되지 않은 앨범입니다.', { cause: '등록되지 않은 앨범입니다.' });
     }
 
+    if (!musics.length) {
+      throw new BadRequestException('공개할 수 있는 음악이 없습니다.', { cause: '공개할 수 있는 음악이 없습니다.' });
+    }
+
     album.changeOpen(isOpen, admin);
     musics.forEach((music) => music.update({ status: isOpen ? MusicStatus.PUBLISH : MusicStatus.INACTIVE }));
 

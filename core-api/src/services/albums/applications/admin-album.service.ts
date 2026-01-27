@@ -11,7 +11,7 @@ import { Admin } from '@services/admins/domain/admin.entity';
 export class AdminAlbumService extends DddService {
   constructor(
     private readonly albumRepository: AlbumRepository,
-    private readonly albumpPublishService: AlbumPublishService
+    private readonly albumPublishService: AlbumPublishService
   ) {
     super();
   }
@@ -85,7 +85,7 @@ export class AdminAlbumService extends DddService {
       throw new BadRequestException('등록되지 않은 앨범입니다.', { cause: '등록되지 않은 앨범입니다.' });
     }
 
-    album.update({ coverImageUrl, bannerImageUrl, title, subTitle, publisher });
+    album.update({ coverImageUrl, bannerImageUrl, title, subTitle, publisher }, admin);
 
     await this.albumRepository.save([album]);
   }
@@ -103,6 +103,6 @@ export class AdminAlbumService extends DddService {
 
   @Transactional()
   async changeOpen({ admin, id, isOpen }: { admin: Admin; id: number; isOpen: boolean }) {
-    await this.albumpPublishService.changeOpen({ albumId: id, isOpen, admin });
+    await this.albumPublishService.changeOpen({ albumId: id, isOpen, admin });
   }
 }
