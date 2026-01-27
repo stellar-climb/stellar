@@ -59,7 +59,7 @@ export class Music extends DddAggregate {
   isMain: boolean;
 
   @ManyToMany(() => Tag, (tag) => tag.musics, { cascade: true })
-  @JoinTable()
+  @JoinTable({ name: 'music_tags' })
   tags: Tag[];
 
   constructor(args: Ctor) {
@@ -75,7 +75,7 @@ export class Music extends DddAggregate {
       this.expectedPublishOn = args.expectedPublishOn;
       this.isAdultContent = args.isAdultContent;
       this.isMain = args.isMain;
-      // this.tags = args.tags;
+      this.tags = args.tags;
 
       // NOTE: 초기화
       this.status = MusicStatus.PREPARE;

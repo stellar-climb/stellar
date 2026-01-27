@@ -73,7 +73,7 @@ export class AdminMusicService extends DddService {
   }
 
   async retrieve({ albumId, id }: { albumId: number; id: number }) {
-    const [music] = await this.musicRepository.find({ albumId, id });
+    const [music] = await this.musicRepository.find({ albumId, id }, { relations: { tags: true } });
 
     if (!music) {
       throw new BadRequestException('음악을 찾을 수 없습니다.', { cause: '음악을 찾을 수 없습니다.' });
