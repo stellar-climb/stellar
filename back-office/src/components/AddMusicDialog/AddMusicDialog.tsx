@@ -1,10 +1,23 @@
-import { Button, Dialog, DialogActions, DialogContent, Grid, Stack, TextField, Checkbox } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Grid,
+  Stack,
+  TextField,
+  Checkbox,
+  Select,
+  MenuItem,
+  Box,
+  Chip,
+} from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
 import { FileUploadButton, DialogTitleGroup, FormRow } from '@components';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@libs';
-import { musicRepository } from '@repositories';
+import { useMutation, useQuery } from '@libs';
+import { musicRepository, tagRepository } from '@repositories';
 import { useSnackbar } from 'notistack';
 
 const yupSchema = yup.object({
@@ -17,6 +30,7 @@ const yupSchema = yup.object({
   isAdultContent: yup.boolean().required('성인 여부는 필수입니다.'),
   isMain: yup.boolean().required('타이틀곡 여부는 필수입니다.'),
   albumId: yup.number().required('앨범 ID는 필수입니다.'),
+  tagIds: yup.array().of(yup.number()).required('태그는 필수입니다.'),
 });
 
 export function AddMusicDialog(props: { albumId: number; onClose: () => void; onKeyDown: React.KeyboardEventHandler }) {
@@ -28,6 +42,7 @@ export function AddMusicDialog(props: { albumId: number; onClose: () => void; on
 
   // 3. state hooks
   // 4. query hooks
+  const { data: tags } = useQuery(tagRepository.list);
   const [createMusic, { loading }] = useMutation(musicRepository.create, {
     onSuccess: () => {
       enqueueSnackbar('음악이 등록되었습니다.', { variant: 'success' });
@@ -39,7 +54,7 @@ export function AddMusicDialog(props: { albumId: number; onClose: () => void; on
   });
 
   // 5. form hooks
-  const { setValue, register, handleSubmit } = useForm({
+  const { control, setValue, register, handleSubmit } = useForm({
     defaultValues: {
       thumbnailImageUrl: '',
       title: '',
@@ -50,6 +65,7 @@ export function AddMusicDialog(props: { albumId: number; onClose: () => void; on
       isAdultContent: false,
       isMain: false,
       albumId,
+      tagIds: [],
     },
     mode: 'onChange',
     resolver: yupResolver(yupSchema),
@@ -111,6 +127,40 @@ export function AddMusicDialog(props: { albumId: number; onClose: () => void; on
               <FormRow required label="타이틀곡" input={<Checkbox {...register('isMain')} />} />
             </Grid>
           </Grid>
+
+          <FormRow
+            required
+            label="태그"
+            input={
+              <Controller
+                control={control}
+                name="tagIds"
+                render={({ field: { onChange, value } }) => (
+                  <Select
+                    fullWidth
+                    multiple
+                    value={value || []}
+                    onChange={onChange}
+                    renderValue={(selected) => (
+                      <Box>
+                        {selected.map((id) => {
+                          const tag = tags?.items.find((tag) => Number(tag.id) === Number(id));
+                          return <Chip key={id} label={tag?.name} />;
+                        })}
+                      </Box>
+                    )}
+                  >
+                    {tags &&
+                      tags?.items.map((tag) => (
+                        <MenuItem key={tag.id} value={tag.id}>
+                          {tag.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                )}
+              />
+            }
+          />
 
           <Grid container spacing={2}>
             <Grid size={{ md: 12 }}>
