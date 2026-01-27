@@ -1,6 +1,7 @@
 export * from './AdminScreen';
 export * from './Album';
 export * from './ArtistScreen';
+export * from './FaqScreen';
 export * from './HomeScreen';
 export * from './LoginScreen';
 export * from './RolePolicyScreen';

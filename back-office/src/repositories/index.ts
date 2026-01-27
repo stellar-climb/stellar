@@ -1,6 +1,7 @@
 export * from './admin-repository';
 export * from './album-repository';
 export * from './artist-repository';
+export * from './faq-repository';
 export * from './history-repository';
 export * from './music-repository';
 export * from './role-policy-repository';

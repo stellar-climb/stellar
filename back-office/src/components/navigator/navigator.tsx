@@ -5,6 +5,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
 
 export function Navigator(props: { drawerWidth: number }) {
   // 1. destructure props
@@ -54,6 +55,7 @@ export function Navigator(props: { drawerWidth: number }) {
               ]}
             />
             <MenuList title="정책 관리" icon={<GavelIcon />} menuItems={[{ path: '/policies/roles', label: '권한' }]} />
+            <MenuList title="고객 지원" icon={<HeadsetMicIcon />} menuItems={[{ path: '/faqs', label: 'FAQ' }]} />
             <MenuList title="커뮤니티 글 관리" />
           </List>
         </Box>
