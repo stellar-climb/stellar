@@ -3,7 +3,6 @@ import { DddAggregate } from '@libs/ddd';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { AlbumUpdatedEvent } from './events';
 import { type Admin } from '@services/admins/domain/admin.entity';
-import { instanceToPlain } from 'class-transformer';
 
 type Ctor = {
   coverImageUrl: string;

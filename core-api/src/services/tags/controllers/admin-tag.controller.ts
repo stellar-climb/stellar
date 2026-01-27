@@ -43,7 +43,7 @@ export class AdminTagController {
   /**
    * 태그 수정
    */
-  @Put()
+  @Put(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: TagUpdateDto) {
     // 1. Destructure body, params, query
     // 2. Get context
@@ -57,7 +57,7 @@ export class AdminTagController {
   /**
    * 태그 삭제
    */
-  @Delete()
+  @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     // 1. Destructure body, params, query
     // 2. Get context
