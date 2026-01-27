@@ -1,17 +1,17 @@
 import { DddService } from '@libs/ddd';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AlbumRepository } from '../repository/album.repository';
-import { addDays, PaginationOptions, today } from '@libs/utils';
+import { PaginationOptions } from '@libs/utils';
 import { Transactional } from '@libs/decorators';
 import { Album } from '../domain/album.entity';
-import { MusicRepository } from '@services/music/repository/music.repository';
-import { MusicStatus } from '@services/music/domain/music.entity';
+import { AlbumPublishService } from '../domain/services/album-publish.service';
+import { Admin } from '@services/admins/domain/admin.entity';
 
 @Injectable()
 export class AdminAlbumService extends DddService {
   constructor(
     private readonly albumRepository: AlbumRepository,
-    private readonly musicRepository: MusicRepository
+    private readonly albumpPublishService: AlbumPublishService
   ) {
     super();
   }
@@ -63,6 +63,7 @@ export class AdminAlbumService extends DddService {
 
   @Transactional()
   async update({
+    admin,
     id,
     coverImageUrl,
     bannerImageUrl,
@@ -70,6 +71,7 @@ export class AdminAlbumService extends DddService {
     subTitle,
     publisher,
   }: {
+    admin: Admin;
     id: number;
     coverImageUrl?: string;
     bannerImageUrl?: string;
@@ -100,22 +102,7 @@ export class AdminAlbumService extends DddService {
   }
 
   @Transactional()
-  async changeOpen({ id, isOpen }: { id: number; isOpen: boolean }) {
-    const [[album], musics] = await Promise.all([
-      this.albumRepository.find({ id }),
-      this.musicRepository.find({
-        albumId: id,
-        maxExpectedPublishOn: addDays(today('YYYY-MM-DD'), 1, 'day'),
-      }),
-    ]);
-
-    if (!album) {
-      throw new BadRequestException('등록되지 않은 앨범입니다.', { cause: '등록되지 않은 앨범입니다.' });
-    }
-
-    album.changeOpen(isOpen);
-    musics.forEach((music) => music.update({ status: isOpen ? MusicStatus.PUBLISH : MusicStatus.INACTIVE }));
-
-    await Promise.all([this.albumRepository.save([album]), this.musicRepository.save(musics)]);
+  async changeOpen({ admin, id, isOpen }: { admin: Admin; id: number; isOpen: boolean }) {
+    await this.albumpPublishService.changeOpen({ albumId: id, isOpen, admin });
   }
 }

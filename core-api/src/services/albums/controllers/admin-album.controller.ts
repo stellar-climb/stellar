@@ -3,12 +3,17 @@ import { ApiTags } from '@nestjs/swagger';
 import { AdminAlbumService } from '../applications/admin-album.service';
 import { AdminGuard } from '@common/guards';
 import { AdminAlbumQueryDto, AlbumCreateDto, AlbumUpdateDto, AlbumChangeOpenDto } from './dto';
+import { Context, ContextKey } from '@common/context';
+import { Admin } from '@services/admins/domain/admin.entity';
 
 @ApiTags('[관리자] 앨범 API')
 @Controller('admins/albums')
 @UseGuards(AdminGuard)
 export class AdminAlbumController {
-  constructor(private readonly adminAlbumService: AdminAlbumService) {}
+  constructor(
+    private readonly adminAlbumService: AdminAlbumService,
+    private readonly context: Context
+  ) {}
 
   /**
    * 앨범 생성
@@ -61,8 +66,11 @@ export class AdminAlbumController {
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: AlbumUpdateDto) {
     // 1. Destructure body, params, query
     // 2. Get context
+    const admin = this.context.get<Admin>(ContextKey.ADMIN);
+
     // 3. Get result
-    await this.adminAlbumService.update({ id, ...body });
+    await this.adminAlbumService.update({ id, ...body, admin });
+
     // 4. Send response
     return {};
   }
@@ -88,10 +96,12 @@ export class AdminAlbumController {
   async changeOpen(@Param('id', ParseIntPipe) id: number, @Body() body: AlbumChangeOpenDto) {
     // 1. Destructure body, params, query
     // 2. Get context
+    const admin = this.context.get<Admin>(ContextKey.ADMIN);
+
     // 3. Get result
-    await this.adminAlbumService.changeOpen({ id, ...body });
+    await this.adminAlbumService.changeOpen({ id, admin, ...body });
 
     // 4. Send response
-    return {};
+    return { data: {} };
   }
 }

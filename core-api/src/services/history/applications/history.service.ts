@@ -6,6 +6,7 @@ import { QueueName } from '@common/event-box/queues';
 import { RolePolicyUpdatedEvent } from '@services/role-policy/domain/events';
 import { isEqual } from 'lodash';
 import { History } from '../domain/history.entity';
+import { AlbumUpdatedEvent } from '@services/albums/domain/events';
 
 @Injectable()
 export class HistoryService extends DddService {
@@ -26,6 +27,28 @@ export class HistoryService extends DddService {
       const history = new History({
         entity: 'rolePolicy',
         entityId: String(rolePolicyId),
+        adminId: admin?.id,
+        adminName: admin?.name ?? 'system',
+        log: changedFields,
+      });
+
+      await this.historyRepository.save([history]);
+    }
+  }
+
+  @Transactional()
+  @EventHandler(AlbumUpdatedEvent, QueueName.HISTORY, {
+    description: '앨범이 변경되면 변경 이력을 저장합니다.',
+  })
+  async handleAlbumUpdatedEvent(event: AlbumUpdatedEvent) {
+    const { albumId, before, after, admin } = event;
+
+    const changedFields = this.getChangedFields(before, after);
+
+    if (Object.keys(changedFields).length) {
+      const history = new History({
+        entity: 'album',
+        entityId: String(albumId),
         adminId: admin?.id,
         adminName: admin?.name ?? 'system',
         log: changedFields,

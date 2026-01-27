@@ -1,6 +1,9 @@
 import type { CalendarDate } from '@common/types';
 import { DddAggregate } from '@libs/ddd';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { AlbumUpdatedEvent } from './events';
+import { type Admin } from '@services/admins/domain/admin.entity';
+import { instanceToPlain } from 'class-transformer';
 
 type Ctor = {
   coverImageUrl: string;
@@ -51,23 +54,44 @@ export class Album extends DddAggregate {
     }
   }
 
-  update(args: {
-    coverImageUrl?: string;
-    bannerImageUrl?: string;
-    title?: string;
-    subTitle?: string;
-    publisher?: string;
-  }) {
+  update(
+    args: {
+      coverImageUrl?: string;
+      bannerImageUrl?: string;
+      title?: string;
+      subTitle?: string;
+      publisher?: string;
+    },
+    admin?: Admin
+  ) {
     const changedArgs = this.stripUnchanged(args);
 
     if (!changedArgs) {
       return;
     }
 
+    const previous = this.snapshot();
     Object.assign(this, changedArgs);
+
+    this.publishEvent(new AlbumUpdatedEvent(this.id, previous, this, admin));
   }
 
-  changeOpen(isOpen: boolean) {
+  changeOpen(isOpen: boolean, admin?: Admin) {
     this.isOpen = isOpen;
+
+    this.publishEvent(new AlbumUpdatedEvent(this.id, { isOpen: !isOpen }, { isOpen: this.isOpen }, admin));
+  }
+
+  private snapshot() {
+    return {
+      id: this.id,
+      coverImageUrl: this.coverImageUrl,
+      bannerImageUrl: this.bannerImageUrl,
+      title: this.title,
+      subTitle: this.subTitle,
+      publisher: this.publisher,
+      isOpen: this.isOpen,
+      publishedOn: this.publishedOn,
+    };
   }
 }
