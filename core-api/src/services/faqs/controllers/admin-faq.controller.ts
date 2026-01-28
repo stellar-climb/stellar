@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '@common/guards';
 import { AdminFaqService } from '../applications/admin-faq.service';
-import { FaqCreateDto, AdminFaqQueryDto } from './dto';
+import { FaqCreateDto, AdminFaqQueryDto, FaqUpdateDto } from './dto';
 
 @ApiTags('[관리자] FAQ API')
 @Controller('admins/faqs')
@@ -38,6 +38,20 @@ export class AdminFaqController {
 
     // 4. Send response
     return { data };
+  }
+
+  /**
+   * FAQ 수정
+   */
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() body: FaqUpdateDto) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminFaqService.update({ id, ...body });
+
+    // 4. Send response
+    return { data: {} };
   }
 
   /**

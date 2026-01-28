@@ -27,7 +27,7 @@ export function FaqScreen() {
 
   // 4. query hooks
   const { data: faqs, loading } = useQuery(faqRepository.list, {
-    variables: { page, limit, filter: { searchKey: search?.key, searchValue: search?.value } },
+    variables: { page, limit, filter: { search: search?.key, searchValue: search?.value } },
   });
   const [removeFaq] = useMutation(faqRepository.remove, {
     onSuccess: () => {

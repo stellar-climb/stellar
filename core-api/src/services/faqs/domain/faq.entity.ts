@@ -52,4 +52,14 @@ export class Faq extends DddAggregate {
       this.status = FaqStatus.PENDING;
     }
   }
+
+  update(args: { type?: FaqType; question?: string; answer?: string }) {
+    const changedArgs = this.stripUnchanged(args);
+
+    if (!changedArgs) {
+      return;
+    }
+
+    Object.assign(this, changedArgs);
+  }
 }

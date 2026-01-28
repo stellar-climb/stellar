@@ -1,5 +1,5 @@
-import { Button, Dialog, DialogActions, DialogContent, Stack, TextField } from '@mui/material';
-import type { Faq } from '@models';
+import { Button, Dialog, DialogActions, DialogContent, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { type Faq, FaqType, getFaqTypeLabelList } from '@models';
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import * as yup from 'yup';
@@ -8,6 +8,12 @@ import { DialogTitleGroup } from '../DialogTitleGroup';
 import { getDirtyValues, useMutation } from '@libs';
 import { faqRepository } from '@repositories';
 import { FormRow } from '../FormRow';
+
+const yupSchema = yup.object({
+  type: yup.mixed<FaqType>().oneOf(Object.values(FaqType)).optional(),
+  question: yup.string().optional().min(1, '빈 문자열은 허용되지 않습니다.'),
+  answer: yup.string().optional().min(1, '빈 문자열은 허용되지 않습니다.'),
+});
 
 export function EditFaqDialog(props: { faq: Faq; onClose: () => void; onKeyDown: React.KeyboardEventHandler }) {
   // 1. destructure props
@@ -20,7 +26,7 @@ export function EditFaqDialog(props: { faq: Faq; onClose: () => void; onKeyDown:
   // 4. query hooks
   const [updateFaq, { loading }] = useMutation(faqRepository.update, {
     onSuccess: () => {
-      enqueueSnackbar('FAQ가 수정되었습니다.');
+      enqueueSnackbar('FAQ가 수정되었습니다.', { variant: 'success' });
       onClose();
     },
     onError: (error) => {
@@ -40,6 +46,7 @@ export function EditFaqDialog(props: { faq: Faq; onClose: () => void; onKeyDown:
       answer: faq.answer,
     },
     mode: 'onChange',
+    resolver: yupResolver(yupSchema),
   });
 
   // 6. calculate values
@@ -51,8 +58,22 @@ export function EditFaqDialog(props: { faq: Faq; onClose: () => void; onKeyDown:
       <DialogTitleGroup title="FAQ 수정" onClose={onClose} />
       <DialogContent>
         <Stack spacing={1} css={{ width: '560px' }}>
-          <FormRow label="질문" required input={<TextField />} />
-          <FormRow label="답변" required input={<TextField />} />
+          <FormRow
+            required
+            label="유형"
+            input={
+              <Select fullWidth defaultValue={faq.type} {...register('type')}>
+                {getFaqTypeLabelList().map((item) => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            }
+          />
+
+          <FormRow label="질문" required input={<TextField {...register('question')} />} />
+          <FormRow label="답변" required input={<TextField {...register('answer')} />} />
         </Stack>
       </DialogContent>
       <DialogActions>

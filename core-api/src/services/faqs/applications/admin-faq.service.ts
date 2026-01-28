@@ -33,6 +33,18 @@ export class AdminFaqService extends DddService {
   }
 
   @Transactional()
+  async update({ id, type, question, answer }: { id: number; type?: FaqType; question?: string; answer?: string }) {
+    const [faq] = await this.faqRepository.find({ id });
+
+    if (!faq) {
+      throw new BadRequestException('존재하지 않는 FAQ입니다.', { cause: '존재하지 않는 FAQ입니다.' });
+    }
+
+    faq.update({ type, question, answer });
+    await this.faqRepository.save([faq]);
+  }
+
+  @Transactional()
   async remove({ id }: { id: number }) {
     const [faq] = await this.faqRepository.find({ id });
 

@@ -35,11 +35,11 @@ export class AdminAlbumController {
   @Get()
   async list(@Query() query: AdminAlbumQueryDto) {
     // 1. Destructure body, params, query
-    const { isOpen, ...options } = query;
+    const { isOpen, search, searchValue, ...options } = query;
 
     // 2. Get context
     // 3. Get result
-    const data = await this.adminAlbumService.list({ isOpen }, options);
+    const data = await this.adminAlbumService.list({ isOpen, search, searchValue }, options);
 
     // 4. Send response
     return { data };

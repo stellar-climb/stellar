@@ -42,10 +42,13 @@ export class AdminAlbumService extends DddService {
     await this.albumRepository.save([newAlbum]);
   }
 
-  async list({ isOpen }: { isOpen?: boolean }, options: PaginationOptions) {
+  async list(
+    { isOpen, search, searchValue }: { isOpen?: boolean; search?: string; searchValue?: string },
+    options: PaginationOptions
+  ) {
     const [albums, total] = await Promise.all([
-      this.albumRepository.find({ isOpen }, { options }),
-      this.albumRepository.count({ isOpen }),
+      this.albumRepository.find({ isOpen, search, searchValue }, { options }),
+      this.albumRepository.count({ isOpen, search, searchValue }),
     ]);
 
     return { items: albums, total };
