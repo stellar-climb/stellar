@@ -67,11 +67,10 @@ export class ConfigsService {
       region: this.configService.get('AWS_REGION'),
       accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
       secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
-      apiUrl: this.configService.get('AWS_API_URL'),
+      apiUrl: this.configService.get('AWS_API_URL') || undefined,
       bucketName: this.configService.get('AWS_S3_BUCKET'),
     };
 
-    this.validateConfig(config, 'aws');
     return config;
   }
 

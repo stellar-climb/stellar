@@ -11,7 +11,7 @@ export class AwsService {
   constructor(private readonly configsService: ConfigsService) {
     this.s3Client = new S3Client({
       region: this.configsService.aws.region,
-      endpoint: this.configsService.isLocal() ? this.configsService.aws.apiUrl : undefined,
+      endpoint: this.configsService.aws.apiUrl || 'https://stellar-contents.s3.ap-northeast-2.amazonaws.com',
       credentials: {
         accessKeyId: this.configsService.aws.accessKeyId,
         secretAccessKey: this.configsService.aws.secretAccessKey,
