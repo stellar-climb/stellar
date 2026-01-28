@@ -1,5 +1,5 @@
 {
-  "family": "core-api",
+  "family": "stellar-api",
   "containerDefinitions": [
     {
       "name": "core-api-container",
