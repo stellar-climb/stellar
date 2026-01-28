@@ -55,9 +55,15 @@ export function Navigator(props: { drawerWidth: number }) {
                 { path: '/tags', label: '태그' },
               ]}
             />
-            <MenuList title="정책 관리" icon={<GavelIcon />} menuItems={[{ path: '/policies/roles', label: '권한' }]} />
+            <MenuList
+              title="정책 관리"
+              icon={<GavelIcon />}
+              menuItems={[
+                { path: '/policies/roles', label: '권한' },
+                { path: '/policies/content-prices', label: '콘텐츠 가격' },
+              ]}
+            />
             <MenuList title="고객 지원" icon={<HeadsetMicIcon />} menuItems={[{ path: '/faqs', label: 'FAQ' }]} />
-            <MenuList title="커뮤니티 글 관리" />
           </List>
         </Box>
         <Box>

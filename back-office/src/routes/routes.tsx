@@ -11,6 +11,7 @@ import {
   TagScreen,
   FaqScreen,
   AdminScreen,
+  ContentPricePolicyScreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -58,7 +59,9 @@ export function AppRouter() {
               <Route index element={<ArtistScreen />} />
             </Route>
             <Route path="/policies">
+              <Route index element={<Navigate to="/policies/roles" />} />
               <Route path="roles" element={<RolePolicyScreen />} />
+              <Route path="content-prices" element={<ContentPricePolicyScreen />} />
             </Route>
 
             <Route path="/albums">
