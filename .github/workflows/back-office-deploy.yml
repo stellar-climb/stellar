@@ -15,6 +15,7 @@ jobs:
       CDF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
       VITE_CORE_API_URL: ${{ secrets.CORE_API_URL }}
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      VITE_GOOGLE_REDIRECT_URL: ${{ secrets.GOOGLE_REDIRECT_URL }}
     defaults:
       run:
         working-directory: ./back-office
