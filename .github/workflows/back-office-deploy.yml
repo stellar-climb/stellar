@@ -11,6 +11,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      CDF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
     defaults:
       run:
         working-directory: ./back-office
@@ -44,6 +46,6 @@ jobs:
           aws s3 sync dist s3://${{ secrets.S3_BUCKET_NAME }} --delete
 
       - name: Invalidate CloudFront
-        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        if: env.CDF_ID != ''
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{ env.CDF_ID }} --paths "/*"
