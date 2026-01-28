@@ -37,7 +37,61 @@
         "timeout": 5,
         "retries": 3,
         "startPeriod": 60
-      }
+      },
+      "secrets": [
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:MYSQL_HOST::",
+          "name": "MYSQL_HOST"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:MYSQL_PORT::",
+          "name": "MYSQL_USERNAME"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:MYSQL_USER::",
+          "name": "MYSQL_PASSWORD"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:MYSQL_PASSWORD::",
+          "name": "MYSQL_DATABASE"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:REDIS_HOST::",
+          "name": "REDIS_HOST"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:REDIS_PASSWORD::",
+          "name": "GOOGLE_CLIENT_ID"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:GOOGLE_CLIENT_SECRET_KEY::",
+          "name": "GOOGLE_CLIENT_SECRET_KEY"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:GOOGLE_REDIRECT_URL::",
+          "name": "GOOGLE_REDIRECT_URI"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:AWS_REGION::",
+          "name": "AWS_REGION"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:AWS_ACCESS_KEY_ID::",
+          "name": "AWS_ACCESS_KEY_ID"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:AWS_SECRET_ACCESS_KEY::",
+          "name": "AWS_SECRET_ACCESS_KEY"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:AWS_API_URL::",
+          "name": "AWS_API_URL"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:684711272335:secret:prod/stellar/core-api-wI1GX4:AWS_S3_BUCKET::",
+          "name": "AWS_S3_BUCKET"
+        }
+      ]
     }
   ],
   "networkMode": "bridge",
