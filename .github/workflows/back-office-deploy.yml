@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CDF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-      VITE_CORE_API_URL: http://localhost:3000/admins
+      VITE_CORE_API_URL: ${{ secrets.CORE_API_URL }}
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       VITE_GOOGLE_REDIRECT_URL: ${{ secrets.GOOGLE_REDIRECT_URL }}
     defaults:
