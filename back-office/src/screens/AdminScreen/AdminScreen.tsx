@@ -48,23 +48,23 @@ export function AdminScreen() {
       width: 120,
       valueFormatter: (value) => (value ? format(value) : '-'),
     },
-    {
-      field: 'id',
-      headerName: '',
-      align: 'center',
-      width: 100,
-      renderCell: ({ row }) => (
-        <DialogButton
-          render={({ onOpen }) => (
-            <Button color="primary" size="small" onClick={onOpen}>
-              수정
-            </Button>
-          )}
-        >
-          {({ onClose, onKeyDown }) => <EditAdminDialog admin={row} onClose={onClose} onKeyDown={onKeyDown} />}
-        </DialogButton>
-      ),
-    },
+    // {
+    //   field: 'id',
+    //   headerName: '',
+    //   align: 'center',
+    //   width: 100,
+    //   renderCell: ({ row }) => (
+    //     <DialogButton
+    //       render={({ onOpen }) => (
+    //         <Button color="primary" size="small" onClick={onOpen}>
+    //           수정
+    //         </Button>
+    //       )}
+    //     >
+    //       {({ onClose, onKeyDown }) => <EditAdminDialog admin={row} onClose={onClose} onKeyDown={onKeyDown} />}
+    //     </DialogButton>
+    //   ),
+    // },
   ];
   const rows = admins?.items || [];
   const totalCount = admins?.total || 0;

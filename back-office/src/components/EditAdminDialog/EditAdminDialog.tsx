@@ -1,7 +1,8 @@
-import { Dialog, DialogActions, DialogContent, TextField, Stack } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, Button, Stack, TextField } from '@mui/material';
 import { DialogTitleGroup } from '../DialogTitleGroup';
 import type { AdminModel } from '@models';
 import { format } from '@libs';
+import { FormRow } from '../FormRow';
 
 export function EditAdminDialog(props: {
   admin: AdminModel;
@@ -23,13 +24,15 @@ export function EditAdminDialog(props: {
     <Dialog open onKeyDown={onKeyDown}>
       <DialogTitleGroup title="관리자 수정" onClose={onClose} />
       <DialogContent css={{ width: '520px' }}>
-        <Stack direction="column" spacing={2}>
-          <TextField label="이름" value={admin.name} disabled />
-          <TextField label="이메일" value={admin.email} disabled />
-          <TextField label="퇴사일" value={admin.exitOn ? format(admin.exitOn) : ''} disabled />
+        <Stack direction="column" spacing={1}>
+          <FormRow label="이름" input={<TextField value={admin.name} disabled />} />
+          <FormRow label="이메일" input={<TextField value={admin.email} disabled />} />
+          <FormRow label="퇴사일" input={<TextField value={admin.exitOn ? format(admin.exitOn) : '-'} disabled />} />
         </Stack>
       </DialogContent>
-      <DialogActions>fda</DialogActions>
+      <DialogActions>
+        <Button color="primary">수정</Button>
+      </DialogActions>
     </Dialog>
   );
 }
