@@ -20,7 +20,7 @@ export class AdminAuthService extends DddService {
   async googleSignIn({ code }: { code: string }) {
     const { email, name, picture, sub } = await this.googleService.getAccessToken(code);
 
-    if (email !== 'jeangho293@gmail.com') {
+    if (email !== 'jeangho293@gmail.com' && email !== 'kimmogeum@gmail.com') {
       throw new UnauthorizedException('You are not authorized to access this resource');
     }
 
