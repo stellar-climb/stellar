@@ -11,5 +11,25 @@ import { Album } from '@services/albums/domain/album.entity';
 import { File } from '@services/files/domain/file.entity';
 import { Music } from '@services/music/domain/music.entity';
 import { Faq } from '@services/faqs/domain/faq.entity';
+import { Hero } from '@services/heros/domain/hero.entity';
+import { HeroItem } from '@services/heros/domain/hero-item.entity';
+import { HeroItemLink } from '@services/heros/domain/hero-item-link.entity';
 
-export default [Token, User, DddEvent, Admin, Role, RolePolicy, History, Artist, Tag, Album, File, Music, Faq];
+export default [
+  Token,
+  User,
+  DddEvent,
+  Admin,
+  Role,
+  RolePolicy,
+  History,
+  Artist,
+  Tag,
+  Album,
+  File,
+  Music,
+  Faq,
+  Hero,
+  HeroItem,
+  HeroItemLink,
+];
