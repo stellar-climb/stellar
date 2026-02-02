@@ -34,8 +34,8 @@ export class Hero extends DddAggregate {
   }
 
   static of(args: HeroCtor) {
-    if (args.type === HeroType.HOME) {
-      // const heroItems = args.heroItems.map((heroItem) => HeroItem.of(heroItem));
-    }
+    const heroItems = args.heroItems.map((item) => HeroItem.of(item));
+
+    return new Hero({ type: args.type, heroItems });
   }
 }
