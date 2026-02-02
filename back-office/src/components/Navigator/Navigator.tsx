@@ -6,6 +6,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
+import TvIcon from '@mui/icons-material/Tv';
 
 export function Navigator(props: { drawerWidth: number }) {
   // 1. destructure props
@@ -55,6 +56,7 @@ export function Navigator(props: { drawerWidth: number }) {
                 { path: '/tags', label: '태그' },
               ]}
             />
+            <MenuList title="섹션 관리" icon={<TvIcon />} menuItems={[{ path: '/sections/heroes', label: '배너' }]} />
             <MenuList
               title="정책 관리"
               icon={<GavelIcon />}

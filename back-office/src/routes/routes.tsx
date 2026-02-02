@@ -12,6 +12,7 @@ import {
   FaqScreen,
   AdminScreen,
   ContentPricePolicyScreen,
+  HeroScreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -58,15 +59,21 @@ export function AppRouter() {
             <Route path="/artists">
               <Route index element={<ArtistScreen />} />
             </Route>
+
+            <Route path="/albums">
+              <Route index element={<AlbumScreen />} />
+              <Route path=":id" element={<AlbumDetailScreen />} />
+            </Route>
+
             <Route path="/policies">
               <Route index element={<Navigate to="/policies/roles" />} />
               <Route path="roles" element={<RolePolicyScreen />} />
               <Route path="content-prices" element={<ContentPricePolicyScreen />} />
             </Route>
 
-            <Route path="/albums">
-              <Route index element={<AlbumScreen />} />
-              <Route path=":id" element={<AlbumDetailScreen />} />
+            <Route path="/sections">
+              <Route index element={<Navigate to="/sections/heroes" />} />
+              <Route path="heroes" element={<HeroScreen />} />
             </Route>
 
             <Route path="/tags">

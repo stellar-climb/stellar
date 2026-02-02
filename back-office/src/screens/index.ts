@@ -6,5 +6,6 @@ export * from './FaqScreen';
 export * from './HomeScreen';
 export * from './LoginScreen';
 export * from './RolePolicyScreen';
+export * from './Section';
 export * from './TagScreen';
 export * from './UserScreen';
