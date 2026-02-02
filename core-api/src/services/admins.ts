@@ -9,6 +9,7 @@ import { AdminTagModule } from './tags/admin-tag.module';
 import { AdminAlbumModule } from './albums/admin-album.module';
 import { AdminFileModule } from './files/admin-file.module';
 import { AdminMusicModule } from './music/admin-music.module';
+import { AdminSeriesModule } from './series/admin-series.module';
 import { AdminFaqModule } from './faqs/admin-faq.module';
 
 export default [
@@ -23,5 +24,6 @@ export default [
   AdminAlbumModule,
   AdminFileModule,
   AdminMusicModule,
+  AdminSeriesModule,
   AdminFaqModule,
 ];
