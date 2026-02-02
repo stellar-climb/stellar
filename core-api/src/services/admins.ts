@@ -10,6 +10,7 @@ import { AdminAlbumModule } from './albums/admin-album.module';
 import { AdminFileModule } from './files/admin-file.module';
 import { AdminMusicModule } from './music/admin-music.module';
 import { AdminFaqModule } from './faqs/admin-faq.module';
+import { AdminHeroModule } from './heros/admin-hero.module';
 
 export default [
   AdminUserModule,
@@ -24,4 +25,5 @@ export default [
   AdminFileModule,
   AdminMusicModule,
   AdminFaqModule,
+  AdminHeroModule,
 ];
