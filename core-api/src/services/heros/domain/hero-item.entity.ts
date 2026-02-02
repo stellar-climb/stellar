@@ -56,7 +56,7 @@ export class HeroItem extends DddAggregate {
   @OneToOne(() => HeroItemLink, (heroItemLink) => heroItemLink.heroItem)
   heroItemLink?: HeroItemLink;
 
-  constructor(args: HeroItemCtor) {
+  private constructor(args: HeroItemCtor) {
     super();
 
     if (args) {
@@ -68,5 +68,9 @@ export class HeroItem extends DddAggregate {
       // NOTE: 초기화
       this.status = HeroItemStatus.PENDING;
     }
+  }
+
+  static of(args: HeroItemCtor) {
+    // TODO: homeIemType에 따라서 switch 돌리자.
   }
 }
