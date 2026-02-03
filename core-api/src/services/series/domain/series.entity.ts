@@ -15,7 +15,7 @@ export enum SeriesMakingType {
 }
 
 type Ctor = {
-  thumbnailImageUrl: string;
+  coverImageUrl: string;
   name: string;
   writer: string;
   illustrator: string;
@@ -33,7 +33,7 @@ export class Series extends DddAggregate {
   id: number;
 
   @Column()
-  thumbnailImageUrl: string;
+  coverImageUrl: string;
 
   @Column()
   name: string;
@@ -72,7 +72,7 @@ export class Series extends DddAggregate {
     super();
 
     if (args) {
-      this.thumbnailImageUrl = args.thumbnailImageUrl;
+      this.coverImageUrl = args.coverImageUrl;
       this.name = args.name;
       this.writer = args.writer;
       this.illustrator = args.illustrator;

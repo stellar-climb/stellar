@@ -1,4 +1,4 @@
-import { Stack, Chip, Box } from '@mui/material';
+import { Stack, Chip, Box, Button } from '@mui/material';
 import {
   BreadCrumb,
   ListViewHeader,
@@ -7,6 +7,7 @@ import {
   type GridColDef,
   Pagination,
   BoxLink,
+  AddSeriesDialog,
 } from '@components';
 import { gradients, useQuery, format } from '@libs';
 import { useState } from 'react';
@@ -120,6 +121,17 @@ export function SeriesScreen() {
             setPage(1);
             setSearch({ key: searchKey, value: searchValue });
           }}
+          addButton={
+            <DialogButton
+              render={({ onOpen }) => (
+                <Button onClick={onOpen} css={{ background: gradients.primary }}>
+                  + 추가
+                </Button>
+              )}
+            >
+              {({ onClose, onKeyDown }) => <AddSeriesDialog onClose={onClose} onKeydown={onKeyDown} />}
+            </DialogButton>
+          }
         />
       </Stack>
       <CustomDataGrid loading={loading} columns={columns} rows={rows} />

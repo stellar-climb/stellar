@@ -3,6 +3,7 @@ export * from './AddArtistDialog';
 export * from './AddFaqDialog';
 export * from './AddMusicDialog';
 export * from './AddRolePolicyDialog';
+export * from './AddSeriesDialog';
 export * from './AddTagDialog';
 export * from './AlbumBasicInfoSection';
 export * from './BoxLink';
