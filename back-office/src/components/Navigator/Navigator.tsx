@@ -52,8 +52,9 @@ export function Navigator(props: { drawerWidth: number }) {
               title="콘텐츠 관리"
               icon={<AudiotrackIcon />}
               menuItems={[
-                { path: '/albums', label: '앨범' },
-                { path: '/tags', label: '태그' },
+                { path: '/contents/series', label: '시리즈' },
+                { path: '/contents/albums', label: '앨범' },
+                { path: '/contents/tags', label: '태그' },
               ]}
             />
             <MenuList title="섹션 관리" icon={<TvIcon />} menuItems={[{ path: '/sections/heroes', label: '배너' }]} />

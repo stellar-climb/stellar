@@ -11,6 +11,7 @@ import {
   TagScreen,
   FaqScreen,
   AdminScreen,
+  SeriesScreen,
   ContentPricePolicyScreen,
   HeroScreen,
 } from '@screens';
@@ -60,9 +61,20 @@ export function AppRouter() {
               <Route index element={<ArtistScreen />} />
             </Route>
 
-            <Route path="/albums">
-              <Route index element={<AlbumScreen />} />
-              <Route path=":id" element={<AlbumDetailScreen />} />
+            {/* 컨텐츠 메뉴 */}
+            <Route path="/contents">
+              <Route path="series">
+                <Route index element={<SeriesScreen />} />
+              </Route>
+
+              <Route path="albums">
+                <Route index element={<AlbumScreen />} />
+                <Route path=":id" element={<AlbumDetailScreen />} />
+              </Route>
+
+              <Route path="tags">
+                <Route index element={<TagScreen />} />
+              </Route>
             </Route>
 
             <Route path="/policies">
@@ -74,10 +86,6 @@ export function AppRouter() {
             <Route path="/sections">
               <Route index element={<Navigate to="/sections/heroes" />} />
               <Route path="heroes" element={<HeroScreen />} />
-            </Route>
-
-            <Route path="/tags">
-              <Route index element={<TagScreen />} />
             </Route>
 
             <Route path="/faqs">

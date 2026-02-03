@@ -6,5 +6,6 @@ export * from './faq-model';
 export * from './history-model';
 export * from './music-model';
 export * from './role-policy-model';
+export * from './series-model';
 export * from './tag-model';
 export * from './user-model';

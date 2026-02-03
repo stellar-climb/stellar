@@ -1,6 +1,6 @@
 export * from './AdminScreen';
-export * from './Album';
 export * from './ArtistScreen';
+export * from './Content';
 export * from './ContentPricePolicyScreen';
 export * from './FaqScreen';
 export * from './HomeScreen';

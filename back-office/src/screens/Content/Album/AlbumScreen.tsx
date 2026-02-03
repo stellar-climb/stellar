@@ -36,7 +36,7 @@ export function AlbumScreen() {
       field: 'id',
       headerName: 'ID',
       width: 80,
-      renderCell: ({ value }) => <BoxLink to={`/albums/${value}`}>{value}</BoxLink>,
+      renderCell: ({ value }) => <BoxLink to={`/contents/albums/${value}`}>{value}</BoxLink>,
     },
     { field: 'title', headerName: '앨범명', width: 120 },
     { field: 'subTitle', headerName: '부재', width: 120 },
