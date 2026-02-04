@@ -72,4 +72,16 @@ export class AdminSeriesService extends DddService {
 
     return series;
   }
+
+  @Transactional()
+  async changeOpen({ id, isOpen }: { id: number; isOpen: boolean }) {
+    const [series] = await this.seriesRepository.find({ id });
+
+    if (!series) {
+      throw new NotFoundException('시리즈를 찾을 수 없습니다.', { cause: '시리즈를 찾을 수 없습니다.' });
+    }
+
+    series.update({ isOpen });
+    await this.seriesRepository.save([series]);
+  }
 }

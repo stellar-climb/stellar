@@ -26,3 +26,4 @@ export * from './MusicListSection';
 export * from './Navigator';
 export * from './Pagination';
 export * from './Section';
+export * from './SeriesBasicInfoSection';

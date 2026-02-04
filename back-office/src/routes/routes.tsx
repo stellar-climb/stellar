@@ -14,6 +14,7 @@ import {
   SeriesScreen,
   ContentPricePolicyScreen,
   HeroScreen,
+  SeriesDetailScreen,
 } from '@screens';
 import { Layout } from './base-layout';
 
@@ -65,6 +66,7 @@ export function AppRouter() {
             <Route path="/contents">
               <Route path="series">
                 <Route index element={<SeriesScreen />} />
+                <Route path=":id" element={<SeriesDetailScreen />} />
               </Route>
 
               <Route path="albums">

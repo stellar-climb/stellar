@@ -88,4 +88,14 @@ export class Series extends DddAggregate {
       this.isOpen = false;
     }
   }
+
+  update(args: { isOpen?: boolean }) {
+    const chagedArgs = this.stripUnchanged(args);
+
+    if (!chagedArgs) {
+      return;
+    }
+
+    Object.assign(this, chagedArgs);
+  }
 }

@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Query, UseGuards, ParseIntPipe, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, ParseIntPipe, Param, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminSeriesService } from '../applications/admin-series.service';
 import { AdminGuard } from '@common/guards';
-import { SeriesCreateDto, SeriesQueryDto } from './dto';
+import { SeriesChangeOpenDto, SeriesCreateDto, SeriesQueryDto } from './dto';
 
 @ApiTags('[관리자] 시리즈 API')
 @Controller('admins/series')
@@ -52,5 +52,19 @@ export class AdminSeriesController {
 
     // 4. Send response
     return { data };
+  }
+
+  /**
+   * 시리즈 공개/비공개 변경
+   */
+  @Put(':id/open')
+  async changeOpen(@Param('id', ParseIntPipe) id: number, @Body() body: SeriesChangeOpenDto) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminSeriesService.changeOpen({ id, ...body });
+
+    // 4. Send response
+    return { data: {} };
   }
 }
