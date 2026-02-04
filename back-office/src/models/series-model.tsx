@@ -14,7 +14,7 @@ export enum SeriesMakingType {
 }
 
 export interface SeriesModel {
-  id: string;
+  id: number;
   coverImageUrl: string;
   name: string;
   writer: string;

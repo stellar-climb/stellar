@@ -89,7 +89,17 @@ export class Series extends DddAggregate {
     }
   }
 
-  update(args: { isOpen?: boolean }) {
+  update(args: {
+    coverImageUrl?: string;
+    name?: string;
+    writer?: string;
+    illustrator?: string;
+    publisher?: string;
+    isAdultContent?: boolean;
+    description?: string;
+    makingType?: SeriesMakingType;
+    isOpen?: boolean;
+  }) {
     const chagedArgs = this.stripUnchanged(args);
 
     if (!chagedArgs) {
