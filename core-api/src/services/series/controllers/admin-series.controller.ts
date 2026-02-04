@@ -1,8 +1,8 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminSeriesService } from '../applications/admin-series.service';
 import { AdminGuard } from '@common/guards';
-import { SeriesQueryDto } from './dto';
+import { SeriesCreateDto, SeriesQueryDto } from './dto';
 
 @ApiTags('[관리자] 시리즈 API')
 @Controller('admins/series')
@@ -24,5 +24,19 @@ export class AdminSeriesController {
 
     // 4. Send response
     return { data };
+  }
+
+  /**
+   * 시리즈 생성
+   */
+  @Post()
+  async create(@Body() body: SeriesCreateDto) {
+    // 1. Destructure body, params, query
+    // 2. Get context
+    // 3. Get result
+    await this.adminSeriesService.create({ ...body });
+
+    // 4. Send response
+    return { data: {} };
   }
 }

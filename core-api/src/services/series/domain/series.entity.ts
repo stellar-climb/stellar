@@ -1,6 +1,6 @@
 import { DddAggregate } from '@libs/ddd';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { type CalendarDate } from '../../../common/types';
+import { type CalendarDate } from '@common/types';
 
 export enum SeriesStatus {
   PENDING = 'pending',

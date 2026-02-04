@@ -9,7 +9,7 @@ export class SeriesRepository extends DddRepository<Series> {
   entityClass = Series;
 
   async find(
-    conditions: { id?: number; search?: string; searchValue?: string; name?: string; makingType?: SeriesMakingType },
+    conditions: { id?: number; name?: string; search?: string; searchValue?: string; makingType?: SeriesMakingType },
     options?: TypeormRelationOptions<Series>
   ) {
     return this.entityManager.find(this.entityClass, {
