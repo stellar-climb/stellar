@@ -1,8 +1,8 @@
 import { useMutation, getDirtyValues } from '@libs';
 import { seriesRepository } from '@repositories';
-import { Stack, Typography, Chip, Switch, Button, IconButton, Box } from '@mui/material';
+import { Stack, Typography, Chip, Switch, Button, IconButton, TextField } from '@mui/material';
 import { useState } from 'react';
-import { ConfirmDialog, DialogButton, DeleteConfirmDialog, FormRow, FileUploadButton } from '@components';
+import { ConfirmDialog, DialogButton, DeleteConfirmDialog, FormRow, FileUploadButton, FormBox } from '@components';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import type { SeriesMakingType, SeriesModel } from '@models';
@@ -157,30 +157,23 @@ export function SeriesBasicInfoSection(props: { series: SeriesModel }) {
         label="커버 사진"
         required
         input={
-          isEditing ? (
-            <FileUploadButton
-              maxFiles={1}
-              initialFiles={[series.coverImageUrl]}
-              onUploadComplete={(urls) => {
-                if (urls.length > 0) {
-                  setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
-                }
-              }}
-            />
-          ) : (
-            <Box
-              component="img"
-              src={series.coverImageUrl}
-              alt="Series Cover"
-              css={{
-                width: '244px',
-                height: '244px',
-                objectFit: 'cover',
-                border: '1px solid #e0e0e0',
-              }}
-            />
-          )
+          <FileUploadButton
+            maxFiles={1}
+            readOnly={!isEditing}
+            initialFiles={[series.coverImageUrl]}
+            onUploadComplete={(urls) => {
+              if (urls.length > 0) {
+                setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
+              }
+            }}
+          />
         }
+      />
+
+      <FormRow
+        label="시리즈명"
+        required
+        input={isEditing ? <TextField {...register('name')} error={!!errors.name} /> : <FormBox>{series.name}</FormBox>}
       />
 
       {/* ConfirmDialog */}

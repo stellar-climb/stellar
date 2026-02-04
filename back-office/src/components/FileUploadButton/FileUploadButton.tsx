@@ -1,6 +1,5 @@
-// components/FileUploadButton.tsx
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { useDropzone, ErrorCode } from 'react-dropzone'; // ErrorCode import 추가
+import { useDropzone, ErrorCode } from 'react-dropzone';
 import {
   Box,
   Typography,
@@ -19,10 +18,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useFileUpload } from '@libs';
-import { Height } from '@mui/icons-material';
+import { useFileUpload } from '@libs'; // 실제 프로젝트 경로에 맞게 유지
 
-// ... (인터페이스 및 헬퍼 함수 기존과 동일) ...
 interface UploadFileState {
   file: File;
   preview?: string;
@@ -31,30 +28,34 @@ interface UploadFileState {
 }
 
 interface FileUploadButtonProps {
-  onUploadComplete: (urls: string[]) => void;
+  onUploadComplete?: (urls: string[]) => void; // readOnly일 때는 선택적일 수 있음
   initialFiles?: string[];
-  maxFiles?: number; // 부모에서 설정 가능 (기본값 5)
+  maxFiles?: number;
   maxSize?: number;
   accept?: Record<string, string[]>;
-  width?: string;
-  height?: string;
+  width?: string | number;
+  height?: string | number;
   description?: string;
+  readOnly?: boolean; // [추가] 읽기 전용 모드 (View 모드)
 }
 
 export function FileUploadButton(props: FileUploadButtonProps) {
   const {
     onUploadComplete,
     initialFiles = [],
-    maxFiles = 5, // 기본값 5개
+    maxFiles = 5,
     maxSize = 5242880,
     accept = { 'image/*': ['.png', '.jpg', '.jpeg'] },
     width = '100%',
-    height = '100%',
+    height = '200px', // 기본 높이
     description = '',
+    readOnly = false, // 기본값 false
   } = props;
 
   const theme = useTheme();
   const { uploadFile } = useFileUpload();
+
+  // 초기 상태 설정
   const [fileList, setFileList] = useState<UploadFileState[]>(() => {
     if (initialFiles.length > 0) {
       return initialFiles.map((url) => ({
@@ -66,14 +67,36 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     }
     return [];
   });
+
   const prevUrlsRef = useRef<string[]>([]);
 
-  // ⭐ [핵심 1] 현재 제한 도달 여부 계산
+  // [중요] 외부에서 initialFiles(DB 데이터)가 늦게 로드되거나 변경될 경우 동기화
+  useEffect(() => {
+    // 1. 이미 파일이 있고, 내용이 같다면 업데이트 스킵 (무한 루프 방지)
+    const currentUrls = fileList.map((f) => f.s3Url).filter(Boolean);
+    const isSame =
+      initialFiles.length === currentUrls.length && initialFiles.every((url, index) => url === currentUrls[index]);
+
+    if (!isSame) {
+      setFileList(
+        initialFiles.map((url) => ({
+          file: new File([], '기존 이미지'),
+          preview: url,
+          status: 'success',
+          s3Url: url,
+        }))
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFiles]);
+
   const isLimitReached = fileList.length >= maxFiles;
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      // (기존 업로드 로직 동일)
+      // readOnly 상태면 드롭 무시
+      if (readOnly) return;
+
       const newFiles: UploadFileState[] = acceptedFiles.map((file) => ({
         file,
         preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
@@ -81,13 +104,11 @@ export function FileUploadButton(props: FileUploadButtonProps) {
       }));
 
       setFileList((prev) => {
-        // 여기서도 slice를 통해 최대 개수를 한 번 더 방어
         const combined = [...prev, ...newFiles].slice(0, maxFiles);
         return combined;
       });
 
       for (const fileState of newFiles) {
-        // ... (업로드 로직 동일)
         try {
           const s3Url = await uploadFile(fileState.file);
           setFileList((prev) =>
@@ -100,64 +121,88 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         }
       }
     },
-    [maxFiles, uploadFile]
+    [maxFiles, uploadFile, readOnly]
   );
 
-  // ... (useEffect 및 handleRemove 동일) ...
   useEffect(() => {
+    // readOnly거나 핸들러가 없으면 스킵
+    if (readOnly || !onUploadComplete) return;
+
     const currentSuccessUrls = fileList
       .filter((item) => item.status === 'success' && item.s3Url)
       .map((item) => item.s3Url!);
+
     const isChanged = JSON.stringify(prevUrlsRef.current) !== JSON.stringify(currentSuccessUrls);
+
     if (isChanged) {
       prevUrlsRef.current = currentSuccessUrls;
       onUploadComplete(currentSuccessUrls);
     }
-  }, [fileList, onUploadComplete]);
+  }, [fileList, onUploadComplete, readOnly]);
 
   const handleRemove = (index: number) => {
+    if (readOnly) return; // readOnly 삭제 불가
+
     setFileList((prev) => {
       const target = prev[index];
-      if (target.preview) URL.revokeObjectURL(target.preview);
+      // 새로 올린 파일의 미리보기 URL 해제 (메모리 누수 방지)
+      if (target.preview && !initialFiles.includes(target.preview)) {
+        URL.revokeObjectURL(target.preview);
+      }
       return prev.filter((_, i) => i !== index);
     });
   };
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
-    maxFiles: maxFiles - fileList.length, // 남은 개수만큼만 허용
+    maxFiles: maxFiles - fileList.length,
     maxSize,
     accept,
-    disabled: isLimitReached, // ⭐ [핵심 2] 제한 도달 시 클릭/드래그 비활성화
+    disabled: isLimitReached || readOnly, // readOnly일 때 드롭존 비활성화
   });
 
-  // 스타일 설정
+  // 스타일 정의
+  const defaultStyle = {
+    // readOnly일 때는 실선(View 모드), 편집 모드일 땐 점선(Dropzone 모드)
+    border: readOnly ? '1px solid' : '2px dashed',
+    borderColor: readOnly
+      ? theme.palette.grey[300]
+      : isLimitReached
+        ? theme.palette.grey[300]
+        : theme.palette.grey[400],
+    padding: readOnly ? 0 : theme.spacing(2), // View 모드일 땐 padding 없이 꽉 채움
+    textAlign: 'center' as const,
+    cursor: readOnly ? 'default' : isLimitReached ? 'not-allowed' : 'pointer',
+    backgroundColor: readOnly
+      ? 'transparent'
+      : isLimitReached
+        ? theme.palette.action.disabledBackground
+        : theme.palette.background.paper,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%', // 부모 Box를 꽉 채움
+    transition: 'all 0.2s ease-in-out',
+    boxSizing: 'border-box' as const,
+    overflow: 'hidden', // 이미지가 둥근 모서리를 넘지 않도록
+    position: 'relative' as const,
+  };
+
   const activeStyle = {
     borderColor: theme.palette.primary.main,
     backgroundColor: theme.palette.action.hover,
   };
 
-  const defaultStyle = {
-    // ... 기존 스타일 동일 ...
-    border: '2px dashed',
-    borderColor: isLimitReached ? theme.palette.grey[300] : theme.palette.grey[400], // 비활성 시 연하게
-    padding: theme.spacing(2),
-    textAlign: 'center' as const,
-    cursor: isLimitReached ? 'not-allowed' : 'pointer', // 마우스 커서 변경
-    backgroundColor: isLimitReached ? theme.palette.action.disabledBackground : theme.palette.background.paper,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '150px',
-    position: 'relative' as const,
-  };
-
-  // ... (renderSingleFileContent 동일) ...
-  // 단일 파일 렌더링을 위한 헬퍼 컴포넌트
+  // 단일 파일 렌더링 (View 모드 겸용)
   const renderSingleFileContent = (item: UploadFileState) => (
-    <Stack alignItems="center" spacing={1} sx={{ width: '100%', p: 1 }}>
-      {/* 1. 미리보기 이미지 또는 아이콘 */}
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      spacing={1}
+      sx={{ width: '100%', height: '100%', position: 'relative' }}
+    >
       {item.preview ? (
         <Box
           component="img"
@@ -165,178 +210,184 @@ export function FileUploadButton(props: FileUploadButtonProps) {
           alt="preview"
           sx={{
             width: '100%',
-            maxHeight: 200,
+            height: '100%',
             objectFit: 'contain',
-            borderRadius: 1,
-            mb: 0.5,
+            borderRadius: readOnly ? 0 : 1,
           }}
         />
       ) : (
-        <InsertDriveFileIcon sx={{ fontSize: 60, color: 'action.active', mb: 1 }} />
+        <InsertDriveFileIcon sx={{ fontSize: 48, color: 'action.active' }} />
       )}
 
-      {/* 2. 파일 이름 */}
-      <Typography variant="subtitle2" noWrap sx={{ maxWidth: '90%', fontWeight: 600 }}>
-        {item.file.name}
-      </Typography>
-
-      {/* 3. [사이즈] - [상태] - [삭제버튼] 한 줄 정렬 */}
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 1 }}>
-        {/* 상태 표시 (구분선 | 추가) */}
-        <Box sx={{ width: '1px', height: '12px', bgcolor: 'grey.300' }} />
-
-        {/* 상태 아이콘 및 텍스트 */}
-        {item.status === 'uploading' && (
-          <Stack direction="row" alignItems="center" spacing={0.5}>
-            <CircularProgress size={14} />
-            <Typography variant="caption" color="primary" fontWeight="bold">
-              업로드 중
-            </Typography>
-          </Stack>
-        )}
-        {item.status === 'success' && (
-          <Stack direction="row" alignItems="center" spacing={0.5}>
-            <CheckCircleIcon color="success" sx={{ fontSize: 18 }} />
-            <Typography variant="caption" color="success.main" fontWeight="bold">
-              완료
-            </Typography>
-          </Stack>
-        )}
-        {item.status === 'error' && (
-          <Stack direction="row" alignItems="center" spacing={0.5}>
-            <ErrorIcon color="error" sx={{ fontSize: 18 }} />
-            <Typography variant="caption" color="error" fontWeight="bold">
-              실패
-            </Typography>
-          </Stack>
-        )}
-
-        {/* ⭐ 삭제 버튼: 완료 아이콘 바로 옆으로 이동 */}
-        <IconButton
-          onClick={(e) => {
-            e.stopPropagation();
-            handleRemove(0);
-          }}
-          disabled={item.status === 'uploading'} // 업로드 중엔 삭제 방지
+      {/* readOnly가 아닐 때만 하단 정보/삭제 버튼 표시 */}
+      {!readOnly && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
           sx={{
-            'ml': 1, // 상태 텍스트와 약간 간격 두기
-            'padding': 0.5,
-            'border': `1px solid ${theme.palette.grey[300]}`, // 테두리 추가해서 버튼처럼 보이게
-            '&:hover': { bgcolor: 'grey.100' },
+            position: 'absolute',
+            top: 1,
+            right: 1,
+            bgcolor: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(2px)',
+            px: 0.5,
+            py: 0.5,
+            borderRadius: 1,
+            boxShadow: 1,
+            zIndex: 10, // 이미지 위에 확실히 뜨도록
           }}
         >
-          <DeleteIcon color="error" css={{ borderRadius: '50%', backgroundColor: '#FFFFFF', padding: '4px' }} />
-        </IconButton>
-      </Stack>
+          {item.status === 'uploading' && <CircularProgress size={14} />}
+          {item.status === 'success' && <CheckCircleIcon color="success" sx={{ fontSize: 18 }} />}
+          {item.status === 'error' && <ErrorIcon color="error" sx={{ fontSize: 18 }} />}
+
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleRemove(0);
+            }}
+            disabled={item.status === 'uploading'}
+            sx={{
+              'padding': 0.5,
+              '&:hover': { bgcolor: 'rgba(0,0,0,0.05)' },
+            }}
+          >
+            <DeleteIcon fontSize="small" color="error" />
+          </IconButton>
+        </Stack>
+      )}
     </Stack>
   );
 
   return (
-    <Box width={width} height={height}>
-      <Box {...getRootProps()} sx={{ ...defaultStyle, ...(isDragActive ? activeStyle : {}) }}>
-        <input {...getInputProps()} />
+    <Box sx={{ width, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      {/* 메인 박스 영역 - width/height Props 적용 */}
+      <Box sx={{ height, width: '100%', position: 'relative' }}>
+        <Box
+          {...getRootProps()}
+          sx={{
+            ...defaultStyle,
+            ...(isDragActive && !readOnly ? activeStyle : {}),
+          }}
+        >
+          <input {...getInputProps()} />
 
-        {/* 1개 파일 미리보기 모드 */}
-        {fileList.length === 1 && maxFiles === 1 ? (
-          renderSingleFileContent(fileList[0])
-        ) : (
-          <>
-            <CloudUploadIcon
-              sx={{
-                fontSize: 48,
-                color: isLimitReached ? 'text.disabled' : isDragActive ? 'primary.main' : 'grey.500',
-                mb: 1,
-              }}
-            />
-            <Typography variant="subtitle1" color={isLimitReached ? 'text.disabled' : 'textPrimary'}>
-              {isLimitReached
-                ? '최대 업로드 개수 도달'
-                : isDragActive
-                  ? '여기에 파일을 놓으세요'
-                  : '파일 선택 또는 드래그'}
-            </Typography>
-
-            <Typography variant="caption" color={isLimitReached ? 'text.disabled' : 'textPrimary'}>
-              {description}
-            </Typography>
-
-            {/* ⭐ [핵심 3] 사용자에게 현재 상태/최대 개수 알려주기 */}
-            <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
-              {isLimitReached
-                ? `더 이상 업로드할 수 없습니다 (최대 ${maxFiles}개)`
-                : `(현재 ${fileList.length}개 / 최대 ${maxFiles}개)`}
-            </Typography>
-          </>
-        )}
+          {/* 1. 파일이 1개일 때 (단일 파일 모드) */}
+          {fileList.length === 1 && maxFiles === 1 ? (
+            renderSingleFileContent(fileList[0])
+          ) : (
+            // 2. 파일이 없거나, 여러 개일 때의 UI
+            <>
+              {readOnly ? (
+                // [View 모드] 파일 없음
+                <Stack alignItems="center" spacing={1}>
+                  <InsertDriveFileIcon sx={{ fontSize: 40, color: 'text.disabled', opacity: 0.5 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    등록된 이미지가 없습니다.
+                  </Typography>
+                </Stack>
+              ) : (
+                // [Edit 모드] 업로드 안내
+                <>
+                  <CloudUploadIcon
+                    sx={{
+                      fontSize: 42,
+                      color: isLimitReached ? 'text.disabled' : isDragActive ? 'primary.main' : 'grey.500',
+                      mb: 1,
+                    }}
+                  />
+                  <Typography variant="body2" color={isLimitReached ? 'text.disabled' : 'textPrimary'} fontWeight={500}>
+                    {isLimitReached
+                      ? '최대 업로드 개수 도달'
+                      : isDragActive
+                        ? '여기에 파일을 놓으세요'
+                        : '파일 선택 또는 드래그'}
+                  </Typography>
+                  {description && (
+                    <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
+                      {description}
+                    </Typography>
+                  )}
+                  <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
+                    {isLimitReached ? `(최대 ${maxFiles}개 완료)` : `(${fileList.length} / ${maxFiles}개)`}
+                  </Typography>
+                </>
+              )}
+            </>
+          )}
+        </Box>
       </Box>
 
-      {/* 에러 메시지: 개수 초과 시 메시지 표시 */}
-      {fileRejections.length > 0 && (
-        <Box mt={2}>
+      {/* 에러 메시지 (readOnly 아닐 때만) */}
+      {!readOnly && fileRejections.length > 0 && (
+        <Box>
           {fileRejections.map(({ file, errors }) => {
-            // ⭐ 개수 초과 에러 메시지 커스텀
             const errorMsg = errors.find((e) => e.code === ErrorCode.TooManyFiles)
               ? `최대 ${maxFiles}개까지만 업로드 가능합니다.`
               : errors[0].message;
-
             return (
-              <Alert severity="error" key={file.name} sx={{ mb: 1 }}>
-                {file.name}: {errorMsg}
+              <Alert severity="error" key={file.name} sx={{ py: 0, px: 1, fontSize: '0.75rem', mb: 0.5 }}>
+                {errorMsg}
               </Alert>
             );
           })}
         </Box>
       )}
 
-      {/* 리스트 렌더링 (단일 파일 모드(maxFiles=1)가 아닐 때만 표시) */}
+      {/* 멀티 파일 리스트 (단일 파일 모드가 아닐 때 + 파일이 있을 때) */}
       {!(maxFiles === 1 && fileList.length === 1) && fileList.length > 0 && (
-        <List sx={{ mt: 2 }}>
-          {/* ... 기존 리스트 렌더링 로직 동일 ... */}
+        <List sx={{ pt: 0 }}>
           {fileList.map((item, index) => (
-            <Paper key={index} variant="outlined" sx={{ mb: 1 }}>
+            <Paper key={index} variant="outlined" sx={{ mb: 0.5, p: 0.5 }}>
               <ListItem
+                disablePadding
+                sx={{ px: 1 }}
                 secondaryAction={
-                  <IconButton edge="end" onClick={() => handleRemove(index)} disabled={item.status === 'uploading'}>
-                    <DeleteIcon />
-                  </IconButton>
+                  !readOnly && ( // readOnly일 땐 삭제 버튼 숨김
+                    <IconButton
+                      edge="end"
+                      size="small"
+                      onClick={() => handleRemove(index)}
+                      disabled={item.status === 'uploading'}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  )
                 }
               >
-                {/* 썸네일/아이콘 렌더링 */}
                 {item.preview ? (
                   <Box
                     component="img"
                     src={item.preview}
                     alt="preview"
-                    sx={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 1, mr: 2 }}
+                    sx={{ width: 32, height: 32, objectFit: 'cover', borderRadius: 1, mr: 1.5 }}
                   />
                 ) : (
-                  <InsertDriveFileIcon sx={{ mr: 2, fontSize: 40, color: 'action.active' }} />
+                  <InsertDriveFileIcon sx={{ mr: 1.5, fontSize: 32, color: 'action.active' }} />
                 )}
-
                 <ListItemText
-                  primary={item.file.name}
+                  primary={item.file.name === '기존 이미지' ? '업로드된 파일' : item.file.name}
+                  slotProps={{
+                    primary: {
+                      variant: 'caption',
+                      noWrap: true,
+                      sx: { maxWidth: '150px', display: 'block' },
+                    },
+                  }}
                   secondary={
-                    <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      {item.status === 'uploading' && (
-                        <Typography variant="caption" color="primary" sx={{ display: 'flex', alignItems: 'center' }}>
-                          <CircularProgress size={12} sx={{ mr: 0.5 }} /> 업로드 중...
-                        </Typography>
-                      )}
-                      {item.status === 'success' && (
+                    !readOnly && ( // readOnly일 땐 상태 텍스트 굳이 안 보여줘도 됨 (원하면 제거 가능)
+                      <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+                        {item.status === 'uploading' && <CircularProgress size={10} sx={{ mr: 0.5 }} />}
                         <Typography
                           variant="caption"
-                          color="success.main"
-                          sx={{ display: 'flex', alignItems: 'center' }}
+                          color={item.status === 'success' ? 'success.main' : 'textSecondary'}
                         >
-                          <CheckCircleIcon sx={{ fontSize: 14, mr: 0.5 }} /> 완료
+                          {item.status === 'uploading' ? '업로드 중' : item.status === 'success' ? '완료' : '실패'}
                         </Typography>
-                      )}
-                      {item.status === 'error' && (
-                        <Typography variant="caption" color="error" sx={{ display: 'flex', alignItems: 'center' }}>
-                          <ErrorIcon sx={{ fontSize: 14, mr: 0.5 }} /> 실패
-                        </Typography>
-                      )}
-                    </Box>
+                      </Box>
+                    )
                   }
                 />
               </ListItem>
