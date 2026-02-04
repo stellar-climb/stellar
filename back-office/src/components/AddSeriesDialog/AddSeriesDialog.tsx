@@ -29,6 +29,7 @@ type SeriesFormValues = {
   publisher: string;
   isAdultContent: boolean;
   makingType: SeriesMakingType;
+  description: string;
 };
 
 const yupSchema = yup.object({
@@ -39,6 +40,7 @@ const yupSchema = yup.object({
   publisher: yup.string().required('발매사는 필수입니다.'),
   isAdultContent: yup.boolean().required('성인용 여부는 필수입니다.'),
   makingType: yup.mixed<SeriesMakingType>().required('제작 유형은 필수입니다.'),
+  description: yup.string().required('줄거리은 필수입니다.'),
 });
 
 export function AddSeriesDialog(props: { onClose: () => void; onKeydown: React.KeyboardEventHandler }) {
@@ -76,6 +78,7 @@ export function AddSeriesDialog(props: { onClose: () => void; onKeydown: React.K
       publisher: '',
       isAdultContent: false,
       makingType: SeriesMakingType.GENERAL,
+      description: '',
     },
     mode: 'onChange',
     resolver: yupResolver(yupSchema),
@@ -145,6 +148,9 @@ export function AddSeriesDialog(props: { onClose: () => void; onKeydown: React.K
                   />
                 }
               />
+            </Grid>
+            <Grid size={{ md: 12 }}>
+              <FormRow required label="줄거리" input={<TextField {...register('description')} multiline rows={4} />} />
             </Grid>
           </Grid>
         </Stack>
