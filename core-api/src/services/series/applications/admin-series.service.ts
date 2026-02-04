@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DddService } from '@libs/ddd';
 import { SeriesRepository } from '../repository/series.repository';
 import { PaginationOptions } from '@libs/utils';
@@ -61,5 +61,15 @@ export class AdminSeriesService extends DddService {
     ]);
 
     return { items: seriesList, total };
+  }
+
+  async retrieve({ id }: { id: number }) {
+    const [series] = await this.seriesRepository.find({ id });
+
+    if (!series) {
+      throw new NotFoundException('시리즈를 찾을 수 없습니다.', { cause: '시리즈를 찾을 수 없습니다.' });
+    }
+
+    return series;
   }
 }
