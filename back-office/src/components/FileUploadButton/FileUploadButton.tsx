@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'; // useCallback 제거
+import { useEffect, useState, useRef } from 'react';
 import { useDropzone, ErrorCode } from 'react-dropzone';
 import {
   Box,
@@ -55,10 +55,10 @@ export function FileUploadButton(props: FileUploadButtonProps) {
   const theme = useTheme();
   const { uploadFile } = useFileUpload();
 
-  // 1. 유효한 초기 파일 목록 계산 (Helper)
+  // 1. Helper
   const getValidFiles = (files: string[]) => files.filter((url) => url && url.trim() !== '');
 
-  // 2. 내부 상태 (fileList)
+  // 2. 내부 상태
   const [fileList, setFileList] = useState<UploadFileState[]>(() => {
     const validFiles = getValidFiles(initialFiles);
     if (validFiles.length > 0) {
@@ -72,17 +72,30 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     return [];
   });
 
-  // 3. Render Phase에서 Prop 변경 감지 및 State 동기화 (Derived State Pattern)
+  // 3. 상태 추적 (Derived State)
   const [prevFilesProp, setPrevFilesProp] = useState<string[]>(() => getValidFiles(initialFiles));
+
+  // [추가] readOnly 모드 변경 감지를 위한 state
+  const [prevReadOnly, setPrevReadOnly] = useState(readOnly);
+
   const currentValidFiles = getValidFiles(initialFiles);
 
+  // (A) 부모가 준 파일 목록이 바뀌었는지 체크
   const isPropChanged =
     currentValidFiles.length !== prevFilesProp.length || !currentValidFiles.every((url, i) => url === prevFilesProp[i]);
 
-  if (isPropChanged) {
+  // (B) [추가] 모드(readOnly)가 바뀌었는지 체크 (Edit <-> View)
+  const isModeChanged = prevReadOnly !== readOnly;
+
+  // [수정] 파일이 바뀌었거나 OR 모드가 바뀌었으면 초기화 실행
+  if (isPropChanged || isModeChanged) {
     setPrevFilesProp(currentValidFiles);
+    setPrevReadOnly(readOnly); // 현재 모드로 업데이트
+
     setFileList((prev) => {
+      // 모드가 바뀌어서 초기화될 때는 무조건 initialFiles(DB값) 기준으로 돌아가야 함
       return currentValidFiles.map((url) => {
+        // 기존 상태 유지 (깜빡임 방지)
         const existingItem = prev.find((item) => item.s3Url === url);
         if (existingItem) return existingItem;
 
@@ -99,8 +112,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
   const prevUrlsRef = useRef<string[]>([]);
   const isLimitReached = fileList.length >= maxFiles;
 
-  // [수정 핵심] useCallback 제거
-  // React Compiler가 활성화된 환경에서는 useCallback을 제거하면 컴파일러가 자동으로 최적화합니다.
+  // 4. Drop Handler
   const onDrop = async (acceptedFiles: File[]) => {
     if (readOnly) return;
 
@@ -134,7 +146,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     }
   };
 
-  // 업로드 완료 콜백 처리
+  // 5. Upload Complete Callback
   useEffect(() => {
     if (readOnly || !onUploadComplete) return;
 
@@ -173,7 +185,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     disabled: (maxFiles !== 1 && isLimitReached) || readOnly,
   });
 
-  // 스타일 정의
   const defaultStyle = {
     border: readOnly ? '1px solid' : '2px dashed',
     borderColor: readOnly
@@ -329,7 +340,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         </Box>
       </Box>
 
-      {/* 에러 메시지 */}
       {!readOnly && fileRejections.length > 0 && (
         <Box>
           {fileRejections.map(({ file, errors }) => {
@@ -345,7 +355,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         </Box>
       )}
 
-      {/* 멀티 파일 리스트 */}
       {!(maxFiles === 1 && fileList.length === 1) && fileList.length > 0 && (
         <List sx={{ pt: 0 }}>
           {fileList.map((item, index) => (

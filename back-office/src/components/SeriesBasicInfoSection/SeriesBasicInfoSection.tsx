@@ -1,6 +1,6 @@
 import { useMutation, getDirtyValues } from '@libs';
 import { seriesRepository } from '@repositories';
-import { Stack, Typography, Chip, Switch, Button, IconButton, TextField } from '@mui/material';
+import { Stack, Typography, Chip, Switch, Button, IconButton, TextField, Grid } from '@mui/material';
 import { useState } from 'react';
 import { ConfirmDialog, DialogButton, DeleteConfirmDialog, FormRow, FileUploadButton, FormBox } from '@components';
 import { useSnackbar } from 'notistack';
@@ -177,6 +177,35 @@ export function SeriesBasicInfoSection(props: { series: SeriesModel }) {
         required
         input={isEditing ? <TextField {...register('name')} error={!!errors.name} /> : <FormBox>{series.name}</FormBox>}
       />
+
+      <Grid container spacing={1}>
+        <Grid size={{ md: 6 }}>
+          <FormRow
+            label="작가"
+            required
+            input={
+              isEditing ? (
+                <TextField {...register('writer')} error={!!errors.writer} />
+              ) : (
+                <FormBox>{series.writer}</FormBox>
+              )
+            }
+          />
+        </Grid>
+        <Grid size={{ md: 6 }}>
+          <FormRow
+            label="그림 작가"
+            required
+            input={
+              isEditing ? (
+                <TextField {...register('illustrator')} error={!!errors.illustrator} />
+              ) : (
+                <FormBox>{series.illustrator}</FormBox>
+              )
+            }
+          />
+        </Grid>
+      </Grid>
 
       {/* ConfirmDialog */}
       <ConfirmDialog

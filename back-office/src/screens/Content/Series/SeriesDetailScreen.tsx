@@ -22,11 +22,11 @@ export function SeriesDetailScreen() {
       <BreadCrumb
         items={[
           { label: '시리즈', path: '/contents/series' },
-          { label: '시리즈 상세 정보', path: `/contents/series/${id}` },
+          { label: '상세 정보', path: `/contents/series/${id}` },
         ]}
       />
       <Stack direction="row" css={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <ListViewHeader title="시리즈 상세 정보" />
+        <ListViewHeader title="상세 정보" />
       </Stack>
 
       {loading || !series ? (
