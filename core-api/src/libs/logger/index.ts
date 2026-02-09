@@ -14,7 +14,7 @@ const logFormat = printf(({ level, message, timestamp }: { level: string; messag
 const isLocal = process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'development';
 
 export const logger = WinstonModule.createLogger({
-  defaultMeta: { service: 'pudding-dev' },
+  defaultMeta: { service: `stellar-${isLocal ? 'dev' : 'prod'}` },
   transports: [
     new winston.transports.Console({
       level: isLocal ? 'debug' : 'info',

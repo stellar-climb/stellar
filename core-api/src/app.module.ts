@@ -6,9 +6,10 @@ import { CommonModule } from '@common/common.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ContextMiddleware, UUIDMiddleware } from '@middlewares';
 import { RequestLoggerInterceptor } from '@libs/interceptors';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import admins from './services/admins';
 import generals from './services/generals';
+import { ExceptionFilter } from '@libs/filters';
 
 @Module({
   imports: [DatabasesModule, ConfigsModule, CommonModule, EventEmitterModule.forRoot(), ...admins, ...generals],
@@ -17,6 +18,10 @@ import generals from './services/generals';
     {
       provide: APP_INTERCEPTOR,
       useClass: RequestLoggerInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionFilter,
     },
   ],
 })
