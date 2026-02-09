@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { logger } from '@libs/logger';
 
 (async () => {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger });
   const port = process.env.PORT ?? 3000;
 
   app.enableCors({
@@ -15,6 +16,6 @@ import { AppModule } from './app.module';
   app.enableShutdownHooks();
 
   await app.listen(port, () => {
-    console.log(`Server is running on port ${port}.🚀 `);
+    logger.log(`Server is running on port ${port}.🚀 `);
   });
 })();
