@@ -33,6 +33,7 @@ export class AdminSeriesService extends DddService {
   }) {
     const [duplicatedSeries] = await this.seriesRepository.find({ name });
 
+    console.log(coverImageUrl);
     if (duplicatedSeries) {
       throw new BadRequestException('이미 존재하는 시리즈명입니다.', { cause: '이미 존재하는 시리즈명입니다.' });
     }

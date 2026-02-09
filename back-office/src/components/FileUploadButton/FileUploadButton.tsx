@@ -28,7 +28,7 @@ interface UploadFileState {
 }
 
 interface FileUploadButtonProps {
-  onUploadComplete?: (urls: string[]) => void; // readOnly일 때는 선택적일 수 있음
+  onUploadComplete?: (urls: string[]) => void;
   initialFiles?: string[];
   maxFiles?: number;
   maxSize?: number;
@@ -36,7 +36,7 @@ interface FileUploadButtonProps {
   width?: string | number;
   height?: string | number;
   description?: string;
-  readOnly?: boolean; // [추가] 읽기 전용 모드 (View 모드)
+  readOnly?: boolean;
 }
 
 export function FileUploadButton(props: FileUploadButtonProps) {
@@ -47,18 +47,19 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     maxSize = 5242880,
     accept = { 'image/*': ['.png', '.jpg', '.jpeg'] },
     width = '100%',
-    height = '200px', // 기본 높이
+    height = '200px',
     description = '',
-    readOnly = false, // 기본값 false
+    readOnly = false,
   } = props;
 
   const theme = useTheme();
   const { uploadFile } = useFileUpload();
 
-  // 초기 상태 설정
+  // [수정 1] 초기화 시 빈 문자열 필터링 (회색 아이콘 이슈 해결)
   const [fileList, setFileList] = useState<UploadFileState[]>(() => {
-    if (initialFiles.length > 0) {
-      return initialFiles.map((url) => ({
+    const validFiles = initialFiles.filter((url) => url && url.trim() !== '');
+    if (validFiles.length > 0) {
+      return validFiles.map((url) => ({
         file: new File([], '기존 이미지'),
         preview: url,
         status: 'success',
@@ -70,22 +71,40 @@ export function FileUploadButton(props: FileUploadButtonProps) {
 
   const prevUrlsRef = useRef<string[]>([]);
 
-  // [중요] 외부에서 initialFiles(DB 데이터)가 늦게 로드되거나 변경될 경우 동기화
   useEffect(() => {
-    // 1. 이미 파일이 있고, 내용이 같다면 업데이트 스킵 (무한 루프 방지)
-    const currentUrls = fileList.map((f) => f.s3Url).filter(Boolean);
+    const validInitialFiles = initialFiles.filter((url) => url && url.trim() !== '');
+    const currentFiles = fileList;
+
+    // 1. 개수가 다르면 무조건 동기화해야 함
+    // 2. 개수가 같아도 내용이 다르면 동기화해야 함
     const isSame =
-      initialFiles.length === currentUrls.length && initialFiles.every((url, index) => url === currentUrls[index]);
+      validInitialFiles.length === currentFiles.length &&
+      validInitialFiles.every((url, index) => url === currentFiles[index].s3Url);
 
     if (!isSame) {
-      setFileList(
-        initialFiles.map((url) => ({
-          file: new File([], '기존 이미지'),
-          preview: url,
-          status: 'success',
-          s3Url: url,
-        }))
-      );
+      setFileList((prev) => {
+        // [핵심 해결책]
+        // 무조건 새로운 객체로 덮어쓰지 말고,
+        // 기존에 이미 가지고 있는 파일(URL이 같은 것)이라면 '기존 상태(preview blob)'를 유지합니다.
+
+        return validInitialFiles.map((url) => {
+          // 현재 로컬 리스트에서 동일한 s3Url을 가진 항목을 찾음
+          const existingItem = prev.find((item) => item.s3Url === url);
+
+          if (existingItem) {
+            // 이미 로컬에 있다면, 미리보기(blob)가 살아있는 그 객체를 그대로 씀 (깜빡임 X)
+            return existingItem;
+          }
+
+          // 로컬에 없다면(새로 DB에서 불러온 것), 새로 만듦
+          return {
+            file: new File([], '기존 이미지'),
+            preview: url,
+            status: 'success',
+            s3Url: url,
+          };
+        });
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFiles]);
@@ -94,7 +113,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      // readOnly 상태면 드롭 무시
       if (readOnly) return;
 
       const newFiles: UploadFileState[] = acceptedFiles.map((file) => ({
@@ -103,9 +121,19 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         status: 'uploading',
       }));
 
+      // [수정 3] maxFiles가 1개일 때 새 파일로 '교체'되도록 수정
       setFileList((prev) => {
-        const combined = [...prev, ...newFiles].slice(0, maxFiles);
-        return combined;
+        if (maxFiles === 1) {
+          // 기존 파일 미리보기 해제 (메모리 누수 방지)
+          prev.forEach((item) => {
+            if (item.preview && !initialFiles.includes(item.preview)) {
+              URL.revokeObjectURL(item.preview);
+            }
+          });
+          return newFiles; // 덮어쓰기
+        }
+        // 여러 개일 때는 기존 로직 (추가)
+        return [...prev, ...newFiles].slice(0, maxFiles);
       });
 
       for (const fileState of newFiles) {
@@ -121,12 +149,16 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         }
       }
     },
-    [maxFiles, uploadFile, readOnly]
+    [maxFiles, uploadFile, readOnly, initialFiles]
   );
 
+  // [수정 4] 업로드 완료 콜백 처리 (핵심: uploading 상태일 땐 콜백 안 보냄)
   useEffect(() => {
-    // readOnly거나 핸들러가 없으면 스킵
     if (readOnly || !onUploadComplete) return;
+
+    // 업로드 중인 파일이 하나라도 있으면 대기 (URL이 아직 없으므로)
+    const isUploading = fileList.some((item) => item.status === 'uploading');
+    if (isUploading) return;
 
     const currentSuccessUrls = fileList
       .filter((item) => item.status === 'success' && item.s3Url)
@@ -141,11 +173,10 @@ export function FileUploadButton(props: FileUploadButtonProps) {
   }, [fileList, onUploadComplete, readOnly]);
 
   const handleRemove = (index: number) => {
-    if (readOnly) return; // readOnly 삭제 불가
+    if (readOnly) return;
 
     setFileList((prev) => {
       const target = prev[index];
-      // 새로 올린 파일의 미리보기 URL 해제 (메모리 누수 방지)
       if (target.preview && !initialFiles.includes(target.preview)) {
         URL.revokeObjectURL(target.preview);
       }
@@ -155,27 +186,27 @@ export function FileUploadButton(props: FileUploadButtonProps) {
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
-    maxFiles: maxFiles - fileList.length,
+    // maxFiles가 1개일 때는 항상 드롭 가능하게 함 (교체를 위해)
+    maxFiles: maxFiles === 1 ? 1 : maxFiles - fileList.length,
     maxSize,
     accept,
-    disabled: isLimitReached || readOnly, // readOnly일 때 드롭존 비활성화
+    disabled: (maxFiles !== 1 && isLimitReached) || readOnly,
   });
 
   // 스타일 정의
   const defaultStyle = {
-    // readOnly일 때는 실선(View 모드), 편집 모드일 땐 점선(Dropzone 모드)
     border: readOnly ? '1px solid' : '2px dashed',
     borderColor: readOnly
       ? theme.palette.grey[300]
-      : isLimitReached
+      : isLimitReached && maxFiles !== 1
         ? theme.palette.grey[300]
         : theme.palette.grey[400],
-    padding: readOnly ? 0 : theme.spacing(2), // View 모드일 땐 padding 없이 꽉 채움
+    padding: readOnly ? 0 : theme.spacing(2),
     textAlign: 'center' as const,
-    cursor: readOnly ? 'default' : isLimitReached ? 'not-allowed' : 'pointer',
+    cursor: readOnly ? 'default' : isLimitReached && maxFiles !== 1 ? 'not-allowed' : 'pointer',
     backgroundColor: readOnly
       ? 'transparent'
-      : isLimitReached
+      : isLimitReached && maxFiles !== 1
         ? theme.palette.action.disabledBackground
         : theme.palette.background.paper,
     display: 'flex',
@@ -183,10 +214,10 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: '100%', // 부모 Box를 꽉 채움
+    height: '100%',
     transition: 'all 0.2s ease-in-out',
     boxSizing: 'border-box' as const,
-    overflow: 'hidden', // 이미지가 둥근 모서리를 넘지 않도록
+    overflow: 'hidden',
     position: 'relative' as const,
   };
 
@@ -195,7 +226,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     backgroundColor: theme.palette.action.hover,
   };
 
-  // 단일 파일 렌더링 (View 모드 겸용)
   const renderSingleFileContent = (item: UploadFileState) => (
     <Stack
       alignItems="center"
@@ -219,7 +249,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         <InsertDriveFileIcon sx={{ fontSize: 48, color: 'action.active' }} />
       )}
 
-      {/* readOnly가 아닐 때만 하단 정보/삭제 버튼 표시 */}
       {!readOnly && (
         <Stack
           direction="row"
@@ -227,15 +256,15 @@ export function FileUploadButton(props: FileUploadButtonProps) {
           spacing={1}
           sx={{
             position: 'absolute',
-            top: 1,
-            right: 1,
+            top: 5,
+            right: 5,
             bgcolor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(2px)',
             px: 0.5,
             py: 0.5,
             borderRadius: 1,
             boxShadow: 1,
-            zIndex: 10, // 이미지 위에 확실히 뜨도록
+            zIndex: 10,
           }}
         >
           {item.status === 'uploading' && <CircularProgress size={14} />}
@@ -263,7 +292,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
 
   return (
     <Box sx={{ width, display: 'flex', flexDirection: 'column', gap: 1 }}>
-      {/* 메인 박스 영역 - width/height Props 적용 */}
       <Box sx={{ height, width: '100%', position: 'relative' }}>
         <Box
           {...getRootProps()}
@@ -274,14 +302,13 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         >
           <input {...getInputProps()} />
 
-          {/* 1. 파일이 1개일 때 (단일 파일 모드) */}
+          {/* 단일 파일 모드: 파일이 1개 있고, maxFiles가 1일 때 */}
           {fileList.length === 1 && maxFiles === 1 ? (
             renderSingleFileContent(fileList[0])
           ) : (
-            // 2. 파일이 없거나, 여러 개일 때의 UI
+            // 파일이 없거나(0개), 여러 개일 때(List형태)의 UI
             <>
               {readOnly ? (
-                // [View 모드] 파일 없음
                 <Stack alignItems="center" spacing={1}>
                   <InsertDriveFileIcon sx={{ fontSize: 40, color: 'text.disabled', opacity: 0.5 }} />
                   <Typography variant="body2" color="text.secondary">
@@ -289,17 +316,21 @@ export function FileUploadButton(props: FileUploadButtonProps) {
                   </Typography>
                 </Stack>
               ) : (
-                // [Edit 모드] 업로드 안내
                 <>
                   <CloudUploadIcon
                     sx={{
                       fontSize: 42,
-                      color: isLimitReached ? 'text.disabled' : isDragActive ? 'primary.main' : 'grey.500',
+                      color:
+                        isLimitReached && maxFiles !== 1 ? 'text.disabled' : isDragActive ? 'primary.main' : 'grey.500',
                       mb: 1,
                     }}
                   />
-                  <Typography variant="body2" color={isLimitReached ? 'text.disabled' : 'textPrimary'} fontWeight={500}>
-                    {isLimitReached
+                  <Typography
+                    variant="body2"
+                    color={isLimitReached && maxFiles !== 1 ? 'text.disabled' : 'textPrimary'}
+                    fontWeight={500}
+                  >
+                    {isLimitReached && maxFiles !== 1
                       ? '최대 업로드 개수 도달'
                       : isDragActive
                         ? '여기에 파일을 놓으세요'
@@ -320,7 +351,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         </Box>
       </Box>
 
-      {/* 에러 메시지 (readOnly 아닐 때만) */}
+      {/* 에러 메시지 */}
       {!readOnly && fileRejections.length > 0 && (
         <Box>
           {fileRejections.map(({ file, errors }) => {
@@ -345,7 +376,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
                 disablePadding
                 sx={{ px: 1 }}
                 secondaryAction={
-                  !readOnly && ( // readOnly일 땐 삭제 버튼 숨김
+                  !readOnly && (
                     <IconButton
                       edge="end"
                       size="small"
@@ -377,7 +408,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
                     },
                   }}
                   secondary={
-                    !readOnly && ( // readOnly일 땐 상태 텍스트 굳이 안 보여줘도 됨 (원하면 제거 가능)
+                    !readOnly && (
                       <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
                         {item.status === 'uploading' && <CircularProgress size={10} sx={{ mr: 0.5 }} />}
                         <Typography

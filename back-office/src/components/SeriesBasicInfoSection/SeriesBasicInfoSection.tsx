@@ -70,6 +70,7 @@ export function SeriesBasicInfoSection(props: { series: SeriesModel }) {
     handleSubmit,
     formState: { isValid, isDirty, errors, dirtyFields },
     setValue,
+    watch,
   } = useForm<SeriesFormValues>({
     defaultValues: {
       coverImageUrl: series.coverImageUrl,
@@ -86,6 +87,7 @@ export function SeriesBasicInfoSection(props: { series: SeriesModel }) {
 
   // 6. calculate values
   const isSubmittable = !isDirty || !isValid;
+  const currentCoverUrl = watch('coverImageUrl');
 
   // 7. effect hooks
   // 8. handlers
@@ -160,10 +162,12 @@ export function SeriesBasicInfoSection(props: { series: SeriesModel }) {
           <FileUploadButton
             maxFiles={1}
             readOnly={!isEditing}
-            initialFiles={[series.coverImageUrl]}
+            initialFiles={currentCoverUrl ? [currentCoverUrl] : []}
             onUploadComplete={(urls) => {
               if (urls.length > 0) {
                 setValue('coverImageUrl', urls[0], { shouldDirty: true, shouldValidate: true });
+              } else {
+                setValue('coverImageUrl', '', { shouldDirty: true, shouldValidate: true });
               }
             }}
           />

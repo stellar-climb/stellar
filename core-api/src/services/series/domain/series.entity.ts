@@ -100,12 +100,12 @@ export class Series extends DddAggregate {
     makingType?: SeriesMakingType;
     isOpen?: boolean;
   }) {
-    const chagedArgs = this.stripUnchanged(args);
+    const changedArgs = this.stripUnchanged(args);
 
-    if (!chagedArgs) {
+    if (!changedArgs) {
       return;
     }
 
-    Object.assign(this, chagedArgs);
+    Object.assign(this, changedArgs);
   }
 }
