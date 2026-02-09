@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react'; // useCallback 제거
 import { useDropzone, ErrorCode } from 'react-dropzone';
 import {
   Box,
@@ -18,7 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useFileUpload } from '@libs'; // 실제 프로젝트 경로에 맞게 유지
+import { useFileUpload } from '@libs';
 
 interface UploadFileState {
   file: File;
@@ -55,9 +55,12 @@ export function FileUploadButton(props: FileUploadButtonProps) {
   const theme = useTheme();
   const { uploadFile } = useFileUpload();
 
-  // [수정 1] 초기화 시 빈 문자열 필터링 (회색 아이콘 이슈 해결)
+  // 1. 유효한 초기 파일 목록 계산 (Helper)
+  const getValidFiles = (files: string[]) => files.filter((url) => url && url.trim() !== '');
+
+  // 2. 내부 상태 (fileList)
   const [fileList, setFileList] = useState<UploadFileState[]>(() => {
-    const validFiles = initialFiles.filter((url) => url && url.trim() !== '');
+    const validFiles = getValidFiles(initialFiles);
     if (validFiles.length > 0) {
       return validFiles.map((url) => ({
         file: new File([], '기존 이미지'),
@@ -69,94 +72,72 @@ export function FileUploadButton(props: FileUploadButtonProps) {
     return [];
   });
 
-  const prevUrlsRef = useRef<string[]>([]);
+  // 3. Render Phase에서 Prop 변경 감지 및 State 동기화 (Derived State Pattern)
+  const [prevFilesProp, setPrevFilesProp] = useState<string[]>(() => getValidFiles(initialFiles));
+  const currentValidFiles = getValidFiles(initialFiles);
 
-  useEffect(() => {
-    const validInitialFiles = initialFiles.filter((url) => url && url.trim() !== '');
-    const currentFiles = fileList;
+  const isPropChanged =
+    currentValidFiles.length !== prevFilesProp.length || !currentValidFiles.every((url, i) => url === prevFilesProp[i]);
 
-    // 1. 개수가 다르면 무조건 동기화해야 함
-    // 2. 개수가 같아도 내용이 다르면 동기화해야 함
-    const isSame =
-      validInitialFiles.length === currentFiles.length &&
-      validInitialFiles.every((url, index) => url === currentFiles[index].s3Url);
+  if (isPropChanged) {
+    setPrevFilesProp(currentValidFiles);
+    setFileList((prev) => {
+      return currentValidFiles.map((url) => {
+        const existingItem = prev.find((item) => item.s3Url === url);
+        if (existingItem) return existingItem;
 
-    if (!isSame) {
-      setFileList((prev) => {
-        // [핵심 해결책]
-        // 무조건 새로운 객체로 덮어쓰지 말고,
-        // 기존에 이미 가지고 있는 파일(URL이 같은 것)이라면 '기존 상태(preview blob)'를 유지합니다.
-
-        return validInitialFiles.map((url) => {
-          // 현재 로컬 리스트에서 동일한 s3Url을 가진 항목을 찾음
-          const existingItem = prev.find((item) => item.s3Url === url);
-
-          if (existingItem) {
-            // 이미 로컬에 있다면, 미리보기(blob)가 살아있는 그 객체를 그대로 씀 (깜빡임 X)
-            return existingItem;
-          }
-
-          // 로컬에 없다면(새로 DB에서 불러온 것), 새로 만듦
-          return {
-            file: new File([], '기존 이미지'),
-            preview: url,
-            status: 'success',
-            s3Url: url,
-          };
-        });
+        return {
+          file: new File([], '기존 이미지'),
+          preview: url,
+          status: 'success',
+          s3Url: url,
+        };
       });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialFiles]);
+    });
+  }
 
+  const prevUrlsRef = useRef<string[]>([]);
   const isLimitReached = fileList.length >= maxFiles;
 
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      if (readOnly) return;
+  // [수정 핵심] useCallback 제거
+  // React Compiler가 활성화된 환경에서는 useCallback을 제거하면 컴파일러가 자동으로 최적화합니다.
+  const onDrop = async (acceptedFiles: File[]) => {
+    if (readOnly) return;
 
-      const newFiles: UploadFileState[] = acceptedFiles.map((file) => ({
-        file,
-        preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-        status: 'uploading',
-      }));
+    const newFiles: UploadFileState[] = acceptedFiles.map((file) => ({
+      file,
+      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+      status: 'uploading',
+    }));
 
-      // [수정 3] maxFiles가 1개일 때 새 파일로 '교체'되도록 수정
-      setFileList((prev) => {
-        if (maxFiles === 1) {
-          // 기존 파일 미리보기 해제 (메모리 누수 방지)
-          prev.forEach((item) => {
-            if (item.preview && !initialFiles.includes(item.preview)) {
-              URL.revokeObjectURL(item.preview);
-            }
-          });
-          return newFiles; // 덮어쓰기
-        }
-        // 여러 개일 때는 기존 로직 (추가)
-        return [...prev, ...newFiles].slice(0, maxFiles);
-      });
-
-      for (const fileState of newFiles) {
-        try {
-          const s3Url = await uploadFile(fileState.file);
-          setFileList((prev) =>
-            prev.map((item) => (item.file === fileState.file ? { ...item, status: 'success', s3Url } : item))
-          );
-        } catch (error) {
-          setFileList((prev) =>
-            prev.map((item) => (item.file === fileState.file ? { ...item, status: 'error' } : item))
-          );
-        }
+    setFileList((prev) => {
+      if (maxFiles === 1) {
+        prev.forEach((item) => {
+          if (item.preview && !initialFiles.includes(item.preview)) {
+            URL.revokeObjectURL(item.preview);
+          }
+        });
+        return newFiles;
       }
-    },
-    [maxFiles, uploadFile, readOnly, initialFiles]
-  );
+      return [...prev, ...newFiles].slice(0, maxFiles);
+    });
 
-  // [수정 4] 업로드 완료 콜백 처리 (핵심: uploading 상태일 땐 콜백 안 보냄)
+    for (const fileState of newFiles) {
+      try {
+        const s3Url = await uploadFile(fileState.file);
+        setFileList((prev) =>
+          prev.map((item) => (item.file === fileState.file ? { ...item, status: 'success', s3Url } : item))
+        );
+      } catch (error) {
+        setFileList((prev) => prev.map((item) => (item.file === fileState.file ? { ...item, status: 'error' } : item)));
+      }
+    }
+  };
+
+  // 업로드 완료 콜백 처리
   useEffect(() => {
     if (readOnly || !onUploadComplete) return;
 
-    // 업로드 중인 파일이 하나라도 있으면 대기 (URL이 아직 없으므로)
     const isUploading = fileList.some((item) => item.status === 'uploading');
     if (isUploading) return;
 
@@ -186,7 +167,6 @@ export function FileUploadButton(props: FileUploadButtonProps) {
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
-    // maxFiles가 1개일 때는 항상 드롭 가능하게 함 (교체를 위해)
     maxFiles: maxFiles === 1 ? 1 : maxFiles - fileList.length,
     maxSize,
     accept,
@@ -302,11 +282,9 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         >
           <input {...getInputProps()} />
 
-          {/* 단일 파일 모드: 파일이 1개 있고, maxFiles가 1일 때 */}
           {fileList.length === 1 && maxFiles === 1 ? (
             renderSingleFileContent(fileList[0])
           ) : (
-            // 파일이 없거나(0개), 여러 개일 때(List형태)의 UI
             <>
               {readOnly ? (
                 <Stack alignItems="center" spacing={1}>
@@ -367,7 +345,7 @@ export function FileUploadButton(props: FileUploadButtonProps) {
         </Box>
       )}
 
-      {/* 멀티 파일 리스트 (단일 파일 모드가 아닐 때 + 파일이 있을 때) */}
+      {/* 멀티 파일 리스트 */}
       {!(maxFiles === 1 && fileList.length === 1) && fileList.length > 0 && (
         <List sx={{ pt: 0 }}>
           {fileList.map((item, index) => (
