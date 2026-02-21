@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { logger } from '@libs/logger';
+import { ConfigsService } from './configs';
 
 (async () => {
   const app = await NestFactory.create(AppModule, { logger });
-  const port = process.env.PORT ?? 3000;
+  const configsService = app.get(ConfigsService);
 
   app.enableCors({
-    origin: '*',
+    origin: configsService.isLocal() ? '*' : ['https://back-office.stellar-climb.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
@@ -15,7 +16,7 @@ import { logger } from '@libs/logger';
   // Enable shutdown hooks
   app.enableShutdownHooks();
 
-  await app.listen(port, () => {
-    logger.log(`Server is running on port ${port}.🚀 `);
+  await app.listen(3000, () => {
+    logger.log(`Server is running on port ${3000}.🚀 `);
   });
 })();
