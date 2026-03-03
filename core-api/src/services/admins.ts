@@ -11,6 +11,7 @@ import { AdminFileModule } from './files/admin-file.module';
 import { AdminMusicModule } from './music/admin-music.module';
 import { AdminSeriesModule } from './series/admin-series.module';
 import { AdminFaqModule } from './faqs/admin-faq.module';
+import { AdminHeroModule } from './heroes/admin-hero.module';
 
 export default [
   AdminUserModule,
@@ -26,4 +27,5 @@ export default [
   AdminMusicModule,
   AdminSeriesModule,
   AdminFaqModule,
+  AdminHeroModule,
 ];
