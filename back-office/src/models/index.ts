@@ -3,6 +3,7 @@ export * from './album-model';
 export * from './artist-model';
 export * from './content-price-model';
 export * from './faq-model';
+export * from './hero-model';
 export * from './history-model';
 export * from './music-model';
 export * from './role-policy-model';
