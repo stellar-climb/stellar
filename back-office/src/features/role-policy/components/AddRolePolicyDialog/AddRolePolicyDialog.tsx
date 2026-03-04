@@ -1,11 +1,10 @@
 import { Dialog, DialogContent, TextField, Button, DialogActions, Stack } from '@mui/material';
 import { DialogTitleGroup } from '@components';
 import { useForm } from 'react-hook-form';
-import { useMutation } from '@libs';
 import { useSnackbar } from 'notistack';
-import { rolePolicyRepository } from '@repositories';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useCreateRolePolicy } from '@features/role-policy/hooks';
 
 const yupSchema = yup.object({
   name: yup.string().required('이름을 입력해주세요.'),
@@ -20,15 +19,7 @@ export function AddRolePolicyDialog(props: { onClose: () => void; onKeyDown: Rea
   const { enqueueSnackbar } = useSnackbar();
 
   // 4. query hooks
-  const [createRolePolicy, { loading }] = useMutation(rolePolicyRepository.create, {
-    onSuccess: () => {
-      enqueueSnackbar('권한 정책이 생성되었습니다.', { variant: 'success' });
-      onClose();
-    },
-    onError: (error) => {
-      enqueueSnackbar(error.message, { variant: 'error' });
-    },
-  });
+  const { createRolePolicy, isLoading } = useCreateRolePolicy();
 
   // 5. form hooks
   const {
@@ -65,11 +56,22 @@ export function AddRolePolicyDialog(props: { onClose: () => void; onKeyDown: Rea
       </DialogContent>
       <DialogActions>
         <Button
-          loading={loading}
+          loading={isLoading}
           disabled={isDisabled}
           type="submit"
-          onClick={handleSubmit(async ({ name, description }) => {
-            await createRolePolicy({ variables: { name, description } });
+          onClick={handleSubmit(({ name, description }) => {
+            createRolePolicy(
+              { name, description },
+              {
+                onSuccess: () => {
+                  enqueueSnackbar('권한 정책이 생성되었습니다', { variant: 'success' });
+                  onClose();
+                },
+                onError: (error) => {
+                  enqueueSnackbar(error.message, { variant: 'error' });
+                },
+              }
+            );
           })}
         >
           저장

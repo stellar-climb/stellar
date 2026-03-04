@@ -1,10 +1,10 @@
-import type { RolePolicyModel } from '@models';
 import { Dialog, DialogContent, DialogActions, TextField, Button, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { DialogTitleGroup } from '../DialogTitleGroup';
-import { getChangedFields, hasChangedFields, useMutation } from '@libs';
-import { rolePolicyRepository } from '@repositories';
+import { DialogTitleGroup } from '@components';
+import { getChangedFields, hasChangedFields } from '@libs';
 import { useSnackbar } from 'notistack';
+import type { RolePolicyModel } from '../../models';
+import { useUpdateRolePolicy } from '../../hooks';
 
 export function EditRolePolicyDialog(props: {
   rolePolicy: RolePolicyModel;
@@ -19,15 +19,7 @@ export function EditRolePolicyDialog(props: {
 
   // 3. state hooks
   // 4. query hooks
-  const [updateRolePolicy, { loading }] = useMutation(rolePolicyRepository.update, {
-    onSuccess: () => {
-      enqueueSnackbar('수정되었습니다.', { variant: 'success' });
-      onClose();
-    },
-    onError: (error) => {
-      enqueueSnackbar(error.message, { variant: 'error' });
-    },
-  });
+  const { updateRolePolicy, isLoading } = useUpdateRolePolicy();
 
   // 5. form hooks
   const {
@@ -59,18 +51,27 @@ export function EditRolePolicyDialog(props: {
       </DialogContent>
       <DialogActions>
         <Button
-          loading={loading}
+          loading={isLoading}
           disabled={isDisabled}
-          onClick={handleSubmit(async () => {
+          onClick={handleSubmit(() => {
             if (!hasChangedFields(dirtyFields)) {
               enqueueSnackbar('변경된 내용이 없습니다.', { variant: 'info' });
               return;
             }
 
             const changedFields = getChangedFields(dirtyFields, getValues);
-            await updateRolePolicy({
-              variables: { id: rolePolicy.id, ...changedFields },
-            });
+            updateRolePolicy(
+              { id: rolePolicy.id, ...changedFields },
+              {
+                onSuccess: () => {
+                  enqueueSnackbar('권한 정책이 수정되었습니다', { variant: 'success' });
+                  onClose();
+                },
+                onError: (error) => {
+                  enqueueSnackbar(error.message, { variant: 'error' });
+                },
+              }
+            );
           })}
         >
           저장

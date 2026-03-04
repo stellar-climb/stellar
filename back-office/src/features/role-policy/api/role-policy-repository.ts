@@ -1,16 +1,8 @@
-import { httpClient, queryKeyMap } from '@libs';
-import type { RolePolicyModel } from '@models';
+import { httpClient } from '@libs';
+import type { RolePolicyModel, RolePolicyListFilter, RolePolicyCreate } from '../models';
 
 export const rolePolicyRepository = {
-  async list({
-    page,
-    limit,
-    filter,
-  }: {
-    page?: number;
-    limit?: number;
-    filter?: { search?: string; searchValue?: string };
-  }) {
+  async list({ page, limit, filter }: RolePolicyListFilter) {
     return httpClient.get<{ items: RolePolicyModel[]; total: number }>('/policies/roles', {
       params: {
         page,
@@ -20,7 +12,7 @@ export const rolePolicyRepository = {
     });
   },
 
-  async create({ name, description }: { name: string; description: string }) {
+  async create({ name, description }: RolePolicyCreate) {
     return httpClient.post<void>('/policies/roles', { name, description });
   },
 
@@ -32,8 +24,3 @@ export const rolePolicyRepository = {
     return httpClient.delete<void>(`/policies/roles/${id}`);
   },
 };
-
-queryKeyMap.set(rolePolicyRepository.list, ['role-policies']);
-queryKeyMap.set(rolePolicyRepository.create, ['role-policies']);
-queryKeyMap.set(rolePolicyRepository.update, ['role-policies']);
-queryKeyMap.set(rolePolicyRepository.remove, ['role-policies']);

@@ -1,19 +1,12 @@
 import { Box, Button, Stack } from '@mui/material';
-import {
-  CustomDataGrid,
-  DialogButton,
-  ListViewHeader,
-  Pagination,
-  AddRolePolicyDialog,
-  DeleteConfirmDialog,
-  EditRolePolicyDialog,
-} from '@components';
-import { useMutation, useQuery, format, gradients } from '@libs';
-import { rolePolicyRepository } from '@repositories';
+import { CustomDataGrid, DialogButton, ListViewHeader, Pagination, DeleteConfirmDialog } from '@components';
+import { format, gradients } from '@libs';
 import { useState } from 'react';
 import type { GridColDef } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-import type { RolePolicyModel } from '@models';
+import { useRolePolicyList, useRemoveRolePolicy } from '@features/role-policy/hooks';
+import type { RolePolicyModel } from '@features/role-policy/models';
+import { AddRolePolicyDialog, EditRolePolicyDialog } from '@features/role-policy/components';
 
 export function RolePolicyScreen() {
   // 1. destructure props
@@ -26,17 +19,12 @@ export function RolePolicyScreen() {
   const [limit, setLimit] = useState(10);
 
   // 4. query hooks
-  const { data: rolePolicies } = useQuery(rolePolicyRepository.list, {
-    variables: { page, limit, filter: search && search.value ? { search: search.key, searchValue: search.value } : {} },
+  const { rolePolicies } = useRolePolicyList({
+    page,
+    limit,
+    filter: search && search.value ? { search: search.key, searchValue: search.value } : {},
   });
-  const [removeRolePolicy, { loading }] = useMutation(rolePolicyRepository.remove, {
-    onSuccess: () => {
-      enqueueSnackbar('삭제되었습니다.', { variant: 'success' });
-    },
-    onError: (error) => {
-      enqueueSnackbar(error.message, { variant: 'error' });
-    },
-  });
+  const { removeRolePolicy, isLoading: loading } = useRemoveRolePolicy();
 
   // 5. form hooks
   // 6. calculate values
@@ -83,7 +71,20 @@ export function RolePolicyScreen() {
               <DeleteConfirmDialog
                 onClose={onClose}
                 onKeyDown={onKeyDown}
-                onDelete={() => removeRolePolicy({ variables: { id: row.id } })}
+                onDelete={() =>
+                  removeRolePolicy(
+                    { id: row.id },
+                    {
+                      onSuccess: () => {
+                        enqueueSnackbar('권한 정책이 삭제되었습니다', { variant: 'success' });
+                        onClose();
+                      },
+                      onError: (error) => {
+                        enqueueSnackbar(error.message, { variant: 'error' });
+                      },
+                    }
+                  )
+                }
               />
             )}
           </DialogButton>
