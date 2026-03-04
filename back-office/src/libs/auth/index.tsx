@@ -6,13 +6,11 @@ import { CircularProgress } from '@mui/material';
 const authClient = httpClient;
 
 const UserContext = createContext<{
-  getUser: () => AdminModel | undefined;
+  user: AdminModel | undefined;
   setUser: (user?: AdminModel) => void;
 }>({
-  getUser() {
-    return undefined;
-  },
-  setUser() {},
+  user: undefined,
+  setUser: () => {},
 });
 
 async function loadToken(query: () => Promise<{ accessToken: string }>) {
@@ -26,8 +24,9 @@ async function loadToken(query: () => Promise<{ accessToken: string }>) {
   return !!accessToken;
 }
 
-async function unloadToken() {
+function unloadToken() {
   localStorage.removeItem('token');
+  httpClient.removeAuthorization();
 }
 
 async function getSelf() {
@@ -40,18 +39,7 @@ export function AuthProvider({ user: initUser, children }: { user?: AdminModel; 
   // state hooks
   const [initialized, setInitialized] = useState(!!initUser);
   const [user, setUser] = useState<AdminModel | undefined>(initUser);
-
-  const userContext = useMemo(
-    () => ({
-      getUser() {
-        return user;
-      },
-      setUser(user?: AdminModel) {
-        setUser(user);
-      },
-    }),
-    [user]
-  );
+  const userContext = useMemo(() => ({ user, setUser }), [user]);
 
   useEffect(() => {
     if (!initialized) {
@@ -65,7 +53,10 @@ export function AuthProvider({ user: initUser, children }: { user?: AdminModel; 
             setUser(await getSelf());
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.error(err);
+          unloadToken();
+        })
         .finally(() => setInitialized(true));
     }
   }, [initialized]);
@@ -87,7 +78,10 @@ export const useSignInGoogle: () => [(accessToken: string) => void, { loading: b
         setLoading(true);
         loadToken(() => Promise.resolve({ accessToken }))
           .then(async () => context.setUser(await getSelf()))
-          .catch((err) => console.log(err))
+          .catch((err) => {
+            console.error(err);
+            unloadToken();
+          })
           .finally(() => setLoading(false));
       },
       [context]
@@ -98,7 +92,7 @@ export const useSignInGoogle: () => [(accessToken: string) => void, { loading: b
 
 export function useUser() {
   const context = useContext(UserContext);
-  const user = context.getUser();
+  const user = context.user;
 
   return [user!];
 }
@@ -107,6 +101,7 @@ export function useSignOut() {
   const context = useContext(UserContext);
 
   return useCallback(() => {
-    unloadToken().then(() => context.setUser());
+    unloadToken();
+    context.setUser(undefined);
   }, [context]);
 }

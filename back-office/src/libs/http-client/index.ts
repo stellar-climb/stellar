@@ -30,6 +30,9 @@ export const httpClient = (() => {
     setAuthorization: (accessToken: string) => {
       _authorization = accessToken;
     },
+    removeAuthorization: () => {
+      _authorization = '';
+    },
 
     async get<T>(
       url: string,
