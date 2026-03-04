@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Stack, Button } from '@mui/material';
 import { BreadCrumb, ListViewHeader } from '@components';
 
 export function HeroScreen() {
@@ -15,13 +15,7 @@ export function HeroScreen() {
     <Stack direction="column" spacing={2}>
       <BreadCrumb items={[{ label: '배너', path: '/sections/heroes' }]} />
       <Stack direction="row" spacing={2} css={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <ListViewHeader
-          title="배너 목록 조회"
-          searchItems={[
-            { searchKey: 'name', label: '이름' },
-            { searchKey: 'category', label: '카테고리' },
-          ]}
-        />
+        <ListViewHeader title="배너 목록 조회" addButton={<Button>배너 추가</Button>} />
       </Stack>
     </Stack>
   );

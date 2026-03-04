@@ -31,7 +31,8 @@
       "@routes": ["routes"],
       "@repositories": ["repositories"],
       "@components": ["components"],
-      "@screens": ["screens"]
+      "@screens": ["screens"],
+      "@features/*": ["features/*"]
     }
   },
   "include": ["src"]

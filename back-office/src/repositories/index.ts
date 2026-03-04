@@ -3,7 +3,6 @@ export * from './album-repository';
 export * from './artist-repository';
 export * from './content-price-repository';
 export * from './faq-repository';
-export * from './hero-repository';
 export * from './history-repository';
 export * from './music-repository';
 export * from './role-policy-repository';

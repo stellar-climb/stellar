@@ -9,3 +9,11 @@ export interface HeroModel {
 
   type: HeroType;
 }
+
+export interface HeroListFilter {
+  page: number;
+  limit: number;
+  filter: {
+    type?: HeroType;
+  };
+}
