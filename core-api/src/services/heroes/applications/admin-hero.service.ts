@@ -32,7 +32,7 @@ export class AdminHeroService extends DddService {
       this.heroRepository.count({ type }),
     ]);
 
-    return { heroes, total };
+    return { items: heroes, total };
   }
 
   async retrieve({ id }: { id: number }) {
