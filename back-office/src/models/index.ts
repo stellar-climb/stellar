@@ -1,4 +1,3 @@
-export * from './admin-model';
 export * from './album-model';
 export * from './artist-model';
 export * from './content-price-model';

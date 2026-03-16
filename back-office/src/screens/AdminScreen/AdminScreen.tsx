@@ -1,10 +1,9 @@
-import { Box, Stack, Chip, Button } from '@mui/material';
-import { ListViewHeader, Pagination, CustomDataGrid, type GridColDef, DialogButton } from '@components';
-import { format, useQuery } from '@libs';
-import { adminRepository } from '@repositories';
+import { Box, Stack, Chip } from '@mui/material';
+import { ListViewHeader, Pagination, CustomDataGrid, type GridColDef } from '@components';
+import { format } from '@libs';
+import { useAdminList } from '@features/admin/hooks';
 import { useState } from 'react';
-import { type AdminModel, AdminStatus, getAdminStatus } from '@models';
-import { EditAdminDialog } from 'components/EditAdminDialog';
+import { type AdminModel, AdminStatus, getAdminStatus } from '@features/admin/models';
 
 export function AdminScreen() {
   // 1. destructure props
@@ -15,12 +14,10 @@ export function AdminScreen() {
 
   // 3. state hooks
   // 4. query hooks
-  const { data: admins, loading } = useQuery(adminRepository.list, {
-    variables: {
-      page,
-      limit,
-      filter: search && search.value ? { search: search.key, searchValue: search.value } : {},
-    },
+  const { admins, loading } = useAdminList({
+    page,
+    limit,
+    filter: search && search.value ? { search: search.key, searchValue: search.value } : {},
   });
 
   // 5. form hooks

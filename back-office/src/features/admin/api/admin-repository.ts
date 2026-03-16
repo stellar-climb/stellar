@@ -1,4 +1,4 @@
-import type { AdminModel } from '@models';
+import type { AdminModel } from '../models';
 import { queryKeyMap, httpClient } from '@libs';
 
 export const adminRepository = {
@@ -7,9 +7,9 @@ export const adminRepository = {
     limit,
     filter,
   }: {
-    page: number;
-    limit: number;
-    filter: { search?: string; searchValue?: string };
+    page?: number;
+    limit?: number;
+    filter?: { search?: string; searchValue?: string };
   }) {
     return httpClient.get<{ items: AdminModel[]; total: number }>('/members', {
       params: {
