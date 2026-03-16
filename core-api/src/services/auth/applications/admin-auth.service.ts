@@ -27,7 +27,13 @@ export class AdminAuthService extends DddService {
     let [admin] = await this.adminRepository.find({ googleSub: sub, email });
 
     if (!admin) {
-      admin = new Admin({ email, name, profileImageUrl: picture, googleSub: sub });
+      admin = Admin.of({
+        email,
+        name,
+        profileImageUrl: picture,
+        googleSub: sub,
+        password: `${email}_${new Date().toISOString()}`,
+      });
 
       await this.adminRepository.save([admin]);
     }
